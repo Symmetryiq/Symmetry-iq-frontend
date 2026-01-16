@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "460134598118",
+    "project_id": "symmetry-iq",
+    "storage_bucket": "symmetry-iq.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:460134598118:android:eed99c2c9fc05383b14227",
+        "android_client_info": {
+          "package_name": "com.bergmanmedia.symmetryiq"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "460134598118-5hikp7raui498nkplj6ir5ptb7o3ibtp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bergmanmedia.symmetryiq",
+            "certificate_hash": "3d65698c37f49f3ff120435824e3262e4d121369"
+          }
+        },
+        {
+          "client_id": "460134598118-8e5q5uvibaorq77g564070cmchns9as3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjrtIzx89wS17YiiadtBr04KSaJcj0R7A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "460134598118-8e5q5uvibaorq77g564070cmchns9as3.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "460134598118-ko3o0g1n8sprsttb7vreaopt89hpfboi.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.bergman.symmetryiq"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
