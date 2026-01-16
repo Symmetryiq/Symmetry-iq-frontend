@@ -2,7 +2,7 @@ import { getAuth, getIdToken } from '@react-native-firebase/auth';
 import axios from 'axios';
 
 const API_URL =
-  process.env.EXPO_PUBLIC_API_URL || 'https://symmetry-api.vercel.app/api';
+  process.env.EXPO_PUBLIC_API_URL || 'https://symmetry-iq.vercel.app/api';
 
 const apiClient = axios.create({
   baseURL: API_URL,
