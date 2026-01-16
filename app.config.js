@@ -1,4 +1,5 @@
 export default ({ config }) => ({
+  ...config,
   name: 'Symmetry IQ',
   description: 'A mobile app focused on assisting users ',
   slug: 'symmetry-iq',
