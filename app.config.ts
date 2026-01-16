@@ -1,4 +1,7 @@
-export default ({ config }) => ({
+
+import { ExpoConfig, ConfigContext } from 'expo/config';
+
+export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: 'Symmetry IQ',
   description: 'A mobile app focused on assisting users ',
