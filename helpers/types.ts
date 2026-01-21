@@ -13,6 +13,11 @@ import {
 } from 'react-native';
 import { SafeAreaViewProps } from 'react-native-safe-area-context';
 
+export interface IconProps {
+  size?: number;
+  color?: string;
+}
+
 export interface ScreenWrapperProps extends SafeAreaViewProps {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;

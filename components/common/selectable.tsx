@@ -21,6 +21,7 @@ const Selectable = ({
   icon,
   label,
   onPress,
+  style,
 }: SelectableProps) => {
   // Animate background and border color for the container
   const bgColor = useSharedValue(selected ? 1 : 0);
@@ -58,7 +59,7 @@ const Selectable = ({
 
   return (
     <AnimatedPressable
-      style={[styles.container, animatedContainerStyle]}
+      style={[styles.container, animatedContainerStyle, style]}
       onPress={onPress}
     >
       <View style={styles.mainWrapper}>

@@ -1,6 +1,6 @@
 import { Colors } from '@/constants/theme'
 import { scale, verticalScale } from '@/helpers/scale'
-import { useAuthStore } from '@/stores/auth-store'
+import { useUser } from '@clerk/clerk-expo'
 import { useRouter } from 'expo-router'
 import { BellIcon, CaretLeft } from 'phosphor-react-native'
 import React from 'react'
@@ -15,7 +15,7 @@ type HeaderProps = {
 
 const Header = ({ showContent = true, showIcon = true, showBackIcon = false }: HeaderProps) => {
   const router = useRouter();
-  const { user } = useAuthStore();
+  const { user } = useUser();
 
   return (
     <View style={styles.header}>
@@ -32,7 +32,7 @@ const Header = ({ showContent = true, showIcon = true, showBackIcon = false }: H
           <View>
             <Typography>Welcome back,</Typography>
             <Typography font="semiBold" size={20} color="onBackground">
-              {user?.displayName || 'User'}
+              {user?.firstName || 'User'}
             </Typography>
           </View>
         </View>}

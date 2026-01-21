@@ -6,6 +6,7 @@ import { PREMIUM_FEATURES, SUBSCRIPTION_PLANS } from '@/constants/subscriptions'
 import { Colors } from '@/constants/theme';
 import { scale, verticalScale } from '@/helpers/scale';
 import { openBrowserLink } from '@/helpers/utils';
+import { updateUserProfile } from '@/services/api/user.api';
 import { useOnboardingStore } from '@/stores/onboarding';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
@@ -33,11 +34,12 @@ const IconMap: Record<string, any> = {
   Brain: Sparkle,
   ListChecks,
   BookOpen,
+
   Prohibit,
 };
 
 const Purchase = () => {
-  const { setOnboardingCompleted } = useOnboardingStore();
+  const { setOnboardingCompleted, age, gender } = useOnboardingStore();
   const [selectedPlan, setSelectedPlan] = useState('yearly');
 
   // useEffect(() => {
@@ -48,8 +50,22 @@ const Purchase = () => {
   //   console.log(packages);
   // })
 
-  const handleCompleteOnboarding = () => {
-    setOnboardingCompleted(true);
+  const handleCompleteOnboarding = async () => {
+    try {
+      // Sync onboarding data to backend metadata
+      await updateUserProfile({
+        age: age,
+        gender: gender,
+        notifications: true, // Default to true
+      });
+
+      // Mark onboarding as completed
+      setOnboardingCompleted(true);
+    } catch (error) {
+      console.error('Error syncing onboarding data:', error);
+      // Still complete onboarding even if API fails - data is in store
+      setOnboardingCompleted(true);
+    }
   };
 
   return (

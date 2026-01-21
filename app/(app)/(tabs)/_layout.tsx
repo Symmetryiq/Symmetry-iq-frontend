@@ -1,13 +1,11 @@
 import BottomTab from '@/components/bottom-tab';
+import HomeIcon from '@/components/icons/home-icon';
+import InsightsIcon from '@/components/icons/insights-icon';
+import RoutinesIcon from '@/components/icons/routines-icon';
+import ScanIcon from '@/components/icons/scan-icon';
+import SettingsIcon from '@/components/icons/settings-icon';
 import { Colors } from '@/constants/theme';
 import { Tabs } from 'expo-router';
-import {
-  CameraIcon,
-  ChartLineIcon,
-  GearSixIcon,
-  HouseIcon,
-  KanbanIcon,
-} from 'phosphor-react-native';
 import React from 'react';
 
 const TabsLayout = () => {
@@ -25,7 +23,7 @@ const TabsLayout = () => {
         options={{
           title: 'Home',
           tabBarIcon: ({ color, size }) => (
-            <HouseIcon size={size} color={color} />
+            <HomeIcon size={size} color={color} />
           ),
         }}
       />
@@ -34,7 +32,7 @@ const TabsLayout = () => {
         options={{
           title: 'Routines',
           tabBarIcon: ({ color, size }) => (
-            <KanbanIcon size={size} color={color} />
+            <RoutinesIcon size={size} color={color} />
           ),
         }}
       />
@@ -43,7 +41,7 @@ const TabsLayout = () => {
         options={{
           title: 'Scan',
           tabBarIcon: ({ color, size }) => (
-            <CameraIcon size={size} color={color} />
+            <ScanIcon size={size} color={color} />
           ),
         }}
       />
@@ -52,7 +50,7 @@ const TabsLayout = () => {
         options={{
           title: 'Insights',
           tabBarIcon: ({ color, size }) => (
-            <ChartLineIcon size={size} color={color} />
+            <InsightsIcon size={size} color={color} />
           ),
         }}
       />
@@ -61,7 +59,7 @@ const TabsLayout = () => {
         options={{
           title: 'Settings',
           tabBarIcon: ({ color, size }) => (
-            <GearSixIcon size={size} color={color} />
+            <SettingsIcon size={size} color={color} />
           ),
         }}
       />

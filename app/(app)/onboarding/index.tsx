@@ -22,7 +22,7 @@ const WelcomeScreen = () => {
         >
           <Animated.Image
             entering={FadeIn.duration(700)}
-            source={require('@/assets/images/face-symmetry.png')}
+            source={require('@/assets/images/face-symmetry.jpg')}
             style={styles.welcomeImage}
             resizeMode={'contain'}
           />

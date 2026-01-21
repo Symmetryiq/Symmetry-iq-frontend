@@ -1,3 +1,5 @@
+import AppleButton from '@/components/buttons/apple-button';
+import GoogleButton from '@/components/buttons/google-button';
 import Button from '@/components/common/button';
 import Input from '@/components/common/input';
 import { Label } from '@/components/common/label';
@@ -6,78 +8,110 @@ import Typography from '@/components/common/typography';
 import { Colors } from '@/constants/theme';
 import { scale, verticalScale } from '@/helpers/scale';
 import { isStrongPassword, isValidEmail } from '@/helpers/validation';
-import { useAuthStore } from '@/stores/auth-store';
-import { Feather } from '@expo/vector-icons';
+import { useOnboardingStore } from '@/stores/onboarding';
+import { useSignUp } from '@clerk/clerk-expo';
 import { useRouter } from 'expo-router';
 import {
-  AppleLogoIcon,
-  GoogleLogoIcon,
   LockIcon,
-  MailboxIcon,
-  UserIcon,
-  WarningIcon,
+  MailboxIcon
 } from 'phosphor-react-native';
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 const CreateAccount = () => {
-  const { signUp, loading, error, clearError } = useAuthStore();
+  const { isLoaded, signUp, setActive } = useSignUp()
+  const { name } = useOnboardingStore();
   const router = useRouter();
 
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [emailAddress, setEmailAddress] = React.useState('')
   const [password, setPassword] = useState('');
-  const [localError, setLocalError] = useState<string | null>(null);
+  const [pendingVerification, setPendingVerification] = React.useState(false)
+  const [code, setCode] = React.useState('')
 
-  const canGoBack = router.canGoBack();
+  const onSignUpPress = async () => {
+    if (!isLoaded) return
 
-  const handleSubmit = async () => {
-    if (!name.trim()) {
-      setLocalError('Name required');
-      return;
+    console.log(emailAddress, password)
+
+    try {
+      await signUp.create({
+        emailAddress,
+        password,
+        firstName: name,
+      })
+
+      await signUp.prepareEmailAddressVerification({ strategy: 'email_code' })
+
+      setPendingVerification(true)
+    } catch (err) {
+      console.error(JSON.stringify(err, null, 2))
     }
+  }
 
-    if (!isValidEmail(email)) {
-      setLocalError('Invalid email');
-      return;
+  const onVerifyPress = async () => {
+    if (!isLoaded) return
+
+    try {
+      const signUpAttempt = await signUp.attemptEmailAddressVerification({
+        code,
+      })
+
+      if (signUpAttempt.status === 'complete') {
+        await setActive({ session: signUpAttempt.createdSessionId })
+        router.replace('/')
+      } else {
+        console.error(JSON.stringify(signUpAttempt, null, 2))
+      }
+    } catch (err) {
+      console.error(JSON.stringify(err, null, 2))
     }
+  }
 
-    if (!isStrongPassword(password)) {
-      setLocalError('Password must be at least 6 characters');
-      return;
-    }
+  if (pendingVerification) {
+    return (
+      <ScreenWrapper style={styles.container}>
+        <View style={styles.content}>
+          <View style={styles.contentHeader}>
+            <Typography color="onBackground" font="semiBold" size={24}>
+              Verify your Account
+            </Typography>
 
-    if (!name.trim() || !email.trim() || !password.trim()) {
-      return;
-    }
+            <Typography color="onSecondary" style={{ textAlign: 'center' }}>
+              Verify your account to explore variety of exciting features
+              powered by AI and fine-tuned by us.
+            </Typography>
+          </View>
+          <View style={styles.form}>
+            <View style={styles.input}>
+              <Label color="onSecondary" font="medium">
+                Verification Code
+              </Label>
 
-    setLocalError(null);
+              <Input
+                placeholder="Enter your verification code"
+                value={code}
+                onChangeText={(code) => setCode(code)}
+                keyboardType="numeric"
+                maxLength={6}
+                icon={
+                  <MailboxIcon weight="fill" size={24} color={Colors.onMuted} />
+                }
+              />
+            </View>
 
-    await signUp(name.trim(), email.trim(), password);
-  };
-
-  const handleBack = () => {
-    canGoBack && router.back();
-  };
+            <Button onPress={onVerifyPress} disabled={!code || !isLoaded} loading={!isLoaded}>
+              <Typography>
+                Verify
+              </Typography>
+            </Button>
+          </View>
+        </View>
+      </ScreenWrapper>
+    )
+  }
 
   return (
     <ScreenWrapper style={styles.container}>
-      <View style={styles.header}>
-        {canGoBack && (
-          <Pressable onPress={handleBack}>
-            <Feather
-              name="chevron-left"
-              size={24}
-              color={Colors.onBackground}
-            />
-          </Pressable>
-        )}
-
-        <Typography color="onSecondary" font="regular" size={16}>
-          Create a new account.
-        </Typography>
-      </View>
-
       <View style={styles.content}>
         <View style={styles.contentHeader}>
           <Typography color="onBackground" font="semiBold" size={24}>
@@ -92,32 +126,13 @@ const CreateAccount = () => {
         <View style={styles.form}>
           <View style={styles.input}>
             <Label color="onSecondary" font="medium">
-              Display Name
-            </Label>
-
-            <Input
-              placeholder="Enter your name"
-              value={name}
-              onChangeText={(text) => {
-                setName(text);
-                clearError();
-              }}
-              icon={<UserIcon weight="fill" size={24} color={Colors.onMuted} />}
-            />
-          </View>
-
-          <View style={styles.input}>
-            <Label color="onSecondary" font="medium">
               Email
             </Label>
 
             <Input
               placeholder="Enter your email"
-              value={email}
-              onChangeText={(text) => {
-                setEmail(text);
-                clearError();
-              }}
+              value={emailAddress}
+              onChangeText={(email) => setEmailAddress(email)}
               keyboardType="email-address"
               autoCapitalize="none"
               icon={
@@ -134,26 +149,15 @@ const CreateAccount = () => {
             <Input
               placeholder="Enter your password"
               value={password}
-              onChangeText={(text) => {
-                setPassword(text);
-                clearError();
-              }}
+              onChangeText={(password) => setPassword(password)}
               secureTextEntry
               icon={<LockIcon weight="fill" size={24} color={Colors.onMuted} />}
             />
           </View>
 
-          {(localError || error) && (
-            <View style={styles.errorContainer}>
-              <WarningIcon size={20} color={Colors.danger} />
-
-              <Typography color="danger">{localError || error}</Typography>
-            </View>
-          )}
-
-          <Button onPress={handleSubmit} disabled={loading} loading={loading}>
+          <Button onPress={onSignUpPress} disabled={!isStrongPassword(password) || !isValidEmail(emailAddress) || pendingVerification || !isLoaded} loading={pendingVerification || !isLoaded}>
             <Typography>
-              {loading ? 'Creating...' : 'Create Account'}
+              Create account
             </Typography>
           </Button>
         </View>
@@ -165,29 +169,8 @@ const CreateAccount = () => {
         </View>
 
         <View style={styles.socialAuthWrapper}>
-          <Button
-            onPress={handleSubmit}
-            style={styles.socialButton}
-            disabled={loading}
-          >
-            <GoogleLogoIcon
-              weight="bold"
-              size={24}
-              color={Colors.onSecondary}
-            />
-
-            <Typography>Signup with Google</Typography>
-          </Button>
-
-          <Button
-            onPress={handleSubmit}
-            style={styles.socialButton}
-            disabled={loading}
-          >
-            <AppleLogoIcon weight="fill" size={24} color={Colors.onSecondary} />
-
-            <Typography>Signup with Apple</Typography>
-          </Button>
+          <GoogleButton />
+          <AppleButton />
         </View>
 
         <View

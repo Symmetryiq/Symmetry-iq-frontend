@@ -156,7 +156,7 @@ const Scan = () => {
             aspectRatio: 1,
             overflow: 'hidden'
           }}>
-            <Image source={require('@/assets/images/tick.webp')} style={{ width: '100%', height: '100%' }} />
+            <Image source={require('@/assets/images/tick.jpg')} style={{ width: '100%', height: '100%' }} />
           </View>
 
           <View style={{ gap: scale(8), }}>

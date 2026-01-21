@@ -14,7 +14,7 @@ const ScanCard = ({ onPress }: ScanCardProps) => {
     <View style={styles.scanCardContainer}>
       <View style={styles.scanCardImageWrapper}>
         <Image
-          source={require('@/assets/images/face-capture.png')}
+          source={require('@/assets/images/face-capture.jpg')}
           style={styles.scanCardImage}
         />
       </View>

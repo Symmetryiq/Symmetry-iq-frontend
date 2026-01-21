@@ -13,7 +13,6 @@ import {
   ScoreKey,
 } from '@/helpers/routine-mapping';
 import { scale, verticalScale } from '@/helpers/scale';
-import { useAuthStore } from '@/stores/auth-store';
 import { useScanStore } from '@/stores/scan-store';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
@@ -23,7 +22,6 @@ import PagerView from 'react-native-pager-view';
 const Insights = () => {
   const [page, setPage] = useState(0);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const { user } = useAuthStore();
   const { latestScan, scans, fetchScans, loading } = useScanStore();
   const { scanId } = useLocalSearchParams<{ scanId: string }>();
 

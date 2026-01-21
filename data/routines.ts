@@ -27,20 +27,20 @@ export interface Routine {
 }
 
 export const RoutineImages: Record<RoutineId, ImageSourcePropType> = {
-  'hard-mewing-hold': require('../assets/images/routines/hard-mewing-hold.png'),
-  'masseter-balance-training': require('../assets/images/routines/masseter-balance-training.png'),
-  'neck-curls-extensions': require('../assets/images/routines/neck-curls-and-extensions.png'),
-  'chin-tucks': require('../assets/images/routines/chin-tucks.png'),
-  'wall-posture-reset': require('../assets/images/routines/wall-posture-reset.png'),
-  'scm-neck-stretch': require('../assets/images/routines/scm-neck-stretch.png'),
-  'mandibular-fascia-release': require('../assets/images/routines/mandibular-fascia-release.png'),
-  'gua-sha-jawline': require('../assets/images/routines/gua-sha-jawline.png'),
-  'cheekbone-lift-massage': require('../assets/images/routines/cheekbone-lift-massage.png'),
-  'smile-symmetry-routine': require('../assets/images/routines/smile-symmetry-routine.png'),
-  'orb-oculi-training': require('../assets/images/routines/orb-oculi-training.png'),
-  'wall-posture-training': require('../assets/images/routines/wall-posture-training.png'),
-  'neck-stretch': require('../assets/images/routines/neck-stretch.png'),
-  'nose-centering-routine': require('../assets/images/routines/nose-centering-routine.png'),
+  'hard-mewing-hold': require('../assets/images/routines/hard-mewing-hold.jpg'),
+  'masseter-balance-training': require('../assets/images/routines/masseter-balance-training.jpg'),
+  'neck-curls-extensions': require('../assets/images/routines/neck-curls-and-extensions.jpg'),
+  'chin-tucks': require('../assets/images/routines/chin-tucks.jpg'),
+  'wall-posture-reset': require('../assets/images/routines/wall-posture-reset.jpg'),
+  'scm-neck-stretch': require('../assets/images/routines/scm-neck-stretch.jpg'),
+  'mandibular-fascia-release': require('../assets/images/routines/mandibular-fascia-release.jpg'),
+  'gua-sha-jawline': require('../assets/images/routines/gua-sha-jawline.jpg'),
+  'cheekbone-lift-massage': require('../assets/images/routines/cheekbone-lift-massage.jpg'),
+  'smile-symmetry-routine': require('../assets/images/routines/smile-symmetry-routine.jpg'),
+  'orb-oculi-training': require('../assets/images/routines/orb-oculi-training.jpg'),
+  'wall-posture-training': require('../assets/images/routines/wall-posture-training.jpg'),
+  'neck-stretch': require('../assets/images/routines/neck-stretch.jpg'),
+  'nose-centering-routine': require('../assets/images/routines/nose-centering-routine.jpg'),
 };
 
 export const Routines: Routine[] = [
@@ -49,7 +49,7 @@ export const Routines: Routine[] = [
     title: '👅 Hard Mewing Hold',
     description:
       'Lifts your midface and improves facial symmetry by training firm and correct tongue posture',
-    image: require('@/assets/images/routines/hard-mewing-hold.png'),
+    image: require('@/assets/images/routines/hard-mewing-hold.jpg'),
     duration: '3–5 minutes',
     products: [],
     instructions: [
@@ -70,7 +70,7 @@ export const Routines: Routine[] = [
     title: '🦴 Masseter Balance Training',
     description:
       'Strengthens your jaw evenly on both sides by using light hand resistance to build balance and muscle control',
-    image: require('@/assets/images/routines/masseter-balance-training.png'),
+    image: require('@/assets/images/routines/masseter-balance-training.jpg'),
     duration: '4–6 minutes',
     products: [],
     instructions: [
@@ -92,7 +92,7 @@ export const Routines: Routine[] = [
     title: '💪 Neck Curls & Extensions',
     description:
       'Strengthens the front and back of your neck to improve posture, jawline definition, and overall facial symmetry',
-    image: require('@/assets/images/routines/neck-curls-and-extensions.png'),
+    image: require('@/assets/images/routines/neck-curls-and-extensions.jpg'),
     duration: '5–7 minutes',
     products: ['Dumbbell or weight plate'],
     instructions: [
@@ -114,7 +114,7 @@ export const Routines: Routine[] = [
     title: '🧍‍♂️ Chin Tucks',
     description:
       'Fixes forward head posture and strengthens your neck for a more balanced, symmetrical profile.',
-    image: require('@/assets/images/routines/chin-tucks.png'),
+    image: require('@/assets/images/routines/chin-tucks.jpg'),
     duration: '6–8 minutes',
     products: ['Mirror (optional)'],
     instructions: [
@@ -136,7 +136,7 @@ export const Routines: Routine[] = [
     title: '🧱 Wall Posture Reset',
     description:
       'Aligns your head and shoulders so your face looks straighter and more symmetrical.',
-    image: require('@/assets/images/routines/wall-posture-reset.png'),
+    image: require('@/assets/images/routines/wall-posture-reset.jpg'),
     duration: '3–5 minutes',
     products: ['Wall'],
     instructions: [
@@ -155,7 +155,7 @@ export const Routines: Routine[] = [
     title: '🧖‍♂️ SCM Neck Stretch',
     description:
       'Releases tight neck muscles that can pull your jawline unevenly and tilt your face',
-    image: require('@/assets/images/routines/scm-neck-stretch.png'),
+    image: require('@/assets/images/routines/scm-neck-stretch.jpg'),
     duration: '3–5 minutes',
     products: [],
     instructions: [
@@ -175,7 +175,7 @@ export const Routines: Routine[] = [
     title: '💆‍♂️ Mandibular Fascia Release',
     description:
       'Loosens jaw tightness that can make one side of your face look lower or uneven',
-    image: require('@/assets/images/routines/mandibular-fascia-release.png'),
+    image: require('@/assets/images/routines/mandibular-fascia-release.jpg'),
     duration: '3–4 minutes',
     products: ['Facial oil or moisturizer (optional)'],
     instructions: [
@@ -194,7 +194,7 @@ export const Routines: Routine[] = [
     title: '💎 Gua Sha Jawline',
     description:
       'Reduces puffiness and defines both sides of your face for a sharper, more symmetrical look.',
-    image: require('@/assets/images/routines/gua-sha-jawline.png'),
+    image: require('@/assets/images/routines/gua-sha-jawline.jpg'),
     duration: '4–6 minutes',
     products: ['Gua Sha stone', 'Facial oil or serum'],
     instructions: [
@@ -215,7 +215,7 @@ export const Routines: Routine[] = [
     title: '💆 Cheekbone Lift Massage',
     description:
       'Lifts your cheeks and improves blood flow for better symmetry and definition',
-    image: require('@/assets/images/routines/cheekbone-lift-massage.png'),
+    image: require('@/assets/images/routines/cheekbone-lift-massage.jpg'),
     duration: '3–4 minutes',
     products: ['Facial oil or moisturizer (optional)'],
     instructions: [
@@ -235,7 +235,7 @@ export const Routines: Routine[] = [
     title: '😄 Smile Symmetry Routine',
     description:
       'Trains both sides of your mouth to move evenly for a more balanced and natural smile',
-    image: require('@/assets/images/routines/smile-symmetry-routine.png'),
+    image: require('@/assets/images/routines/smile-symmetry-routine.jpg'),
     duration: '3–4 minutes',
     products: ['Mirror'],
     instructions: [
@@ -254,7 +254,7 @@ export const Routines: Routine[] = [
     title: '👁 Orb Oculi Training',
     description:
       'Strengthens the muscles around your eyes so both open and close evenly for better facial balance',
-    image: require('@/assets/images/routines/orb-oculi-training.png'),
+    image: require('@/assets/images/routines/orb-oculi-training.jpg'),
     duration: '3–5 minutes',
     products: ['Mirror (optional)'],
     instructions: [
@@ -274,7 +274,7 @@ export const Routines: Routine[] = [
     title: '🧍‍♀️ Wall Posture Training',
     description:
       'Improves your posture and head alignment so your neck stays straight and your face looks more symmetrical',
-    image: require('@/assets/images/routines/wall-posture-training.png'),
+    image: require('@/assets/images/routines/wall-posture-training.jpg'),
     duration: '4–6 minutes',
     products: ['Wall'],
     instructions: [
@@ -294,7 +294,7 @@ export const Routines: Routine[] = [
     title: '🧘‍♂️ Neck Stretch',
     description:
       'Releases neck tightness that can tilt your head and make your face look uneven',
-    image: require('@/assets/images/routines/neck-stretch.png'),
+    image: require('@/assets/images/routines/neck-stretch.jpg'),
     duration: '3–4 minutes',
     products: [],
     instructions: [
@@ -314,7 +314,7 @@ export const Routines: Routine[] = [
     title: '👃 Nose Centering Routine',
     description:
       'Helps make your nose look straighter by gently pushing it toward the center',
-    image: require('@/assets/images/routines/nose-centering-routine.png'),
+    image: require('@/assets/images/routines/nose-centering-routine.jpg'),
     duration: '3–5 minutes',
     products: ['None'],
     instructions: [

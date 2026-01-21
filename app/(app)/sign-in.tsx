@@ -1,72 +1,166 @@
-import AppleAuthButton from '@/components/apple-auth';
+import AppleButton from '@/components/buttons/apple-button';
+import GoogleButton from '@/components/buttons/google-button';
 import Button from '@/components/common/button';
 import Input from '@/components/common/input';
 import { Label } from '@/components/common/label';
 import ScreenWrapper from '@/components/common/screen-wrapper';
 import Typography from '@/components/common/typography';
-import GoogleAuthButton from '@/components/google-auth';
 import { Colors } from '@/constants/theme';
 import { scale, verticalScale } from '@/helpers/scale';
-import { isValidEmail } from '@/helpers/validation';
-import { useAuthStore } from '@/stores/auth-store';
-import { Feather } from '@expo/vector-icons';
+import { isClerkAPIResponseError, useSignIn } from '@clerk/clerk-expo';
+import { ClerkAPIError } from '@clerk/types';
 import { useRouter } from 'expo-router';
 import {
   LockIcon,
-  MailboxIcon,
-  WarningIcon
+  MailboxIcon
 } from 'phosphor-react-native';
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 const Signin = () => {
-  const router = useRouter();
-  const canGoBack = router.canGoBack();
-  const { signIn, signInWithGoogle, loading, error, clearError } =
-    useAuthStore();
+  const { isLoaded, signIn, setActive } = useSignIn()
+  const router = useRouter()
 
-  const [email, setEmail] = useState('');
+  const [emailAddress, setEmailAddress] = useState('');
   const [password, setPassword] = useState('');
-  const [localError, setLocalError] = useState<string | null>(null);
+  const [pendingVerification, setPendingVerification] = React.useState(false)
+  const [errors, setErrors] = useState<ClerkAPIError[]>();
 
-  const handleSubmit = async () => {
-    if (!isValidEmail(email)) {
-      setLocalError('Invalid email');
-      return;
+  const onSignInPress = async () => {
+    setErrors(undefined)
+    if (!isLoaded) return
+
+    try {
+      const signInAttempt = await signIn.create({
+        identifier: emailAddress,
+        password,
+      })
+
+      if (signInAttempt.status === 'complete') {
+        await setActive({ session: signInAttempt.createdSessionId })
+      } else if (signInAttempt.status === 'needs_second_factor') {
+        setPendingVerification(true)
+      } else if (signInAttempt.status === 'needs_first_factor') {
+        console.log(signInAttempt.supportedFirstFactors)
+      } else {
+        console.error(JSON.stringify(signInAttempt, null, 2))
+      }
+    } catch (err) {
+      if (isClerkAPIResponseError(err)) setErrors(err.errors)
+      console.error(JSON.stringify(err, null, 2))
     }
+  }
 
-    if (!password) {
-      setLocalError('Password required');
-      return;
+  const onVerifyPress = async () => {
+    setErrors(undefined)
+    if (!isLoaded) return
+
+    try {
+      const signInAttempt = await signIn.create({
+        identifier: emailAddress,
+        password,
+      })
+
+      if (signInAttempt.status === 'complete') {
+        await setActive({ session: signInAttempt.createdSessionId })
+      } else if (signInAttempt.status === 'needs_second_factor') {
+        setPendingVerification(true)
+      } else if (signInAttempt.status === 'needs_first_factor') {
+        console.log(signInAttempt.supportedFirstFactors)
+      } else {
+        console.error(JSON.stringify(signInAttempt, null, 2))
+      }
+    } catch (err) {
+      if (isClerkAPIResponseError(err)) setErrors(err.errors)
+      console.error(JSON.stringify(err, null, 2))
     }
+  }
 
-    setLocalError(null);
+  if (pendingVerification) {
+    return (
+      <ScreenWrapper style={styles.container}>
+        <View style={styles.content}>
+          <View style={styles.contentHeader}>
+            <Typography color="onBackground" font="semiBold" size={24}>
+              Verify
+            </Typography>
 
-    await signIn(email.trim(), password);
-  };
+            <Typography color="onSecondary" style={{ textAlign: 'center' }}>
+              Verify your email to access smart, personalized reports using our
+              best Artificial Intelligence Algorithms.
+            </Typography>
+          </View>
+          <View style={styles.form}>
+            <View style={styles.input}>
+              <Label color="onSecondary" font="medium">
+                Email
+              </Label>
 
-  const handleBack = () => {
-    canGoBack && router.back();
-  };
+              <Input
+                placeholder="Enter your email"
+                value={emailAddress}
+                onChangeText={(email) => setEmailAddress(email)}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                icon={
+                  <MailboxIcon weight="fill" size={24} color={Colors.onMuted} />
+                }
+              />
+            </View>
+
+            <View style={styles.input}>
+              <Label color="onSecondary" font="medium">
+                Password
+              </Label>
+
+              <Input
+                placeholder="Enter your password"
+                value={password}
+                onChangeText={(password) => setPassword(password)}
+                secureTextEntry
+                icon={<LockIcon weight="fill" size={24} color={Colors.onMuted} />}
+              />
+            </View>
+
+            {errors?.map((error) => (
+              <View key={error.code} style={styles.errorContainer}>
+                <Typography color="danger">{error.longMessage}</Typography>
+              </View>
+            ))}
+
+            <Button onPress={onSignInPress} loading={!isLoaded} disabled={!isLoaded}>
+              <Typography>{!isLoaded ? 'Signing in...' : 'Sign In'}</Typography>
+            </Button>
+          </View>
+
+          <View style={styles.divider}>
+            <View style={styles.seperator} />
+            <Typography color="onMuted">Or continue with</Typography>
+            <View style={styles.seperator} />
+          </View>
+
+          <View style={styles.socialAuthWrapper}>
+            <GoogleButton />
+            <AppleButton />
+          </View>
+
+          <View
+            style={{ alignSelf: 'center', flexDirection: 'row', gap: scale(8) }}
+          >
+            <Typography color="onSecondary">
+              Don&apos;t have an account?
+            </Typography>
+            <Pressable onPress={() => router.push('/create-account')}>
+              <Typography color="onPrimary">Create Account</Typography>
+            </Pressable>
+          </View>
+        </View>
+      </ScreenWrapper>
+    )
+  }
 
   return (
     <ScreenWrapper style={styles.container}>
-      <View style={styles.header}>
-        {canGoBack && (
-          <Pressable onPress={handleBack}>
-            <Feather
-              name="chevron-left"
-              size={24}
-              color={Colors.onBackground}
-            />
-          </Pressable>
-        )}
-
-        <Typography color="onSecondary" font="regular" size={16}>
-          Sign in to your account.
-        </Typography>
-      </View>
-
       <View style={styles.content}>
         <View style={styles.contentHeader}>
           <Typography color="onBackground" font="semiBold" size={24}>
@@ -86,11 +180,8 @@ const Signin = () => {
 
             <Input
               placeholder="Enter your email"
-              value={email}
-              onChangeText={(text) => {
-                setEmail(text);
-                clearError();
-              }}
+              value={emailAddress}
+              onChangeText={(email) => setEmailAddress(email)}
               keyboardType="email-address"
               autoCapitalize="none"
               icon={
@@ -107,25 +198,20 @@ const Signin = () => {
             <Input
               placeholder="Enter your password"
               value={password}
-              onChangeText={(text) => {
-                setPassword(text);
-                clearError();
-              }}
+              onChangeText={(password) => setPassword(password)}
               secureTextEntry
               icon={<LockIcon weight="fill" size={24} color={Colors.onMuted} />}
             />
           </View>
 
-          {(localError || error) && (
-            <View style={styles.errorContainer}>
-              <WarningIcon size={20} color={Colors.danger} />
-
-              <Typography color="danger">{localError || error}</Typography>
+          {errors?.map((error) => (
+            <View key={error.code} style={styles.errorContainer}>
+              <Typography color="danger">{error.longMessage}</Typography>
             </View>
-          )}
+          ))}
 
-          <Button onPress={handleSubmit} loading={loading} disabled={loading}>
-            <Typography>{loading ? 'Signing in...' : 'Sign In'}</Typography>
+          <Button onPress={onSignInPress} loading={!isLoaded} disabled={!isLoaded}>
+            <Typography>{!isLoaded ? 'Signing in...' : 'Sign In'}</Typography>
           </Button>
         </View>
 
@@ -136,21 +222,8 @@ const Signin = () => {
         </View>
 
         <View style={styles.socialAuthWrapper}>
-          {/* <Button
-            onPress={signInWithGoogle}
-            style={styles.socialButton}
-            disabled={loading}
-          >
-            <GoogleLogoIcon
-              weight="bold"
-              size={24}
-              color={Colors.onSecondary}
-            />
-
-            <Typography>Login with Google</Typography>
-          </Button> */}
-          <GoogleAuthButton />
-          <AppleAuthButton />
+          <GoogleButton />
+          <AppleButton />
         </View>
 
         <View

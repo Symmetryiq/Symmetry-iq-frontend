@@ -1,8 +1,8 @@
-import { getAuth, getIdToken } from '@react-native-firebase/auth';
+import { getClerkInstance } from '@clerk/clerk-expo';
 import axios from 'axios';
 
 const API_URL =
-  process.env.EXPO_PUBLIC_API_URL || 'https://symmetry-iq.vercel.app/api';
+  process.env.EXPO_PUBLIC_API_URL || 'https://symmetry-api.vercel.app/api';
 
 const apiClient = axios.create({
   baseURL: API_URL,
@@ -15,23 +15,19 @@ const apiClient = axios.create({
 // Request interceptor to add Firebase auth token
 apiClient.interceptors.request.use(
   async (config) => {
-    try {
-      const currentUser = getAuth().currentUser;
+    const clerk = getClerkInstance();
 
-      if (currentUser) {
-        // Force refresh token to ensure it's not expired
-        const token = await getIdToken(currentUser, true);
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-    } catch (error) {
-      console.error('Error getting auth token:', error);
+    const token = await clerk.session?.getToken();
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
 
     return config;
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 // Response interceptor for error handling
@@ -64,7 +60,7 @@ apiClient.interceptors.response.use(
     // For now, we update the error message and reject so callsites can display it
     error.message = errorMessage;
     return Promise.reject(error);
-  }
+  },
 );
 
 export default apiClient;

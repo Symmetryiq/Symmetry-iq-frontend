@@ -8,10 +8,9 @@ import RoutineCardLarge from '@/components/routine-card';
 import ScanCard from '@/components/scan-card';
 import { Colors } from '@/constants/theme';
 import { scale, verticalScale } from '@/helpers/scale';
-import { useAuthStore } from '@/stores/auth-store';
-import { useNotificationStore } from '@/stores/notification-store';
 import { usePlanStore } from '@/stores/plan-store';
 import { useScanStore } from '@/stores/scan-store';
+import { useUser } from '@clerk/clerk-expo';
 import { router, useFocusEffect } from 'expo-router';
 import { BellIcon } from 'phosphor-react-native';
 import React, { useMemo, useState } from 'react';
@@ -19,16 +18,14 @@ import { Image, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 const Home = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const { user } = useAuthStore();
+  const { user } = useUser();
   const { currentPlan, fetchCurrentPlan } = usePlanStore();
-  const { unreadCount, refreshUnreadCount } = useNotificationStore();
   const { scans, fetchScans } = useScanStore();
 
   // Fetch plan and unread count on mount/focus
   useFocusEffect(
     React.useCallback(() => {
       fetchCurrentPlan();
-      refreshUnreadCount();
       fetchScans();
     }, [])
   );
@@ -96,7 +93,7 @@ const Home = () => {
             <View style={styles.headerContentWrapper}>
               <Typography color="onSecondary">Welcome back,</Typography>
               <Typography font="semiBold" size={20} color="onBackground">
-                {user?.displayName || 'User'}
+                {user?.firstName || 'User'}
               </Typography>
             </View>
           </View>
@@ -106,13 +103,6 @@ const Home = () => {
             onPress={() => router.push('/(app)/(tabs)/(home)/notifications')}
           >
             <BellIcon weight="fill" size={24} color={Colors.onMuted} />
-            {unreadCount > 0 && (
-              <View style={styles.badge}>
-                <Typography size={10} font="semiBold" color="onPrimary">
-                  {unreadCount > 99 ? '99+' : unreadCount}
-                </Typography>
-              </View>
-            )}
           </Pressable>
         </View>
 

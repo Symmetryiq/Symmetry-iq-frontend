@@ -1,70 +1,30 @@
-import { Colors } from '@/constants/theme';
-import { configureGoogleAuth } from '@/helpers/auth';
-import {
-  addNotificationReceivedListener,
-  addNotificationResponseReceivedListener,
-  getLastNotificationResponse,
-} from '@/services/notifications';
-import { useAuthStore } from '@/stores/auth-store';
-import { useNotificationStore } from '@/stores/notification-store';
+import { Colors, Fonts } from '@/constants/theme';
 import { useOnboardingStore } from '@/stores/onboarding';
-import { getAuth, onAuthStateChanged } from '@react-native-firebase/auth';
-import { Subscription } from 'expo-notifications';
-import { Stack, router } from 'expo-router';
-import React, { useEffect, useRef } from 'react';
+import { useAuth, useUser } from '@clerk/clerk-expo';
+import { Stack } from 'expo-router';
+import { useEffect } from 'react';
 
 const AppLayout = () => {
-  const { onboardingCompleted } = useOnboardingStore();
-  const { user } = useAuthStore();
-  const { registerToken, refreshUnreadCount } = useNotificationStore();
-  const notificationListener = useRef<Subscription>();
-  const responseListener = useRef<Subscription>();
+  const { onboardingCompleted, setAge, setGender } = useOnboardingStore();
+  const { user } = useUser();
 
+  // Sync backend metadata to onboarding store for returning users
   useEffect(() => {
-    configureGoogleAuth();
-    const unsubscribe = onAuthStateChanged(getAuth(), (user) => {
-      useAuthStore.setState({ user });
-    });
-
-    return unsubscribe;
-  }, []);
-
-  // Register push token and setup listeners when user is logged in
-  useEffect(() => {
-    if (!user) return;
-
-    // Register push token
-    registerToken();
-    refreshUnreadCount();
-
-    // Listen for notifications received while app is foregrounded
-    notificationListener.current = addNotificationReceivedListener((notification) => {
-      console.log('📬 Notification received:', notification);
-      refreshUnreadCount();
-    });
-
-    // Listen for user tapping on a notification
-    responseListener.current = addNotificationResponseReceivedListener((response) => {
-      console.log('👆 Notification tapped:', response);
-      const data = response.notification.request.content.data;
-
-      // Navigate to notifications screen
-      router.push('/(app)/(tabs)/(home)/notifications');
-    });
-
-    // Check if app was opened from a notification
-    getLastNotificationResponse().then((response) => {
-      if (response) {
-        console.log('🚀 App opened from notification:', response);
-        router.push('/(app)/(tabs)/(home)/notifications');
+    if (user && user.publicMetadata) {
+      const metadata = user.publicMetadata as any;
+      if (metadata.age && !useOnboardingStore.getState().age) {
+        setAge(metadata.age);
       }
-    });
+      if (metadata.gender && !useOnboardingStore.getState().gender) {
+        setGender(metadata.gender);
+      }
+    }
+  }, [user, setAge, setGender]);
+  const { isSignedIn, isLoaded } = useAuth();
 
-    return () => {
-      notificationListener.current?.remove();
-      responseListener.current?.remove();
-    };
-  }, [user]);
+  if (!isLoaded) {
+    return null;
+  }
 
   return (
     <Stack
@@ -77,13 +37,55 @@ const AppLayout = () => {
         <Stack.Screen name="onboarding" />
       </Stack.Protected>
 
-      <Stack.Protected guard={!user}>
-        <Stack.Screen name="sign-in" />
-        <Stack.Screen name="create-account" />
-        <Stack.Screen name="reset-password" />
+      <Stack.Protected guard={!isSignedIn}>
+        <Stack.Screen name="sign-in" options={{
+          headerShown: true,
+          headerTitle: 'Sign In',
+          headerTitleAlign: 'center',
+          headerTintColor: Colors.onBackground,
+          headerStyle: {
+            backgroundColor: Colors.background,
+          },
+          headerShadowVisible: false,
+          headerTitleStyle: {
+            color: Colors.onBackground,
+            fontFamily: Fonts.regular
+          },
+          headerBackButtonDisplayMode: 'default',
+        }} />
+        <Stack.Screen name="create-account" options={{
+          headerShown: true,
+          headerTitle: 'Create Account',
+          headerTitleAlign: 'center',
+          headerShadowVisible: false,
+          headerTintColor: Colors.onBackground,
+          headerStyle: {
+            backgroundColor: Colors.background,
+          },
+          headerTitleStyle: {
+            color: Colors.onBackground,
+            fontFamily: Fonts.regular
+          },
+          headerBackButtonDisplayMode: 'default',
+        }} />
+        <Stack.Screen name="reset-password" options={{
+          headerShown: true,
+          headerTitle: 'Reset Password',
+          headerTitleAlign: 'center',
+          headerShadowVisible: false,
+          headerTintColor: Colors.onBackground,
+          headerStyle: {
+            backgroundColor: Colors.background,
+          },
+          headerTitleStyle: {
+            color: Colors.onBackground,
+            fontFamily: Fonts.regular
+          },
+          headerBackButtonDisplayMode: 'default',
+        }} />
       </Stack.Protected>
 
-      <Stack.Protected guard={!!user}>
+      <Stack.Protected guard={!!isSignedIn}>
         <Stack.Screen name="(tabs)" />
       </Stack.Protected>
     </Stack>

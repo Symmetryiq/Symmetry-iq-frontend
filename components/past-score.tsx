@@ -29,7 +29,7 @@ const PastScore = ({ scan }: PastScoreProps) => {
       {/* Image */}
       <View style={styles.imageWrapper}>
         <Image
-          source={require('@/assets/images/face-capture.png')}
+          source={require('@/assets/images/face-capture.jpg')}
           style={styles.image}
         />
       </View>
