@@ -1,0 +1,53 @@
+diff --git a/node_modules/react-native-mediapipe/ReactNativeMediaPipe.podspec b/node_modules/react-native-mediapipe/ReactNativeMediaPipe.podspec
+index 19e8425..654a3f0 100644
+--- a/node_modules/react-native-mediapipe/ReactNativeMediaPipe.podspec
++++ b/node_modules/react-native-mediapipe/ReactNativeMediaPipe.podspec
+@@ -32,7 +32,8 @@ Pod::Spec.new do |s|
+     s.pod_target_xcconfig    = {
+         "HEADER_SEARCH_PATHS" => "\"$(PODS_ROOT)/boost\"",
+         "OTHER_CPLUSPLUSFLAGS" => "-DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1",
+-        "CLANG_CXX_LANGUAGE_STANDARD" => "c++17"
++        "CLANG_CXX_LANGUAGE_STANDARD" => "c++17",
++        'DEFINES_MODULE' => 'YES'
+     }
+     s.dependency "React-RCTFabric"
+     s.dependency "React-Codegen"
+diff --git a/node_modules/react-native-mediapipe/ios/facelandmarkdetection/FaceLandmarkDetectionFrameProcessorPlugin.m b/node_modules/react-native-mediapipe/ios/facelandmarkdetection/FaceLandmarkDetectionFrameProcessorPlugin.m
+index 3223639..09483a5 100644
+--- a/node_modules/react-native-mediapipe/ios/facelandmarkdetection/FaceLandmarkDetectionFrameProcessorPlugin.m
++++ b/node_modules/react-native-mediapipe/ios/facelandmarkdetection/FaceLandmarkDetectionFrameProcessorPlugin.m
+@@ -10,7 +10,7 @@
+ #import <VisionCamera/FrameProcessorPlugin.h>
+ #import <VisionCamera/FrameProcessorPluginRegistry.h>
+ 
+-#import "ReactNativeMediaPipe-Swift.h"
++#import <ReactNativeMediaPipe/ReactNativeMediaPipe-Swift.h>
+ 
+ @interface FaceLandmarkDetectionFrameProcessorPlugin (FrameProcessorPluginLoader)
+ @end
+diff --git a/node_modules/react-native-mediapipe/ios/objectdetection/ObjectDetectionFrameProcessorPlugin.m b/node_modules/react-native-mediapipe/ios/objectdetection/ObjectDetectionFrameProcessorPlugin.m
+index 54079cb..303a431 100644
+--- a/node_modules/react-native-mediapipe/ios/objectdetection/ObjectDetectionFrameProcessorPlugin.m
++++ b/node_modules/react-native-mediapipe/ios/objectdetection/ObjectDetectionFrameProcessorPlugin.m
+@@ -10,7 +10,7 @@
+ #import <VisionCamera/FrameProcessorPlugin.h>
+ #import <VisionCamera/FrameProcessorPluginRegistry.h>
+ 
+-#import "ReactNativeMediaPipe-Swift.h"
++#import <ReactNativeMediaPipe/ReactNativeMediaPipe-Swift.h>
+ 
+ @interface ObjectDetectionFrameProcessorPlugin (FrameProcessorPluginLoader)
+ @end
+diff --git a/node_modules/react-native-mediapipe/ios/posedetection/PoseDetectionFrameProcessorPlugin.m b/node_modules/react-native-mediapipe/ios/posedetection/PoseDetectionFrameProcessorPlugin.m
+index 2e67dae..853335d 100644
+--- a/node_modules/react-native-mediapipe/ios/posedetection/PoseDetectionFrameProcessorPlugin.m
++++ b/node_modules/react-native-mediapipe/ios/posedetection/PoseDetectionFrameProcessorPlugin.m
+@@ -10,7 +10,7 @@
+ #import <VisionCamera/FrameProcessorPlugin.h>
+ #import <VisionCamera/FrameProcessorPluginRegistry.h>
+ 
+-#import "ReactNativeMediaPipe-Swift.h"
++#import <ReactNativeMediaPipe/ReactNativeMediaPipe-Swift.h>
+ 
+ @interface PoseDetectionFrameProcessorPlugin (FrameProcessorPluginLoader)
+ @end

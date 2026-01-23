@@ -4,12 +4,15 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
-    "reset-project": "node ./scripts/reset-project.js",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "postinstall": "patch-package"
   },
+  "trustedDependencies": [
+    "patch-package"
+  ],
   "dependencies": {
     "@clerk/clerk-expo": "^2.19.18",
     "@expo-google-fonts/outfit": "^0.4.3",
@@ -45,7 +48,7 @@
     "react-dom": "19.1.0",
     "react-native": "0.81.5",
     "react-native-gesture-handler": "~2.28.0",
-    "react-native-mediapipe": "github:bugsum/react-native-mediapipe",
+    "react-native-mediapipe": "^0.6.0",
     "react-native-pager-view": "6.9.1",
     "react-native-purchases": "^9.6.14",
     "react-native-reanimated": "~4.1.1",
@@ -59,9 +62,10 @@
   },
   "devDependencies": {
     "@types/react": "~19.1.0",
-    "typescript": "~5.9.2",
     "eslint": "^9.25.0",
-    "eslint-config-expo": "~10.0.0"
+    "eslint-config-expo": "~10.0.0",
+    "patch-package": "^8.0.1",
+    "typescript": "~5.9.2"
   },
   "private": true
 }
