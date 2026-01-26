@@ -18,7 +18,9 @@
       "bundleIdentifier": "com.bergmanmedia.symmetryiq",
       "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSLocationWhenInUseUsageDescription": "This app uses location data optionally to improve user accessibility and reports.",
+        "NSCameraUsageDescription": "This app uses the camera to collect face landmarks for analysis."
       }
     },
 
