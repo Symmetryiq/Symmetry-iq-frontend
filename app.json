@@ -78,7 +78,7 @@
         }
       ],
       "expo-secure-store",
-      "./plugins/withMediapipeTasks.js"
+      ["./plugins/with-model-ios"]
     ],
 
     "experiments": {

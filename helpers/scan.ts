@@ -10,10 +10,7 @@ import { getValidJWTToken } from './analyze';
 export const getLandmarks = async (imagePath: string): Promise<Landmark[]> => {
   try {
     const result: FaceLandmarkDetectionResultBundle =
-      await faceLandmarkDetectionOnImage(
-        imagePath,
-        'mediapipe/face_landmarker.task'
-      );
+      await faceLandmarkDetectionOnImage(imagePath, 'face_landmarker.task');
 
     if (result.results.length <= 0) throw new Error('No Face Detected');
 
@@ -40,7 +37,7 @@ export const getLandmarks = async (imagePath: string): Promise<Landmark[]> => {
     throw new Error(
       typeof error === 'string'
         ? error
-        : error?.message || 'Failed to detect face landmarks'
+        : error?.message || 'Failed to detect face landmarks',
     );
   }
 };
@@ -68,12 +65,12 @@ export const getScores = async (landmarks: Landmark[]) => {
         // Server responded with error status
         throw new Error(
           error.response.data?.message ||
-            `Server error: ${error.response.status}`
+            `Server error: ${error.response.status}`,
         );
       } else if (error.request) {
         // Request made but no response received
         throw new Error(
-          'Network error: Unable to reach the server. Please check your connection.'
+          'Network error: Unable to reach the server. Please check your connection.',
         );
       }
     }
@@ -87,7 +84,7 @@ export const getScores = async (landmarks: Landmark[]) => {
     throw new Error(
       typeof error === 'string'
         ? error
-        : error?.message || 'Failed to get scores'
+        : error?.message || 'Failed to get scores',
     );
   }
 };

@@ -2,36 +2,44 @@ import AppleButton from '@/components/buttons/apple-button';
 import GoogleButton from '@/components/buttons/google-button';
 import Button from '@/components/common/button';
 import Input from '@/components/common/input';
+import KeyboardWrapper from '@/components/common/keyboard-wrapper';
 import { Label } from '@/components/common/label';
 import ScreenWrapper from '@/components/common/screen-wrapper';
 import Typography from '@/components/common/typography';
 import { Colors } from '@/constants/theme';
 import { scale, verticalScale } from '@/helpers/scale';
-import { isStrongPassword, isValidEmail } from '@/helpers/validation';
 import { useOnboardingStore } from '@/stores/onboarding';
 import { useSignUp } from '@clerk/clerk-expo';
-import { useRouter } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import {
   LockIcon,
   MailboxIcon
 } from 'phosphor-react-native';
 import React, { useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 const CreateAccount = () => {
-  const { isLoaded, signUp, setActive } = useSignUp()
+  const { signUp, setActive, isLoaded } = useSignUp();
   const { name } = useOnboardingStore();
   const router = useRouter();
 
   const [emailAddress, setEmailAddress] = React.useState('')
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const [pendingVerification, setPendingVerification] = React.useState(false)
   const [code, setCode] = React.useState('')
 
   const onSignUpPress = async () => {
     if (!isLoaded) return
+    if (!emailAddress || !password) {
+      setError('All fields are required.');
+      return;
+    }
 
-    console.log(emailAddress, password)
+    setLoading(true);
+    setError(null);
 
     try {
       await signUp.create({
@@ -43,13 +51,26 @@ const CreateAccount = () => {
       await signUp.prepareEmailAddressVerification({ strategy: 'email_code' })
 
       setPendingVerification(true)
-    } catch (err) {
-      console.error(JSON.stringify(err, null, 2))
+    } catch (err: any) {
+      const message =
+        err?.errors?.[0]?.longMessage ||
+        err?.errors?.[0]?.message ||
+        'Sign up failed. Please try again.';
+      setError(message);
+    } finally {
+      setLoading(false);
     }
   }
 
   const onVerifyPress = async () => {
     if (!isLoaded) return
+    if (!code) {
+      setError('Verification code is required.');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
 
     try {
       const signUpAttempt = await signUp.attemptEmailAddressVerification({
@@ -58,32 +79,45 @@ const CreateAccount = () => {
 
       if (signUpAttempt.status === 'complete') {
         await setActive({ session: signUpAttempt.createdSessionId })
-        router.replace('/')
       } else {
-        console.error(JSON.stringify(signUpAttempt, null, 2))
+        setError('Verification failed. Please try again.');
       }
-    } catch (err) {
-      console.error(JSON.stringify(err, null, 2))
+    } catch (err: any) {
+      const message =
+        err?.errors?.[0]?.longMessage ||
+        err?.errors?.[0]?.message ||
+        'Verification failed. Please try again.';
+
+      setError(message);
+    } finally {
+      setLoading(false);
     }
   }
 
   if (pendingVerification) {
     return (
-      <ScreenWrapper style={styles.container}>
-        <View style={styles.content}>
-          <View style={styles.contentHeader}>
-            <Typography color="onBackground" font="semiBold" size={24}>
+      <ScreenWrapper>
+        <KeyboardWrapper style={styles.container}>
+          <View>
+            <Typography color="onBackground" center font="semiBold" size={28}>
               Verify your Account
             </Typography>
 
-            <Typography color="onSecondary" style={{ textAlign: 'center' }}>
+            <Typography color="onSecondary" center style={{ marginBottom: 24 }}>
               Verify your account to explore variety of exciting features
               powered by AI and fine-tuned by us.
             </Typography>
           </View>
-          <View style={styles.form}>
-            <View style={styles.input}>
-              <Label color="onSecondary" font="medium">
+
+          <View>
+            {error && (
+              <Typography color="danger" center style={{ marginBottom: 16 }}>
+                {error}
+              </Typography>
+            )}
+
+            <View style={{ marginBottom: 16 }}>
+              <Label color="onSecondary" font="medium" style={{ marginBottom: 6 }}>
                 Verification Code
               </Label>
 
@@ -99,169 +133,151 @@ const CreateAccount = () => {
               />
             </View>
 
-            <Button onPress={onVerifyPress} disabled={!code || !isLoaded} loading={!isLoaded}>
-              <Typography>
-                Verify
-              </Typography>
+            <Button onPress={onVerifyPress} disabled={!code || !isLoaded} loading={loading}>
+              {loading ? (
+                <ActivityIndicator color={Colors.onPrimary} />
+              ) : (
+                <Typography>
+                  Verify
+                </Typography>
+              )}
             </Button>
           </View>
-        </View>
+        </KeyboardWrapper>
       </ScreenWrapper>
     )
   }
 
   return (
-    <ScreenWrapper style={styles.container}>
-      <View style={styles.content}>
-        <View style={styles.contentHeader}>
-          <Typography color="onBackground" font="semiBold" size={24}>
-            Create your Account?
-          </Typography>
-
-          <Typography color="onSecondary" style={{ textAlign: 'center' }}>
-            Create an account to explore variety of exciting features powered by
-            AI and fine-tuned by us.
-          </Typography>
-        </View>
-        <View style={styles.form}>
-          <View style={styles.input}>
-            <Label color="onSecondary" font="medium">
-              Email
-            </Label>
-
-            <Input
-              placeholder="Enter your email"
-              value={emailAddress}
-              onChangeText={(email) => setEmailAddress(email)}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              icon={
-                <MailboxIcon weight="fill" size={24} color={Colors.onMuted} />
-              }
-            />
-          </View>
-
-          <View style={styles.input}>
-            <Label color="onSecondary" font="medium">
-              Password
-            </Label>
-
-            <Input
-              placeholder="Enter your password"
-              value={password}
-              onChangeText={(password) => setPassword(password)}
-              secureTextEntry
-              icon={<LockIcon weight="fill" size={24} color={Colors.onMuted} />}
-            />
-          </View>
-
-          <Button onPress={onSignUpPress} disabled={!isStrongPassword(password) || !isValidEmail(emailAddress) || pendingVerification || !isLoaded} loading={pendingVerification || !isLoaded}>
-            <Typography>
-              Create account
+    <ScreenWrapper>
+      <KeyboardWrapper style={styles.container}>
+        <View style={{ flex: 1 }}>
+          <View>
+            {/* Header */}
+            <Typography color="onBackground" center font="semiBold" size={28}>
+              Create Account
             </Typography>
-          </Button>
+
+            <Typography color="onSecondary" center style={{ marginBottom: 16 }}>
+              Create your account to explore variety of exciting features
+              powered by AI and fine-tuned by us.
+            </Typography>
+          </View>
+
+          <View>
+            {error && (
+              <Typography color="danger" center style={{ marginBottom: 16 }}>
+                {error}
+              </Typography>
+            )}
+
+            {/* Form */}
+            <View style={{ marginBottom: 16 }}>
+              <Label color="onSecondary" font="medium" style={{ marginBottom: 6 }}>
+                Email Address
+              </Label>
+
+              <Input
+                placeholder="Enter your email address"
+                value={emailAddress}
+                onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                icon={
+                  <MailboxIcon weight="fill" size={24} color={Colors.onMuted} />
+                }
+              />
+            </View>
+
+            <View style={{ marginBottom: 24 }}>
+              <Label color="onSecondary" font="medium" style={{ marginBottom: 6 }}>
+                Password
+              </Label>
+
+              <Input
+                placeholder="Enter your password"
+                value={password}
+                onChangeText={(password) => setPassword(password)}
+                secureTextEntry
+                icon={
+                  <LockIcon weight="fill" size={24} color={Colors.onMuted} />
+                }
+              />
+            </View>
+
+            <Button onPress={onSignUpPress} disabled={!emailAddress || !password} loading={loading}>
+              {loading ? (
+                <ActivityIndicator color={Colors.onPrimary} />
+              ) : (
+                <Typography>
+                  Sign Up
+                </Typography>
+              )}
+            </Button>
+          </View>
+
+          <View>
+            <Seperator />
+
+            <View style={{ gap: 16 }}>
+              <GoogleButton />
+              <AppleButton />
+            </View>
+          </View>
         </View>
 
-        <View style={styles.divider}>
-          <View style={styles.seperator} />
-          <Typography color="onMuted">Or continue with</Typography>
-          <View style={styles.seperator} />
+        <View style={styles.redirect}>
+          <Typography color="onMuted" font="medium" size={14}>Already have an account?{' '}</Typography>
+          <Link href="/sign-in">
+            <Typography color="onSecondary" font="medium" size={14} style={{ textDecorationLine: 'underline' }}>Sign In</Typography>
+          </Link>
         </View>
-
-        <View style={styles.socialAuthWrapper}>
-          <GoogleButton />
-          <AppleButton />
-        </View>
-
-        <View
-          style={{
-            alignSelf: 'center',
-            justifyContent: 'center',
-            flexDirection: 'row',
-            gap: scale(8),
-          }}
-        >
-          <Typography color="onSecondary">Already have an account?</Typography>
-          <Pressable onPress={() => router.push('/sign-in')}>
-            <Typography color="onPrimary">Login</Typography>
-          </Pressable>
-        </View>
-      </View>
+      </KeyboardWrapper>
     </ScreenWrapper>
   );
 };
 
 export default CreateAccount;
 
+function Seperator() {
+  return (
+    <View style={styles.dividerContainer}>
+      <View style={styles.divider} />
+      <Typography color="onMuted">OR</Typography>
+      <View style={styles.divider} />
+    </View>
+  )
+}
+
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    gap: verticalScale(8),
-  },
-
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: scale(16),
-    paddingHorizontal: scale(16),
-    paddingVertical: verticalScale(16),
-  },
-
-  content: {
-    flex: 1,
     backgroundColor: Colors.card,
-    gap: verticalScale(20),
-    borderTopLeftRadius: verticalScale(50),
-    borderTopRightRadius: verticalScale(50),
+    borderTopLeftRadius: 50,
+    borderTopRightRadius: 50,
     borderCurve: 'continuous',
-    padding: verticalScale(16),
+    paddingHorizontal: scale(24),
+    paddingVertical: 24,
   },
 
-  contentHeader: {
-    gap: verticalScale(8),
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: verticalScale(16),
+  error: {
+    alignSelf: 'center'
   },
 
-  form: {
-    gap: verticalScale(16),
-  },
-
-  input: {
-    gap: verticalScale(8),
-  },
-
-  errorContainer: {
-    paddingVertical: verticalScale(8),
-    borderRadius: verticalScale(8),
-    gap: scale(8),
+  dividerContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    gap: scale(16),
+    alignItems: 'center',
+    marginVertical: verticalScale(12),
   },
 
   divider: {
-    flexDirection: 'row',
-    gap: scale(16),
-    alignItems: 'center',
-  },
-
-  seperator: {
-    borderWidth: 1,
-    borderColor: Colors.border,
+    flex: 1,
     height: 1,
-    width: '30%',
+    backgroundColor: Colors.border,
   },
 
-  socialAuthWrapper: {
-    gap: verticalScale(16),
-  },
-
-  socialButton: {
-    backgroundColor: Colors.secondary,
+  redirect: {
     flexDirection: 'row',
-    gap: scale(8),
-  },
+    alignSelf: 'center'
+  }
 });
