@@ -1,8 +1,8 @@
-import { Colors } from '@/constants/theme';
-import { scale, verticalScale } from '@/helpers/scale';
-import { ButtonProps } from '@/helpers/types';
-import React from 'react';
-import { Pressable, StyleSheet } from 'react-native';
+import { Colors } from "@/constants/theme";
+import { scale, verticalScale } from "@/helpers/scale";
+import { ButtonProps } from "@/helpers/types";
+import React from "react";
+import { Pressable, StyleSheet } from "react-native";
 
 const Button = ({
   style,
@@ -36,11 +36,11 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: Colors.primary,
     borderRadius: 200,
-    borderCurve: 'continuous',
+    borderCurve: "continuous",
     paddingVertical: verticalScale(16),
     paddingHorizontal: scale(16),
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   disabledState: {

@@ -1,13 +1,26 @@
-import BackButton from '@/components/common/back-button';
-import ScreenWrapper from '@/components/common/screen-wrapper';
-import Typography from '@/components/common/typography';
-import { FeatureId } from '@/constants/factors';
-import { Colors } from '@/constants/theme';
-import { Features } from '@/data/insights';
-import { Feather, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useMemo, useState } from 'react';
+import BackButton from "@/components/common/back-button";
+import ScreenWrapper from "@/components/common/screen-wrapper";
+import Typography from "@/components/common/typography";
+import { FeatureId } from "@/constants/factors";
+import { Colors } from "@/constants/theme";
+import { Features } from "@/data/insights";
+
+import { LinearGradient } from "expo-linear-gradient";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import {
+  ArrowRightIcon,
+  CheckCircleIcon,
+  CheckIcon,
+  LightningIcon,
+  ShieldCheckIcon,
+  SparkleIcon,
+  StackIcon,
+  TiktokLogoIcon,
+  ToteIcon,
+  WarningIcon,
+  XCircleIcon,
+} from "phosphor-react-native";
+import React, { useMemo, useState } from "react";
 import {
   Dimensions,
   LayoutAnimation,
@@ -17,13 +30,13 @@ import {
   ScrollView,
   StyleSheet,
   UIManager,
-  View
-} from 'react-native';
+  View,
+} from "react-native";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 if (
-  Platform.OS === 'android' &&
+  Platform.OS === "android" &&
   UIManager.setLayoutAnimationEnabledExperimental
 ) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -34,7 +47,7 @@ const FeatureDetailScreen = () => {
   const { factor: featureId } = useLocalSearchParams<{ factor: FeatureId }>();
   const [completedTips, setCompletedTips] = useState<Set<number>>(new Set());
   const [completedMistakes, setCompletedMistakes] = useState<Set<number>>(
-    new Set()
+    new Set(),
   );
   const [expanded, setExpanded] = useState(false);
 
@@ -71,7 +84,7 @@ const FeatureDetailScreen = () => {
 
   const handleTikTokLink = (url: string) => {
     Linking.openURL(url).catch((err) =>
-      console.error('Failed to open URL:', err)
+      console.error("Failed to open URL:", err),
     );
   };
 
@@ -79,9 +92,13 @@ const FeatureDetailScreen = () => {
     return (
       <ScreenWrapper style={styles.container}>
         <View style={styles.errorContainer}>
-          <Typography size={18} color="onSecondary">Factor details not available</Typography>
+          <Typography size={18} color="onSecondary">
+            Factor details not available
+          </Typography>
           <Pressable onPress={() => router.back()} style={styles.backButton}>
-            <Typography color="primary" font="medium">Go Back</Typography>
+            <Typography color="primary" font="medium">
+              Go Back
+            </Typography>
           </Pressable>
         </View>
       </ScreenWrapper>
@@ -90,11 +107,11 @@ const FeatureDetailScreen = () => {
 
   const tipsProgress =
     feature.whatToDo.items.length > 0
-      ? (completedTips.size / feature.whatToDo.items.length)
+      ? completedTips.size / feature.whatToDo.items.length
       : 0;
 
   return (
-    <ScreenWrapper style={styles.container} edges={['top']}>
+    <ScreenWrapper style={styles.container} edges={["top"]}>
       {/* Dynamic Header */}
       <View style={styles.header}>
         <BackButton />
@@ -112,7 +129,7 @@ const FeatureDetailScreen = () => {
         {/* Hero Section */}
         <View style={styles.heroSection}>
           <LinearGradient
-            colors={[Colors.primaryLight, 'transparent']}
+            colors={[Colors.primaryLight, "transparent"]}
             style={styles.heroGradient}
           />
           <View style={styles.headingRow}>
@@ -124,13 +141,19 @@ const FeatureDetailScreen = () => {
                 {feature.title}
               </Typography>
               <View style={styles.badge}>
-                <Typography size={12} font="semiBold" color="primary">FACIAL FACTOR</Typography>
+                <Typography size={12} font="semiBold" color="primary">
+                  FACIAL FACTOR
+                </Typography>
               </View>
             </View>
           </View>
 
           <View style={styles.descriptionCard}>
-            <Typography size={16} color="onSecondary" style={styles.descriptionText}>
+            <Typography
+              size={16}
+              color="onSecondary"
+              style={styles.descriptionText}
+            >
               {feature.description}
             </Typography>
           </View>
@@ -139,13 +162,17 @@ const FeatureDetailScreen = () => {
         {/* Action Progress */}
         <View style={styles.progressContainer}>
           <View style={styles.progressHeader}>
-            <Typography size={14} font="semiBold" color="onTertiary">GOAL PROGRESS</Typography>
+            <Typography size={14} font="semiBold" color="onTertiary">
+              GOAL PROGRESS
+            </Typography>
             <Typography size={14} font="bold" color="primary">
               {Math.round(tipsProgress * 100)}%
             </Typography>
           </View>
           <View style={styles.progressTrack}>
-            <View style={[styles.progressFill, { width: `${tipsProgress * 100}%` }]} />
+            <View
+              style={[styles.progressFill, { width: `${tipsProgress * 100}%` }]}
+            />
           </View>
         </View>
 
@@ -153,16 +180,26 @@ const FeatureDetailScreen = () => {
         {feature.howToShape && (
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <MaterialCommunityIcons name="layers-outline" size={24} color={Colors.primary} />
-              <Typography size={20} font="bold">{feature.howToShape.title}</Typography>
+              <StackIcon size={24} color={Colors.primary} />
+              <Typography size={20} font="bold">
+                {feature.howToShape.title}
+              </Typography>
             </View>
             <View style={styles.stepsContainer}>
               {feature.howToShape.steps.map((step, index) => (
                 <View key={index} style={styles.stepCard}>
                   <View style={styles.stepIndex}>
-                    <Typography size={12} font="bold" color="onPrimary">{index + 1}</Typography>
+                    <Typography size={12} font="bold" color="onPrimary">
+                      {index + 1}
+                    </Typography>
                   </View>
-                  <Typography size={15} color="onSecondary" style={styles.stepText}>{step}</Typography>
+                  <Typography
+                    size={15}
+                    color="onSecondary"
+                    style={styles.stepText}
+                  >
+                    {step}
+                  </Typography>
                 </View>
               ))}
             </View>
@@ -172,8 +209,10 @@ const FeatureDetailScreen = () => {
         {/* Master Checklist */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Feather name="check-circle" size={24} color={Colors.success} />
-            <Typography size={20} font="bold">{feature.whatToDo.title}</Typography>
+            <CheckCircleIcon size={24} color={Colors.success} />
+            <Typography size={20} font="bold">
+              {feature.whatToDo.title}
+            </Typography>
           </View>
           {feature.whatToDo.items.map((item, index) => {
             const isCompleted = completedTips.has(index);
@@ -181,10 +220,20 @@ const FeatureDetailScreen = () => {
               <Pressable
                 key={index}
                 onPress={() => toggleTip(index)}
-                style={[styles.checkItem, isCompleted && styles.checkItemActive]}
+                style={[
+                  styles.checkItem,
+                  isCompleted && styles.checkItemActive,
+                ]}
               >
-                <View style={[styles.checkbox, isCompleted && styles.checkboxActive]}>
-                  {isCompleted && <Ionicons name="checkmark" size={16} color="#fff" />}
+                <View
+                  style={[
+                    styles.checkbox,
+                    isCompleted && styles.checkboxActive,
+                  ]}
+                >
+                  {isCompleted && (
+                    <CheckIcon size={16} color="#fff" weight="bold" />
+                  )}
                 </View>
                 <View style={styles.checkContent}>
                   <View style={styles.checkTitleRow}>
@@ -192,14 +241,18 @@ const FeatureDetailScreen = () => {
                     <Typography
                       size={16}
                       font="semiBold"
-                      color={isCompleted ? 'onMuted' : 'onBackground'}
+                      color={isCompleted ? "onMuted" : "onBackground"}
                       style={isCompleted && styles.strikeThrough}
                     >
                       {item.label}
                     </Typography>
                   </View>
                   {!isCompleted && (
-                    <Typography size={14} color="onSecondary" style={styles.checkDesc}>
+                    <Typography
+                      size={14}
+                      color="onSecondary"
+                      style={styles.checkDesc}
+                    >
                       {item.description}
                     </Typography>
                   )}
@@ -216,22 +269,28 @@ const FeatureDetailScreen = () => {
             style={styles.tiktokCard}
           >
             <LinearGradient
-              colors={['#FE2C55', '#25F4EE']}
+              colors={["#FE2C55", "#25F4EE"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.tiktokGradient}
             />
             <View style={styles.tiktokContent}>
               <View style={styles.tiktokIcon}>
-                <Ionicons name="logo-tiktok" size={24} color="#fff" />
+                <TiktokLogoIcon size={24} color="#fff" />
               </View>
               <View style={{ flex: 1 }}>
-                <Typography size={16} font="bold" color="onPrimary">AR Symmetry Filter</Typography>
-                <Typography size={12} color="onPrimary" style={{ opacity: 0.8 }}>
+                <Typography size={16} font="bold" color="onPrimary">
+                  AR Symmetry Filter
+                </Typography>
+                <Typography
+                  size={12}
+                  color="onPrimary"
+                  style={{ opacity: 0.8 }}
+                >
                   {feature.tiktokFilter.text}
                 </Typography>
               </View>
-              <Feather name="arrow-right" size={20} color="#fff" />
+              <ArrowRightIcon size={20} color="#fff" />
             </View>
           </Pressable>
         )}
@@ -240,8 +299,10 @@ const FeatureDetailScreen = () => {
         {feature.recommendedProducts && (
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <Feather name="shopping-bag" size={24} color="#FFD700" />
-              <Typography size={20} font="bold">Expert Toolkit</Typography>
+              <ToteIcon size={24} color="#FFD700" />
+              <Typography size={20} font="bold">
+                Expert Toolkit
+              </Typography>
             </View>
             <ScrollView
               horizontal
@@ -251,10 +312,18 @@ const FeatureDetailScreen = () => {
               {feature.recommendedProducts.items.map((product, index) => (
                 <View key={index} style={styles.productCard}>
                   <View style={styles.productIconBg}>
-                    <MaterialCommunityIcons name="star-four-points" size={20} color="#FFD700" />
+                    <SparkleIcon size={20} color="#FFD700" weight="fill" />
                   </View>
-                  <Typography size={15} font="bold" color="onBackground">{product.name}</Typography>
-                  <Typography size={12} color="onTertiary" style={{ marginTop: 4 }}>{product.benefit}</Typography>
+                  <Typography size={15} font="bold" color="onBackground">
+                    {product.name}
+                  </Typography>
+                  <Typography
+                    size={12}
+                    color="onTertiary"
+                    style={{ marginTop: 4 }}
+                  >
+                    {product.benefit}
+                  </Typography>
                 </View>
               ))}
             </ScrollView>
@@ -265,14 +334,16 @@ const FeatureDetailScreen = () => {
         {feature.proTip && (
           <View style={styles.proTipContainer}>
             <LinearGradient
-              colors={[Colors.primary, '#8B5CF6']}
+              colors={[Colors.primary, "#8B5CF6"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.proTipBg}
             />
             <View style={styles.proTipHeader}>
-              <Feather name="zap" size={18} color="#fff" />
-              <Typography size={14} font="bold" color="onPrimary">PRO TIP</Typography>
+              <LightningIcon size={18} color="#fff" weight="fill" />
+              <Typography size={14} font="bold" color="onPrimary">
+                PRO TIP
+              </Typography>
             </View>
             <Typography size={15} color="onPrimary" style={styles.proTipText}>
               {feature.proTip}
@@ -283,8 +354,10 @@ const FeatureDetailScreen = () => {
         {/* Pitfalls to Avoid */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Feather name="alert-triangle" size={24} color={Colors.danger} />
-            <Typography size={20} font="bold">Habits to Break</Typography>
+            <WarningIcon size={24} color={Colors.danger} />
+            <Typography size={20} font="bold">
+              Habits to Break
+            </Typography>
           </View>
           {feature.commonMistakes.items.map((mistake, index) => {
             const isAvoided = completedMistakes.has(index);
@@ -292,15 +365,34 @@ const FeatureDetailScreen = () => {
               <Pressable
                 key={index}
                 onPress={() => toggleMistake(index)}
-                style={[styles.mistakeItem, isAvoided && styles.mistakeItemActive]}
+                style={[
+                  styles.mistakeItem,
+                  isAvoided && styles.mistakeItemActive,
+                ]}
               >
-                <View style={[styles.mistakeIcon, isAvoided && styles.mistakeItemActive]}>
-                  <Ionicons name={isAvoided ? "shield-checkmark" : "close-circle-outline"} size={20} color={isAvoided ? Colors.success : Colors.danger} />
+                <View
+                  style={[
+                    styles.mistakeIcon,
+                    isAvoided && styles.mistakeItemActive,
+                  ]}
+                >
+                  {isAvoided ? (
+                    <ShieldCheckIcon
+                      size={20}
+                      color={Colors.success}
+                      weight="fill"
+                    />
+                  ) : (
+                    <XCircleIcon size={20} color={Colors.danger} />
+                  )}
                 </View>
                 <Typography
                   size={15}
-                  color={isAvoided ? 'onMuted' : 'onSecondary'}
-                  style={[styles.mistakeText, isAvoided && styles.strikeThrough]}
+                  color={isAvoided ? "onMuted" : "onSecondary"}
+                  style={[
+                    styles.mistakeText,
+                    isAvoided && styles.strikeThrough,
+                  ]}
                 >
                   {mistake}
                 </Typography>
@@ -323,9 +415,9 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingVertical: 12,
   },
@@ -342,11 +434,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 20,
     paddingBottom: 30,
-    position: 'relative',
-    overflow: 'hidden',
+    position: "relative",
+    overflow: "hidden",
   },
   heroGradient: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
@@ -354,8 +446,8 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   headingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 16,
     marginBottom: 24,
   },
@@ -363,29 +455,29 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 24,
-    backgroundColor: 'rgba(255,255,255,0.05)',
+    backgroundColor: "rgba(255,255,255,0.05)",
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderColor: "rgba(255,255,255,0.1)",
+    alignItems: "center",
+    justifyContent: "center",
   },
   headingText: {
     flex: 1,
     gap: 4,
   },
   badge: {
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
     backgroundColor: Colors.primaryLight,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 8,
   },
   descriptionCard: {
-    backgroundColor: 'rgba(255,255,255,0.03)',
+    backgroundColor: "rgba(255,255,255,0.03)",
     padding: 20,
     borderRadius: 24,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.05)',
+    borderColor: "rgba(255,255,255,0.05)",
   },
   descriptionText: {
     lineHeight: 24,
@@ -396,18 +488,18 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   progressHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 10,
   },
   progressTrack: {
     height: 8,
-    backgroundColor: 'rgba(255,255,255,0.05)',
+    backgroundColor: "rgba(255,255,255,0.05)",
     borderRadius: 4,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   progressFill: {
-    height: '100%',
+    height: "100%",
     backgroundColor: Colors.primary,
     borderRadius: 4,
   },
@@ -416,8 +508,8 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 12,
     marginBottom: 20,
   },
@@ -425,47 +517,47 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   stepCard: {
-    flexDirection: 'row',
-    backgroundColor: 'rgba(255,255,255,0.03)',
+    flexDirection: "row",
+    backgroundColor: "rgba(255,255,255,0.03)",
     padding: 16,
     borderRadius: 16,
     gap: 16,
-    alignItems: 'center',
+    alignItems: "center",
   },
   stepIndex: {
     width: 24,
     height: 24,
     borderRadius: 8,
     backgroundColor: Colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   stepText: {
     flex: 1,
     lineHeight: 22,
   },
   checkItem: {
-    flexDirection: 'row',
-    backgroundColor: 'rgba(255,255,255,0.03)',
+    flexDirection: "row",
+    backgroundColor: "rgba(255,255,255,0.03)",
     padding: 16,
     borderRadius: 20,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: 'transparent',
+    borderColor: "transparent",
     gap: 16,
   },
   checkItemActive: {
-    borderColor: 'rgba(76, 175, 80, 0.2)',
-    backgroundColor: 'rgba(76, 175, 80, 0.05)',
+    borderColor: "rgba(76, 175, 80, 0.2)",
+    backgroundColor: "rgba(76, 175, 80, 0.05)",
   },
   checkbox: {
     width: 24,
     height: 24,
     borderRadius: 8,
     borderWidth: 2,
-    borderColor: 'rgba(255,255,255,0.1)',
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderColor: "rgba(255,255,255,0.1)",
+    alignItems: "center",
+    justifyContent: "center",
     marginTop: 2,
   },
   checkboxActive: {
@@ -477,8 +569,8 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   checkTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
   checkDesc: {
@@ -486,24 +578,24 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   strikeThrough: {
-    textDecorationLine: 'line-through',
+    textDecorationLine: "line-through",
     opacity: 0.5,
   },
   tiktokCard: {
     marginHorizontal: 20,
     height: 72,
     borderRadius: 20,
-    overflow: 'hidden',
+    overflow: "hidden",
     marginBottom: 32,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   tiktokGradient: {
     ...StyleSheet.absoluteFillObject,
     opacity: 0.9,
   },
   tiktokContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 20,
     gap: 16,
   },
@@ -511,9 +603,9 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: 'rgba(0,0,0,0.2)',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "rgba(0,0,0,0.2)",
+    alignItems: "center",
+    justifyContent: "center",
   },
   productsScroll: {
     gap: 12,
@@ -521,19 +613,19 @@ const styles = StyleSheet.create({
   },
   productCard: {
     width: 160,
-    backgroundColor: 'rgba(255,255,255,0.03)',
+    backgroundColor: "rgba(255,255,255,0.03)",
     padding: 16,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.05)',
+    borderColor: "rgba(255,255,255,0.05)",
   },
   productIconBg: {
     width: 32,
     height: 32,
     borderRadius: 10,
-    backgroundColor: 'rgba(255, 215, 0, 0.1)',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "rgba(255, 215, 0, 0.1)",
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 12,
   },
   proTipContainer: {
@@ -541,28 +633,28 @@ const styles = StyleSheet.create({
     padding: 24,
     borderRadius: 24,
     marginBottom: 32,
-    position: 'relative',
-    overflow: 'hidden',
+    position: "relative",
+    overflow: "hidden",
   },
   proTipBg: {
     ...StyleSheet.absoluteFillObject,
     opacity: 0.1,
   },
   proTipHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
     marginBottom: 12,
   },
   proTipText: {
     lineHeight: 24,
-    fontStyle: 'italic',
+    fontStyle: "italic",
   },
   mistakeItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: 16,
-    backgroundColor: 'rgba(255,255,255,0.02)',
+    backgroundColor: "rgba(255,255,255,0.02)",
     borderRadius: 16,
     marginBottom: 10,
     gap: 12,
@@ -573,16 +665,16 @@ const styles = StyleSheet.create({
   mistakeIcon: {
     width: 32,
     height: 32,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   mistakeText: {
     flex: 1,
   },
   errorContainer: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     gap: 20,
   },
   backButton: {

@@ -1,41 +1,46 @@
-import Button from '@/components/common/button';
-import Input from '@/components/common/input';
-import ScreenWrapper from '@/components/common/screen-wrapper';
-import Selectable from '@/components/common/selectable';
-import Typography from '@/components/common/typography';
-import { Colors, Fonts } from '@/constants/theme';
-import { updateUserProfile } from '@/services/api/user.api'; // Added import for updateUserProfile
-import { useOnboardingStore } from '@/stores/onboarding';
-import { useUser } from '@clerk/clerk-expo';
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import Button from "@/components/common/button";
+import Input from "@/components/common/input";
+import ScreenWrapper from "@/components/common/screen-wrapper";
+import Selectable from "@/components/common/selectable";
+import Typography from "@/components/common/typography";
+import { Colors, Fonts } from "@/constants/theme";
+import { updateUserProfile } from "@/services/api/user.api"; // Added import for updateUserProfile
+import { useOnboardingStore } from "@/stores/onboarding";
+import { useUser } from "@clerk/expo";
+import { useRouter } from "expo-router";
+import { GenderFemaleIcon, GenderMaleIcon } from "phosphor-react-native";
+import React, { useState } from "react";
+import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
 
 const ProfileScreen = () => {
   const { user } = useUser();
   const router = useRouter();
   const { age, gender, setAge, setGender } = useOnboardingStore();
 
-  const [name, setName] = useState(user?.fullName || '');
+  const [name, setName] = useState(user?.fullName || "");
   const [loading, setLoading] = useState(false);
 
   const handleSave = async () => {
     if (!name.trim()) {
-      Alert.alert('Error', 'Name cannot be empty');
+      Alert.alert("Error", "Name cannot be empty");
       return;
     }
 
-    if (!age.trim() || isNaN(Number(age)) || Number(age) < 1 || Number(age) > 120) {
-      Alert.alert('Error', 'Please enter a valid age (1-120)');
+    if (
+      !age.trim() ||
+      isNaN(Number(age)) ||
+      Number(age) < 1 ||
+      Number(age) > 120
+    ) {
+      Alert.alert("Error", "Please enter a valid age (1-120)");
       return;
     }
 
     setLoading(true);
     try {
       // Update name via Clerk
-      const [firstName, ...lastNameParts] = name.trim().split(' ');
-      const lastName = lastNameParts.join(' ') || '';
+      const [firstName, ...lastNameParts] = name.trim().split(" ");
+      const lastName = lastNameParts.join(" ") || "";
 
       await user?.update({
         firstName: firstName,
@@ -46,27 +51,29 @@ const ProfileScreen = () => {
       await updateUserProfile({
         age: age,
         gender: gender,
-        notifications: (user?.publicMetadata?.preferences as any)?.notifications ?? true,
+        notifications:
+          (user?.publicMetadata?.preferences as any)?.notifications ?? true,
       });
 
       // Reload user to get updated metadata
       await user?.reload();
 
-      router.back()
+      router.back();
     } catch (error) {
-      console.error('Error updating profile:', error);
-      Alert.alert('Error', 'Failed to update profile. Please try again.');
+      console.error("Error updating profile:", error);
+      Alert.alert("Error", "Failed to update profile. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <ScreenWrapper edges={['bottom']}>
+    <ScreenWrapper edges={["bottom"]}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={styles.content}
         contentContainerStyle={styles.contentContainer}
+        keyboardShouldPersistTaps="handled"
       >
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Personal Information</Text>
@@ -102,25 +109,45 @@ const ProfileScreen = () => {
             <View style={styles.genderOptions}>
               <Selectable
                 label="Male"
-                selected={gender === 'male'}
-                onPress={() => setGender('male')}
-                icon={<Ionicons name="male" size={24} color={gender === 'male' ? Colors.onPrimary : Colors.onSecondary} />}
+                selected={gender === "male"}
+                onPress={() => setGender("male")}
+                icon={
+                  <GenderMaleIcon
+                    size={24}
+                    color={
+                      gender === "male" ? Colors.onPrimary : Colors.onSecondary
+                    }
+                  />
+                }
                 style={styles.genderSelectable}
               />
               <Selectable
                 label="Female"
-                selected={gender === 'female'}
-                onPress={() => setGender('female')}
-                icon={<Ionicons name="female" size={24} color={gender === 'female' ? Colors.onPrimary : Colors.onSecondary} />}
+                selected={gender === "female"}
+                onPress={() => setGender("female")}
+                icon={
+                  <GenderFemaleIcon
+                    size={24}
+                    color={
+                      gender === "female"
+                        ? Colors.onPrimary
+                        : Colors.onSecondary
+                    }
+                  />
+                }
                 style={styles.genderSelectable}
               />
             </View>
           </View>
         </View>
 
-        <Button onPress={handleSave} disabled={loading} style={styles.saveButton}>
+        <Button
+          onPress={handleSave}
+          disabled={loading}
+          style={styles.saveButton}
+        >
           <Typography color="onPrimary" font="semiBold" size={18}>
-            {loading ? 'Saving...' : 'Save Changes'}
+            {loading ? "Saving..." : "Save Changes"}
           </Typography>
         </Button>
       </ScrollView>
@@ -141,7 +168,7 @@ const styles = StyleSheet.create({
   },
 
   section: {
-    width: '100%',
+    width: "100%",
     marginBottom: 24,
   },
 
@@ -171,13 +198,13 @@ const styles = StyleSheet.create({
   },
 
   input: {
-    width: '100%',
+    width: "100%",
   },
 
   genderOptions: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 12,
-    width: '100%',
+    width: "100%",
   },
 
   genderSelectable: {

@@ -1,23 +1,23 @@
-import Button from '@/components/common/button';
-import ScreenWrapper from '@/components/common/screen-wrapper';
-import Typography from '@/components/common/typography';
-import { Colors } from '@/constants/theme';
-import { scale, verticalScale } from '@/helpers/scale';
-import { Feather } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import React from 'react';
-import { Image, StyleSheet, View } from 'react-native';
-import Animated, { FadeIn } from 'react-native-reanimated';
+import Button from "@/components/common/button";
+import ScreenWrapper from "@/components/common/screen-wrapper";
+import Typography from "@/components/common/typography";
+import { Colors } from "@/constants/theme";
+import { scale, verticalScale } from "@/helpers/scale";
+import { router } from "expo-router";
+import { CheckCircle } from "phosphor-react-native";
+import React from "react";
+import { Image, StyleSheet, View } from "react-native";
+import Animated, { FadeIn } from "react-native-reanimated";
 
 const features = [
-  'Works in any lighting',
-  'Completely private, stored securely',
-  'Real time tracking',
+  "Works in any lighting",
+  "Completely private, stored securely",
+  "Real time tracking",
 ];
 
 const FeaturesScreen = () => {
   const handleSetupStart = () => {
-    router.push('/onboarding/name');
+    router.push("/onboarding/steps");
   };
 
   return (
@@ -28,7 +28,7 @@ const FeaturesScreen = () => {
           style={styles.imageWrapper}
         >
           <Image
-            source={require('@/assets/images/face-analysis.jpg')}
+            source={require("@/assets/images/face-analysis.jpg")}
             resizeMode="cover"
             style={styles.image}
           />
@@ -47,10 +47,10 @@ const FeaturesScreen = () => {
             {features.map((value, idx) => {
               return (
                 <View key={idx} style={styles.listItem}>
-                  <Feather
-                    name="check-circle"
+                  <CheckCircle
                     size={24}
                     color={Colors.onBackground}
+                    weight="fill"
                   />
 
                   <Typography color="onMuted" font="regular" size={16}>
@@ -77,23 +77,23 @@ export default FeaturesScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
     paddingHorizontal: scale(16),
     paddingVertical: verticalScale(16),
   },
 
   imageWrapper: {
-    width: '100%',
+    width: "100%",
     height: verticalScale(350),
     borderRadius: 56,
-    borderCurve: 'continuous',
-    alignSelf: 'center',
-    overflow: 'hidden',
+    borderCurve: "continuous",
+    alignSelf: "center",
+    overflow: "hidden",
   },
 
   image: {
-    height: '100%',
-    width: '100%',
+    height: "100%",
+    width: "100%",
     aspectRatio: 1,
   },
 
@@ -104,8 +104,8 @@ const styles = StyleSheet.create({
   },
 
   listItem: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: scale(16),
-    alignItems: 'center',
+    alignItems: "center",
   },
 });

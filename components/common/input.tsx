@@ -1,8 +1,8 @@
-import { Colors } from '@/constants/theme';
-import { scale, verticalScale } from '@/helpers/scale';
-import { InputProps } from '@/helpers/types';
-import React, { useState } from 'react';
-import { StyleSheet, TextInput, View } from 'react-native';
+import { Colors } from "@/constants/theme";
+import { scale, verticalScale } from "@/helpers/scale";
+import { InputProps } from "@/helpers/types";
+import React, { useState } from "react";
+import { StyleSheet, TextInput, View } from "react-native";
 
 const Input = (props: InputProps) => {
   const [isFocused, setIsFocused] = useState(false);
@@ -33,10 +33,10 @@ export default Input;
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
+    flexDirection: "row",
     height: verticalScale(56),
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderWidth: 1,
     borderColor: Colors.border,
     borderRadius: 200,

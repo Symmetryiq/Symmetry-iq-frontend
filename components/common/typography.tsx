@@ -1,13 +1,13 @@
-import { Colors, Fonts } from '@/constants/theme';
-import { scale } from '@/helpers/scale';
-import { TypographyProps } from '@/helpers/types';
-import React from 'react';
-import { Text, TextStyle } from 'react-native';
+import { Colors, Fonts } from "@/constants/theme";
+import { scale } from "@/helpers/scale";
+import { TypographyProps } from "@/helpers/types";
+import React from "react";
+import { Text, TextStyle } from "react-native";
 
 const Typography = ({
   size = 16,
-  color = 'onBackground',
-  font = 'regular',
+  color = "onBackground",
+  font = "regular",
   children,
   style,
   textProps = {},
@@ -17,7 +17,7 @@ const Typography = ({
     fontSize: scale(size),
     color: Colors[color],
     fontFamily: Fonts[font],
-    textAlign: center ? 'center' : 'left',
+    textAlign: center ? "center" : "left",
   };
 
   return (

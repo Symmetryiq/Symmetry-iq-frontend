@@ -1,4 +1,4 @@
-import { useUser } from '@clerk/clerk-expo';
+import { useUser } from '@clerk/expo';
 import { create } from 'zustand';
 
 type AuthState = {
@@ -13,6 +13,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   loading: false,
   error: null,
 
+  // TODO: Implement reset password
   resetPassword: async (email) => {
     set({ loading: true, error: null });
     try {
@@ -23,6 +24,8 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({ loading: false });
     }
   },
+
+  // FIXME: Accept the Clerk user object as a parameter, or use getClerkInstance() (like you do in client.ts).
 
   updateDisplayName: async (name: string) => {
     set({ loading: true, error: null });

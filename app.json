@@ -7,12 +7,11 @@
     "version": "1.0.0",
     "platforms": ["ios", "android"],
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/logo.png",
     "scheme": "symmetryiq",
     "userInterfaceStyle": "dark",
     "backgroundColor": "#16141f",
     "newArchEnabled": true,
-
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.bergmanmedia.symmetryiq",
@@ -23,21 +22,21 @@
         "NSCameraUsageDescription": "This app uses the camera to collect face landmarks for analysis."
       }
     },
-
     "android": {
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.bergmanmedia.symmetryiq",
-      "googleServicesFile": "./google-services.json"
+      "googleServicesFile": "./google-services.json",
+      "icon": "./assets/images/logo-android.png",
+      "softwareKeyboardLayoutMode": "pan"
     },
-
     "web": {
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-
     "plugins": [
       "expo-router",
+      "expo-notifications",
       [
         "expo-font",
         {
@@ -52,7 +51,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/icon.png",
+          "image": "./assets/images/logo.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
@@ -78,15 +77,17 @@
         }
       ],
       "expo-secure-store",
-      ["./plugins/with-model-ios"]
+      "expo-apple-authentication",
+      "./plugins/with-model-ios",
+      "./plugins/with-model-android",
+      "@clerk/expo"
     ],
-
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
     },
-
     "extra": {
+      "EXPO_PUBLIC_CLERK_GOOGLE_IOS_URL_SCHEME": "com.googleusercontent.apps.460134598118-qmvrfbjf85e8r7nbjptp3ogbagr7bj1v",
       "router": {},
       "eas": {
         "projectId": "51228dab-19a8-4c7f-ac85-cb808412e5a1"

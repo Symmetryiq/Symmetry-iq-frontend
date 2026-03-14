@@ -1,13 +1,13 @@
-import { Colors } from '@/constants/theme';
-import { RoutineId, RoutineImages } from '@/data/routines';
-import { getRoutineById } from '@/helpers/routine';
-import { scale, verticalScale } from '@/helpers/scale';
-import { BlurView } from 'expo-blur';
-import { router } from 'expo-router';
-import { LockIcon, PlayIcon } from 'phosphor-react-native';
-import React from 'react';
-import { Image, Pressable, StyleSheet, View } from 'react-native';
-import Typography from './common/typography';
+import { Colors } from "@/constants/theme";
+import { RoutineId, RoutineImages } from "@/data/routines";
+import { getRoutineById } from "@/helpers/routine";
+import { scale, verticalScale } from "@/helpers/scale";
+import { BlurView } from "expo-blur";
+import { router } from "expo-router";
+import { LockIcon, PlayIcon } from "phosphor-react-native";
+import React from "react";
+import { Image, Pressable, StyleSheet, View } from "react-native";
+import Typography from "./common/typography";
 
 type RoutineCardProps = {
   routineId: RoutineId;
@@ -26,13 +26,11 @@ const RoutineCardLarge = ({ routineId, locked }: RoutineCardProps) => {
         </View>
 
         {/* Content */}
-        <View style={{ gap: verticalScale(8), width: '100%' }}>
+        <View style={{ gap: verticalScale(8), width: "100%" }}>
           <Typography size={24} font="semiBold" color="onCard">
             {routine.title}
           </Typography>
-          <Typography color="onSecondary">
-            {routine.description}
-          </Typography>
+          <Typography color="onSecondary">{routine.description}</Typography>
         </View>
 
         {/* Footer */}
@@ -45,7 +43,7 @@ const RoutineCardLarge = ({ routineId, locked }: RoutineCardProps) => {
             style={styles.cardButton}
             onPress={() =>
               router.push({
-                pathname: '/routines/[id]',
+                pathname: "/routines/[id]",
                 params: { id: routine.id },
               })
             }
@@ -62,9 +60,18 @@ const RoutineCardLarge = ({ routineId, locked }: RoutineCardProps) => {
       {/* 🔒 Locked Overlay */}
       {locked && (
         <View style={styles.lockedOverlay}>
-          <BlurView intensity={1} tint="dark" experimentalBlurMethod='dimezisBlurView' style={StyleSheet.absoluteFill} />
+          <BlurView
+            intensity={1}
+            tint="dark"
+            experimentalBlurMethod="dimezisBlurView"
+            style={StyleSheet.absoluteFill}
+          />
           <View style={styles.lockedContent}>
-            <LockIcon weight="regular" size={scale(42)} color={Colors.onBackground} />
+            <LockIcon
+              weight="regular"
+              size={scale(42)}
+              color={Colors.onBackground}
+            />
 
             <Typography size={28} font="regular" color="onPrimary">
               Available Soon!
@@ -80,7 +87,7 @@ export default RoutineCardLarge;
 
 const styles = StyleSheet.create({
   cardWrapper: {
-    position: 'relative',
+    position: "relative",
   },
 
   cardContainer: {
@@ -88,20 +95,20 @@ const styles = StyleSheet.create({
     gap: verticalScale(12),
     borderRadius: verticalScale(28),
     backgroundColor: Colors.card,
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 
   cardImageWrapper: {
-    width: '100%',
+    width: "100%",
     aspectRatio: 16 / 9,
     borderRadius: verticalScale(28),
-    overflow: 'hidden',
+    overflow: "hidden",
   },
 
   cardImage: {
-    height: '100%',
-    width: '100%',
+    height: "100%",
+    width: "100%",
   },
 
   cardContentWrapper: {
@@ -109,16 +116,16 @@ const styles = StyleSheet.create({
   },
 
   footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
   },
 
   cardButton: {
     gap: scale(8),
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
 
   iconWrapper: {
@@ -130,14 +137,14 @@ const styles = StyleSheet.create({
   lockedOverlay: {
     ...StyleSheet.absoluteFillObject,
     borderRadius: verticalScale(28),
-    overflow: 'hidden',
-    justifyContent: 'center',
-    alignItems: 'center',
+    overflow: "hidden",
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   lockedContent: {
     padding: scale(16),
     gap: verticalScale(8),
-    alignItems: 'center',
+    alignItems: "center",
   },
 });

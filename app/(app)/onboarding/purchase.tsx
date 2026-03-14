@@ -1,14 +1,19 @@
-import Button from '@/components/common/button';
-import ScreenWrapper from '@/components/common/screen-wrapper';
-import Typography from '@/components/common/typography';
-import { POLICY_URL, TERMS_URL } from '@/constants';
-import { PREMIUM_FEATURES, SUBSCRIPTION_PLANS } from '@/constants/subscriptions';
-import { Colors } from '@/constants/theme';
-import { scale, verticalScale } from '@/helpers/scale';
-import { openBrowserLink } from '@/helpers/utils';
-import { updateUserProfile } from '@/services/api/user.api';
-import { useOnboardingStore } from '@/stores/onboarding';
-import { LinearGradient } from 'expo-linear-gradient';
+import Button from "@/components/common/button";
+import ScreenWrapper from "@/components/common/screen-wrapper";
+import Typography from "@/components/common/typography";
+import { POLICY_URL, TERMS_URL } from "@/constants";
+import {
+  PREMIUM_FEATURES,
+  SUBSCRIPTION_PLANS,
+} from "@/constants/subscriptions";
+import { Colors } from "@/constants/theme";
+import { scale, verticalScale } from "@/helpers/scale";
+import { openBrowserLink } from "@/helpers/utils";
+import { updateUserProfile } from "@/services/api/user.api";
+import { useOnboardingStore } from "@/stores/onboarding";
+import { usePlanStore } from "@/stores/plan-store";
+import { useScanStore } from "@/stores/scan-store";
+import { LinearGradient } from "expo-linear-gradient";
 import {
   BookOpen,
   CheckCircle,
@@ -17,17 +22,12 @@ import {
   Scan,
   ShieldCheck,
   Sparkle,
-  Star
-} from 'phosphor-react-native';
-import React, { useState } from 'react';
-import {
-  Dimensions,
-  Pressable,
-  StyleSheet,
-  View
-} from 'react-native';
+  Star,
+} from "phosphor-react-native";
+import React, { useState } from "react";
+import { Dimensions, Pressable, StyleSheet, View } from "react-native";
 
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const IconMap: Record<string, any> = {
   Scan,
@@ -39,8 +39,17 @@ const IconMap: Record<string, any> = {
 };
 
 const Purchase = () => {
-  const { setOnboardingCompleted, age, gender } = useOnboardingStore();
-  const [selectedPlan, setSelectedPlan] = useState('yearly');
+  const {
+    setOnboardingCompleted,
+    age,
+    gender,
+    demoLandmarks,
+    demoScores,
+    setDemoScan,
+  } = useOnboardingStore();
+  const { saveScanData } = useScanStore();
+  const { generateNewPlan } = usePlanStore();
+  const [selectedPlan, setSelectedPlan] = useState("yearly");
 
   // useEffect(() => {
   //   initializePaywall();
@@ -59,10 +68,23 @@ const Purchase = () => {
         notifications: true, // Default to true
       });
 
+      // Save the demo scan if it exists so routines are generated
+      if (demoLandmarks && demoScores) {
+        const newScan = await saveScanData(demoLandmarks, demoScores);
+
+        // If the scan was saved successfully, generate a new plan from it.
+        if (newScan && newScan._id) {
+          await generateNewPlan(newScan._id);
+        }
+
+        // Clear demo data
+        setDemoScan(null, null, null);
+      }
+
       // Mark onboarding as completed
       setOnboardingCompleted(true);
     } catch (error) {
-      console.error('Error syncing onboarding data:', error);
+      console.error("Error syncing onboarding data:", error);
       // Still complete onboarding even if API fails - data is in store
       setOnboardingCompleted(true);
     }
@@ -71,7 +93,7 @@ const Purchase = () => {
   return (
     <ScreenWrapper style={styles.wrapper}>
       <LinearGradient
-        colors={[Colors.primaryLight, 'transparent', Colors.background]}
+        colors={[Colors.primaryLight, "transparent", Colors.background]}
         locations={[0, 0.4, 0.9]}
         style={StyleSheet.absoluteFill}
       />
@@ -120,7 +142,7 @@ const Purchase = () => {
             >
               <View style={styles.planInfo}>
                 <Typography size={16} font="bold">
-                  {plan.title.split(' ')[0]} Premium
+                  {plan.title.split(" ")[0]} Premium
                 </Typography>
                 <Typography size={12} color="onMuted">
                   {plan.duration}
@@ -140,7 +162,11 @@ const Purchase = () => {
                     {plan.price}
                   </Typography>
                   {selectedPlan === plan.id && (
-                    <CheckCircle size={22} weight="fill" color={Colors.primary} />
+                    <CheckCircle
+                      size={22}
+                      weight="fill"
+                      color={Colors.primary}
+                    />
                   )}
                 </View>
               </View>
@@ -150,10 +176,7 @@ const Purchase = () => {
 
         {/* Action Section */}
         <View style={styles.footer}>
-          <Button
-            onPress={handleCompleteOnboarding}
-            style={styles.ctaButton}
-          >
+          <Button onPress={handleCompleteOnboarding} style={styles.ctaButton}>
             <Typography font="bold" color="onPrimary" size={18}>
               Start Your Glow Up
             </Typography>
@@ -161,19 +184,34 @@ const Purchase = () => {
 
           <View style={styles.legalLinks}>
             <Pressable hitSlop={10}>
-              <Typography size={12} color="onMuted">Restore</Typography>
+              <Typography size={12} color="onMuted">
+                Restore
+              </Typography>
             </Pressable>
-            <Typography size={12} color="onMuted">•</Typography>
+            <Typography size={12} color="onMuted">
+              •
+            </Typography>
             <Pressable hitSlop={10} onPress={() => openBrowserLink(TERMS_URL)}>
-              <Typography size={12} color="onMuted">Terms</Typography>
+              <Typography size={12} color="onMuted">
+                Terms
+              </Typography>
             </Pressable>
-            <Typography size={12} color="onMuted">•</Typography>
+            <Typography size={12} color="onMuted">
+              •
+            </Typography>
             <Pressable hitSlop={10} onPress={() => openBrowserLink(POLICY_URL)}>
-              <Typography size={12} color="onMuted">Privacy</Typography>
+              <Typography size={12} color="onMuted">
+                Privacy
+              </Typography>
             </Pressable>
           </View>
 
-          <Typography size={10} color="onMuted" center style={styles.disclaimer}>
+          <Typography
+            size={10}
+            color="onMuted"
+            center
+            style={styles.disclaimer}
+          >
             Recurring billing. Cancel anytime.
           </Typography>
         </View>
@@ -187,16 +225,16 @@ export default Purchase;
 const styles = StyleSheet.create({
   wrapper: {
     backgroundColor: Colors.background,
-    flex: 1
+    flex: 1,
   },
   container: {
     flex: 1,
     paddingHorizontal: scale(20),
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
     paddingVertical: verticalScale(16),
   },
   header: {
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: verticalScale(8),
   },
   logoContainer: {
@@ -204,8 +242,8 @@ const styles = StyleSheet.create({
     height: scale(60),
     borderRadius: 200,
     backgroundColor: Colors.primaryLight,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: verticalScale(12),
   },
   title: {
@@ -216,20 +254,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: scale(20),
   },
   featuresGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
     marginVertical: verticalScale(16),
     gap: verticalScale(10),
   },
   featureItemWrapper: {
-    width: '48%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(255,255,255,0.03)',
+    width: "48%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(255,255,255,0.03)",
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.05)',
+    borderColor: "rgba(255,255,255,0.05)",
     padding: scale(8),
     borderRadius: 12,
     gap: scale(8),
@@ -239,8 +277,8 @@ const styles = StyleSheet.create({
     height: scale(28),
     borderRadius: 8,
     backgroundColor: Colors.primaryLight,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   featureTitle: {
     flex: 1,
@@ -254,25 +292,25 @@ const styles = StyleSheet.create({
     paddingVertical: verticalScale(14),
     paddingHorizontal: scale(16),
     borderWidth: 2,
-    borderColor: 'transparent',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    borderColor: "transparent",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   selectedPlanCard: {
     borderColor: Colors.primary,
-    backgroundColor: 'rgba(74, 58, 255, 0.08)',
+    backgroundColor: "rgba(74, 58, 255, 0.08)",
   },
   planInfo: {
     gap: verticalScale(2),
   },
   planPriceAndBadge: {
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
     gap: verticalScale(4),
   },
   priceRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: scale(8),
   },
   smallBadge: {
@@ -282,12 +320,12 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   footer: {
-    alignItems: 'center',
+    alignItems: "center",
     gap: verticalScale(12),
     marginTop: verticalScale(10),
   },
   ctaButton: {
-    width: '100%',
+    width: "100%",
     paddingVertical: verticalScale(16),
     borderRadius: 16,
     shadowColor: Colors.primary,
@@ -297,7 +335,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   legalLinks: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: scale(12),
     opacity: 0.6,
   },
@@ -305,5 +343,3 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
 });
-
-

@@ -1,9 +1,9 @@
-import { Colors } from '@/constants/theme';
-import { scale, verticalScale } from '@/helpers/scale';
-import { ArrowRightIcon } from 'phosphor-react-native';
-import React from 'react';
-import { Image, Pressable, StyleSheet, View } from 'react-native';
-import Typography from './common/typography';
+import { Colors } from "@/constants/theme";
+import { scale, verticalScale } from "@/helpers/scale";
+import { ArrowRightIcon } from "phosphor-react-native";
+import React from "react";
+import { Image, Pressable, StyleSheet, View } from "react-native";
+import Typography from "./common/typography";
 
 type ScanCardProps = {
   onPress: () => void;
@@ -14,7 +14,7 @@ const ScanCard = ({ onPress }: ScanCardProps) => {
     <View style={styles.scanCardContainer}>
       <View style={styles.scanCardImageWrapper}>
         <Image
-          source={require('@/assets/images/face-capture.jpg')}
+          source={require("@/assets/images/face-capture.jpg")}
           style={styles.scanCardImage}
         />
       </View>
@@ -47,35 +47,35 @@ const styles = StyleSheet.create({
     gap: verticalScale(8),
     borderRadius: verticalScale(28),
     backgroundColor: Colors.card,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 
   scanCardImageWrapper: {
     width: scale(140),
     aspectRatio: 1,
     borderRadius: verticalScale(28),
-    overflow: 'hidden',
+    overflow: "hidden",
   },
 
   scanCardImage: {
-    height: '100%',
-    width: '100%',
+    height: "100%",
+    width: "100%",
   },
 
   scanCardContentWrapper: {
     gap: verticalScale(16),
-    width: '50%',
+    width: "50%",
   },
 
   scanCardButton: {
     paddingHorizontal: scale(16),
     paddingVertical: verticalScale(12),
     gap: scale(8),
-    flexDirection: 'row',
+    flexDirection: "row",
     backgroundColor: Colors.primary,
     borderRadius: verticalScale(16),
-    alignItems: 'center',
+    alignItems: "center",
   },
 });

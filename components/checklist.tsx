@@ -1,20 +1,28 @@
-import { Colors } from '@/constants/theme';
-import { scale, verticalScale } from '@/helpers/scale';
-import { useChecklistStore } from '@/stores/checklist-store';
-import * as Haptics from 'expo-haptics';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Check, CircleNotch, Drop, List, MoonStars, Scan, Tooth } from 'phosphor-react-native';
-import React, { useEffect, useMemo } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Colors } from "@/constants/theme";
+import { scale, verticalScale } from "@/helpers/scale";
+import { useChecklistStore } from "@/stores/checklist-store";
+import * as Haptics from "expo-haptics";
+import { LinearGradient } from "expo-linear-gradient";
+import {
+  Check,
+  CircleNotch,
+  Drop,
+  List,
+  MoonStars,
+  Scan,
+  Tooth,
+} from "phosphor-react-native";
+import React, { useEffect, useMemo } from "react";
+import { Pressable, StyleSheet, View } from "react-native";
 import Animated, {
   Easing,
   interpolate,
   interpolateColor,
   useAnimatedStyle,
   useDerivedValue,
-  withTiming
-} from 'react-native-reanimated';
-import Typography from './common/typography';
+  withTiming,
+} from "react-native-reanimated";
+import Typography from "./common/typography";
 
 const AnimatedTypography = Animated.createAnimatedComponent(Typography);
 
@@ -26,7 +34,9 @@ const Checklist = ({ date }: ChecklistProps) => {
   const { tasks, fetchChecklist, updateTask } = useChecklistStore();
 
   useEffect(() => {
-    const targetDate = date ? date.toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+    const targetDate = date
+      ? date.toISOString().split("T")[0]
+      : new Date().toISOString().split("T")[0];
     fetchChecklist(targetDate);
   }, [date]);
 
@@ -39,7 +49,7 @@ const Checklist = ({ date }: ChecklistProps) => {
   const animatedProgress = useDerivedValue(() => {
     return withTiming(progress, {
       duration: 600,
-      easing: Easing.bezier(0.33, 1, 0.68, 1)
+      easing: Easing.bezier(0.33, 1, 0.68, 1),
     });
   });
 
@@ -85,9 +95,7 @@ const Checklist = ({ date }: ChecklistProps) => {
               }}
             />
 
-            {index < tasks.length - 1 ? (
-              <View style={styles.divider} />
-            ) : null}
+            {index < tasks.length - 1 ? <View style={styles.divider} /> : null}
           </React.Fragment>
         ))}
       </View>
@@ -104,26 +112,38 @@ type ChecklistItemProps = {
 
 const getIconForTask = (title: string, color: string) => {
   const t = title.toLowerCase();
-  if (t.includes('tongue')) return <Drop color={color} size={20} weight="duotone" />;
-  if (t.includes('chewing')) return <Tooth color={color} size={20} weight="duotone" />;
-  if (t.includes('symmetry')) return <List color={color} size={20} weight="duotone" />;
-  if (t.includes('scan')) return <Scan color={color} size={20} weight="duotone" />;
-  if (t.includes('sleep')) return <MoonStars color={color} size={20} weight="duotone" />;
+  if (t.includes("tongue"))
+    return <Drop color={color} size={20} weight="duotone" />;
+  if (t.includes("chewing"))
+    return <Tooth color={color} size={20} weight="duotone" />;
+  if (t.includes("symmetry"))
+    return <List color={color} size={20} weight="duotone" />;
+  if (t.includes("scan"))
+    return <Scan color={color} size={20} weight="duotone" />;
+  if (t.includes("sleep"))
+    return <MoonStars color={color} size={20} weight="duotone" />;
   return <CircleNotch color={color} size={20} weight="duotone" />;
 };
 
-const ChecklistItem = ({ title, description, completed, onToggle }: ChecklistItemProps) => {
+const ChecklistItem = ({
+  title,
+  description,
+  completed,
+  onToggle,
+}: ChecklistItemProps) => {
   const animatedValue = useDerivedValue(() => {
     return withTiming(completed ? 1 : 0, {
       duration: 300,
-      easing: Easing.bezier(0.4, 0, 0.2, 1)
+      easing: Easing.bezier(0.4, 0, 0.2, 1),
     });
   });
 
   const rowStyle = useAnimatedStyle(() => {
     return {
       opacity: interpolate(animatedValue.value, [0, 1], [1, 0.6]),
-      transform: [{ scale: interpolate(animatedValue.value, [0, 1], [1, 0.99]) }],
+      transform: [
+        { scale: interpolate(animatedValue.value, [0, 1], [1, 0.99]) },
+      ],
     };
   });
 
@@ -132,9 +152,11 @@ const ChecklistItem = ({ title, description, completed, onToggle }: ChecklistIte
       backgroundColor: interpolateColor(
         animatedValue.value,
         [0, 1],
-        [Colors.secondary, Colors.primaryLight]
+        [Colors.secondary, Colors.primaryLight],
       ),
-      transform: [{ scale: interpolate(animatedValue.value, [0, 1], [1, 1.1]) }],
+      transform: [
+        { scale: interpolate(animatedValue.value, [0, 1], [1, 1.1]) },
+      ],
     };
   });
 
@@ -143,12 +165,12 @@ const ChecklistItem = ({ title, description, completed, onToggle }: ChecklistIte
       backgroundColor: interpolateColor(
         animatedValue.value,
         [0, 1],
-        ['transparent', Colors.primary]
+        ["transparent", Colors.primary],
       ),
       borderColor: interpolateColor(
         animatedValue.value,
         [0, 1],
-        [Colors.border, Colors.primary]
+        [Colors.border, Colors.primary],
       ),
     };
   });
@@ -169,16 +191,18 @@ const ChecklistItem = ({ title, description, completed, onToggle }: ChecklistIte
           {getIconForTask(title, iconColor)}
         </Animated.View>
 
-        <View style={{ flex: 1, alignItems: 'flex-start' }}>
+        <View style={{ flex: 1, alignItems: "flex-start" }}>
           <Typography
             size={18}
             font="medium"
             color={completed ? "onMuted" : "onCard"}
-            style={completed ? { textDecorationLine: 'line-through' } : null}
+            style={completed ? { textDecorationLine: "line-through" } : null}
           >
             {title}
           </Typography>
-          <Typography size={14} color="onMuted">{description}</Typography>
+          <Typography size={14} color="onMuted">
+            {description}
+          </Typography>
         </View>
 
         <Animated.View style={[styles.checklistItemCheckbox, checkboxStyle]}>
@@ -210,22 +234,22 @@ const styles = StyleSheet.create({
   },
 
   progressInfo: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'baseline',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "baseline",
   },
 
   progressBarBackground: {
     height: verticalScale(10),
     backgroundColor: Colors.muted,
     borderRadius: verticalScale(5),
-    overflow: 'hidden',
+    overflow: "hidden",
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: "rgba(255, 255, 255, 0.05)",
   },
 
   progressBarFill: {
-    height: '100%',
+    height: "100%",
     borderRadius: 200,
   },
 
@@ -234,9 +258,9 @@ const styles = StyleSheet.create({
   },
 
   checklistItemContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     gap: scale(16),
     paddingVertical: verticalScale(8),
     paddingHorizontal: scale(8),
@@ -247,8 +271,8 @@ const styles = StyleSheet.create({
     width: verticalScale(44),
     height: verticalScale(44),
     borderRadius: verticalScale(22),
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   checklistItemCheckbox: {
@@ -256,16 +280,14 @@ const styles = StyleSheet.create({
     width: verticalScale(28),
     borderRadius: verticalScale(14),
     borderWidth: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   divider: {
     height: 1,
-    width: '100%',
+    width: "100%",
     backgroundColor: Colors.border,
     opacity: 0.3,
   },
 });
-
-

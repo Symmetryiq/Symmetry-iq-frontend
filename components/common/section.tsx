@@ -1,6 +1,6 @@
-import { scale } from '@/helpers/scale';
-import React from 'react';
-import { StyleSheet, View, ViewStyle } from 'react-native';
+import { scale } from "@/helpers/scale";
+import React from "react";
+import { StyleSheet, View, ViewStyle } from "react-native";
 
 type SectionProps = {
   children: React.ReactNode;

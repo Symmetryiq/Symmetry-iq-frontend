@@ -1,69 +1,165 @@
-import AppleButton from '@/components/buttons/apple-button';
-import GoogleButton from '@/components/buttons/google-button';
-import Button from '@/components/common/button';
-import Input from '@/components/common/input';
-import KeyboardWrapper from '@/components/common/keyboard-wrapper';
-import { Label } from '@/components/common/label';
-import ScreenWrapper from '@/components/common/screen-wrapper';
-import Typography from '@/components/common/typography';
-import { Colors } from '@/constants/theme';
-import { scale, verticalScale } from '@/helpers/scale';
-import { isClerkAPIResponseError, useSignIn } from '@clerk/clerk-expo';
-import { Link, useRouter } from 'expo-router';
-import {
-  LockIcon,
-  MailboxIcon
-} from 'phosphor-react-native';
-import React, { useState } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import AppleButton from "@/components/buttons/apple-button";
+import GoogleButton from "@/components/buttons/google-button";
+import Button from "@/components/common/button";
+import Input from "@/components/common/input";
+import KeyboardWrapper from "@/components/common/keyboard-wrapper";
+import { Label } from "@/components/common/label";
+import ScreenWrapper from "@/components/common/screen-wrapper";
+import Typography from "@/components/common/typography";
+import { Colors } from "@/constants/theme";
+import { scale, verticalScale } from "@/helpers/scale";
+import { useSignIn } from "@clerk/expo";
+import { Link, useRouter } from "expo-router";
+import { LockIcon, MailboxIcon } from "phosphor-react-native";
+import React, { useState } from "react";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 
 const Signin = () => {
-  const { signIn, isLoaded, setActive } = useSignIn();
-  const router = useRouter()
+  const { signIn, errors, fetchStatus } = useSignIn();
+  const router = useRouter();
 
-  const [emailAddress, setEmailAddress] = useState('');
-  const [password, setPassword] = useState('');
+  const [emailAddress, setEmailAddress] = useState("");
+  const [password, setPassword] = useState("");
+  const [code, setCode] = useState("");
+  const [useBackupCode, setUseBackupCode] = useState(false);
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const handleSubmit = async () => {
+    const { error } = await signIn.password({
+      emailAddress,
+      password,
+    });
 
-  if (!isLoaded) {
-    return (
-      <View style={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
-      }}>
-        <ActivityIndicator />
-      </View>
-    );
-  }
-
-  const onSignInPress = async () => {
-    if (!emailAddress || !password) {
-      setError("Email and password are required.");
+    if (error) {
+      console.error(JSON.stringify(error, null, 2));
       return;
     }
 
-    setLoading(true);
-    setError(null);
+    if (signIn.status === "complete") {
+      await signIn.finalize();
+    } else if (signIn.status === "needs_second_factor") {
+      await signIn.mfa.sendEmailCode();
+    } else if (signIn.status === "needs_client_trust") {
+      const emailCodeFactor = signIn.supportedSecondFactors.find(
+        (factor) => factor.strategy === "email_code",
+      );
 
-    try {
-      const signInAttempt = await signIn.create({
-        identifier: emailAddress.trim(),
-        password,
-      })
-
-      if (signInAttempt.status === 'complete') {
-        await setActive({ session: signInAttempt.createdSessionId })
-      } else {
-        setError("Additional verification required.")
+      if (emailCodeFactor) {
+        await signIn.mfa.sendEmailCode();
       }
-    } catch (err: any) {
-      if (isClerkAPIResponseError(err)) setError(err.errors[0].longMessage || 'Invalid credentials.')
-    } finally {
-      setLoading(false);
+    } else {
+      console.error("Sign-in attempt not complete:", signIn);
     }
+  };
+
+  const handleVerify = async () => {
+    await signIn.mfa.verifyEmailCode({ code });
+
+    if (signIn.status === "complete") {
+      await signIn.finalize();
+    } else {
+      console.error("Sign-in attempt not complete:", signIn);
+    }
+  };
+
+  // const onSignInPress = async () => {
+  //   if (!emailAddress || !password) {
+  //     setError("Email and password are required.");
+  //     return;
+  //   }
+
+  //   setLoading(true);
+  //   setError(null);
+
+  //   try {
+  //     const signInAttempt = await signIn.create({
+  //       identifier: emailAddress.trim(),
+  //       password,
+  //     })
+
+  //     if (signInAttempt.status === 'complete') {
+  //       await setActive({ session: signInAttempt.createdSessionId })
+  //     } else {
+  //       setError("Additional verification required.")
+  //     }
+  //   } catch (err: any) {
+  //     if (isClerkAPIResponseError(err)) setError(err.errors[0].longMessage || 'Invalid credentials.')
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }
+
+  if (signIn.status === "needs_client_trust") {
+    return (
+      <ScreenWrapper>
+        <KeyboardWrapper style={styles.container}>
+          <View>
+            <Typography color="onBackground" center font="semiBold" size={28}>
+              Verify your Account
+            </Typography>
+
+            <Typography color="onSecondary" center style={{ marginBottom: 24 }}>
+              Verify your account to explore variety of exciting features
+              powered by AI and fine-tuned by us.
+            </Typography>
+          </View>
+
+          <View>
+            {errors.fields.code && (
+              <Typography color="danger" center style={{ marginBottom: 16 }}>
+                {errors.fields.code.message}
+              </Typography>
+            )}
+
+            <View style={{ marginBottom: 16 }}>
+              <Label
+                color="onSecondary"
+                font="medium"
+                style={{ marginBottom: 6 }}
+              >
+                Verification Code
+              </Label>
+
+              <Input
+                placeholder="Enter your verification code"
+                value={code}
+                onChangeText={(code) => setCode(code)}
+                keyboardType="numeric"
+                maxLength={6}
+                icon={
+                  <MailboxIcon weight="fill" size={24} color={Colors.onMuted} />
+                }
+              />
+            </View>
+
+            <Button
+              onPress={handleVerify}
+              disabled={fetchStatus === "fetching"}
+              loading={fetchStatus === "fetching"}
+            >
+              {fetchStatus === "fetching" ? (
+                <ActivityIndicator color={Colors.onPrimary} />
+              ) : (
+                <Typography>Verify</Typography>
+              )}
+            </Button>
+
+            <Button
+              style={{ backgroundColor: Colors.secondary }}
+              onPress={() => signIn.mfa.sendEmailCode()}
+            >
+              <Typography>I need a new code</Typography>
+            </Button>
+
+            <Button
+              style={{ backgroundColor: Colors.secondary }}
+              onPress={() => signIn.reset()}
+            >
+              <Typography>Start over</Typography>
+            </Button>
+          </View>
+        </KeyboardWrapper>
+      </ScreenWrapper>
+    );
   }
 
   return (
@@ -82,14 +178,30 @@ const Signin = () => {
           </View>
 
           <View>
-            {error && (
+            {errors.fields.identifier && (
               <Typography color="danger" center style={{ marginBottom: 16 }}>
-                {error}
+                {errors.fields.identifier.message}
               </Typography>
             )}
 
+            {errors.fields.password && (
+              <Typography color="danger" center style={{ marginBottom: 16 }}>
+                {errors.fields.password.message}
+              </Typography>
+            )}
+
+            {/* {errors && (
+              <Typography color="danger" center style={{ marginBottom: 16 }}>
+                {JSON.stringify(errors, null, 2)}
+              </Typography>
+            )} */}
+
             <View style={{ marginBottom: 16 }}>
-              <Label color="onSecondary" font="medium" style={{ marginBottom: 6 }}>
+              <Label
+                color="onSecondary"
+                font="medium"
+                style={{ marginBottom: 6 }}
+              >
                 Email Address
               </Label>
 
@@ -106,7 +218,11 @@ const Signin = () => {
             </View>
 
             <View style={{ marginBottom: 24 }}>
-              <Label color="onSecondary" font="medium" style={{ marginBottom: 6 }}>
+              <Label
+                color="onSecondary"
+                font="medium"
+                style={{ marginBottom: 6 }}
+              >
                 Password
               </Label>
 
@@ -121,13 +237,17 @@ const Signin = () => {
               />
             </View>
 
-            <Button onPress={onSignInPress} disabled={!emailAddress || !password} loading={loading}>
-              {loading ? (
+            <Button
+              onPress={handleSubmit}
+              disabled={
+                !emailAddress || !password || fetchStatus === "fetching"
+              }
+              loading={fetchStatus === "fetching"}
+            >
+              {fetchStatus === "fetching" ? (
                 <ActivityIndicator color={Colors.onPrimary} />
               ) : (
-                <Typography>
-                  Sign In
-                </Typography>
+                <Typography>Sign In</Typography>
               )}
             </Button>
           </View>
@@ -143,9 +263,18 @@ const Signin = () => {
         </View>
 
         <View style={styles.redirect}>
-          <Typography color="onMuted" font="medium" size={14}>Don&apos;t have an account?{' '}</Typography>
+          <Typography color="onMuted" font="medium" size={14}>
+            Don&apos;t have an account?{" "}
+          </Typography>
           <Link href="/create-account">
-            <Typography color="onSecondary" font="medium" size={14} style={{ textDecorationLine: 'underline' }}>Create Account</Typography>
+            <Typography
+              color="onSecondary"
+              font="medium"
+              size={14}
+              style={{ textDecorationLine: "underline" }}
+            >
+              Create Account
+            </Typography>
           </Link>
         </View>
       </KeyboardWrapper>
@@ -162,7 +291,7 @@ function Seperator() {
       <Typography color="onMuted">OR</Typography>
       <View style={styles.divider} />
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -170,19 +299,19 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.card,
     borderTopLeftRadius: 50,
     borderTopRightRadius: 50,
-    borderCurve: 'continuous',
+    borderCurve: "continuous",
     paddingHorizontal: scale(24),
     paddingVertical: 24,
   },
 
   error: {
-    alignSelf: 'center'
+    alignSelf: "center",
   },
 
   dividerContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: scale(16),
-    alignItems: 'center',
+    alignItems: "center",
     marginVertical: verticalScale(12),
   },
 
@@ -193,7 +322,7 @@ const styles = StyleSheet.create({
   },
 
   redirect: {
-    flexDirection: 'row',
-    alignSelf: 'center'
-  }
+    flexDirection: "row",
+    alignSelf: "center",
+  },
 });

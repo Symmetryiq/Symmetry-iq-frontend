@@ -1,17 +1,17 @@
-import { Colors } from '@/constants/theme';
-import { scale, verticalScale } from '@/helpers/scale';
-import { SelectableProps } from '@/helpers/types';
-import { Feather } from '@expo/vector-icons';
-import React, { useEffect } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Colors } from "@/constants/theme";
+import { scale, verticalScale } from "@/helpers/scale";
+import { SelectableProps } from "@/helpers/types";
+import { CheckIcon } from "phosphor-react-native";
+import React, { useEffect } from "react";
+import { Pressable, StyleSheet, View } from "react-native";
 import Animated, {
   interpolateColor as interpolateColorRN,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
   withTiming,
-} from 'react-native-reanimated';
-import Typography from './typography';
+} from "react-native-reanimated";
+import Typography from "./typography";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 const AnimatedView = Animated.createAnimatedComponent(View);
@@ -42,12 +42,12 @@ const Selectable = ({
       backgroundColor: interpolateColorRN(
         bgColor.value,
         [0, 1],
-        [Colors.muted, Colors.primaryLight]
+        [Colors.muted, Colors.primaryLight],
       ),
       borderColor: interpolateColorRN(
         bgColor.value,
         [0, 1],
-        [Colors.border, Colors.primary]
+        [Colors.border, Colors.primary],
       ),
     };
   });
@@ -67,11 +67,11 @@ const Selectable = ({
           {icon && icon}
           <View style={styles.labelWrapper}>
             <Typography
-              color={selected ? 'onPrimary' : 'onSecondary'}
+              color={selected ? "onPrimary" : "onSecondary"}
               size={18}
               textProps={{
                 numberOfLines: 2,
-                ellipsizeMode: 'tail',
+                ellipsizeMode: "tail",
               }}
             >
               {label}
@@ -82,7 +82,7 @@ const Selectable = ({
         <View style={styles.checkboxWrapper}>
           <AnimatedView style={[styles.checkbox, animatedCheckStyle]}>
             {selected && (
-              <Feather name="check" size={16} color={Colors.onPrimary} />
+              <CheckIcon size={16} color={Colors.onPrimary} weight="bold" />
             )}
           </AnimatedView>
         </View>
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
     backgroundColor: Colors.muted,
     minHeight: scale(52),
-    width: '100%',
+    width: "100%",
   },
 
   containerSelected: {
@@ -113,16 +113,16 @@ const styles = StyleSheet.create({
   },
 
   mainWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
     gap: scale(12),
   },
 
   contentWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     flex: 1,
     gap: scale(8),
     minWidth: 0,
@@ -131,14 +131,14 @@ const styles = StyleSheet.create({
   labelWrapper: {
     flex: 1,
     minWidth: 0,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
 
   checkboxWrapper: {
-    alignItems: 'flex-end',
-    justifyContent: 'flex-start',
+    alignItems: "flex-end",
+    justifyContent: "flex-start",
     minWidth: CHECKBOX_SIZE,
-    height: '100%',
+    height: "100%",
   },
 
   checkbox: {
@@ -146,9 +146,9 @@ const styles = StyleSheet.create({
     height: CHECKBOX_SIZE,
     backgroundColor: Colors.primary,
     borderRadius: CHECKBOX_SIZE / 2,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.15,
     shadowRadius: 2,

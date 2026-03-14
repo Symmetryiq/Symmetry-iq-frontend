@@ -1,12 +1,12 @@
 // Packages Imports
-import { useState } from 'react';
+import { useState } from "react";
 import {
   StyleProp,
   StyleSheet,
   TextStyle,
   View,
   ViewStyle,
-} from 'react-native';
+} from "react-native";
 import Animated, {
   Extrapolation,
   interpolate,
@@ -14,9 +14,9 @@ import Animated, {
   useAnimatedProps,
   useDerivedValue,
   withTiming,
-} from 'react-native-reanimated';
-import { Circle, Svg } from 'react-native-svg';
-import Typography from './typography';
+} from "react-native-reanimated";
+import { Circle, Svg } from "react-native-svg";
+import Typography from "./typography";
 
 // Create an Animated Component for the Circle
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
@@ -48,10 +48,10 @@ function CircularProgress(props: CircularProgressProps) {
 
   // get other props
   const {
-    labelColor = 'white',
+    labelColor = "white",
     labelStyle,
-    outerCircleColor = 'white',
-    progressCircleColor = 'dodgerblue',
+    outerCircleColor = "white",
+    progressCircleColor = "dodgerblue",
   } = otherProps;
 
   // Constants
@@ -74,7 +74,7 @@ function CircularProgress(props: CircularProgressProps) {
       derivedProgressValue.value,
       [0, 100],
       [100, 0],
-      Extrapolation.CLAMP
+      Extrapolation.CLAMP,
     );
 
     // This dash offset is the inner circle progress
@@ -140,10 +140,10 @@ export default CircularProgress;
 // styles
 const styles = StyleSheet.create({
   labelView: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

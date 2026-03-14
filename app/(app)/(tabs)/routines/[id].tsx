@@ -1,9 +1,17 @@
-import { Colors, Fonts } from '@/constants/theme';
-import { Routine, RoutineId, RoutineImages } from '@/data/routines';
-import { getRoutineById } from '@/helpers/routine';
-import { Feather, Ionicons } from '@expo/vector-icons';
-import { router, useLocalSearchParams } from 'expo-router';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Colors, Fonts } from "@/constants/theme";
+import { Routine, RoutineId, RoutineImages } from "@/data/routines";
+import { getRoutineById } from "@/helpers/routine";
+import { router, useLocalSearchParams } from "expo-router";
+import {
+  ArrowCounterClockwiseIcon,
+  CheckIcon,
+  ClockIcon,
+  ListIcon,
+  MedalIcon,
+  ToteIcon,
+  WarningCircleIcon,
+} from "phosphor-react-native";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -12,8 +20,8 @@ import {
   StyleSheet,
   Text,
   View,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type Params = { id?: RoutineId };
 
@@ -26,7 +34,7 @@ const RoutineScreen = () => {
 
   useEffect(() => {
     if (!id) {
-      setError('Missing routine ID');
+      setError("Missing routine ID");
       setLoading(false);
       return;
     }
@@ -44,7 +52,7 @@ const RoutineScreen = () => {
       setCompletedMap(initial);
       setError(null);
     } catch (error) {
-      setError((error as Error).message ?? 'Failed to load');
+      setError((error as Error).message ?? "Failed to load");
     } finally {
       setLoading(false);
     }
@@ -104,8 +112,8 @@ const RoutineScreen = () => {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.centerContainer}>
-          <Feather name="alert-circle" size={48} color={Colors.onTertiary} />
-          <Text style={styles.errorText}>{error ?? 'Routine not found'}</Text>
+          <WarningCircleIcon size={48} color={Colors.onTertiary} />
+          <Text style={styles.errorText}>{error ?? "Routine not found"}</Text>
           <Pressable onPress={() => router.back()} style={styles.errorButton}>
             <Text style={styles.errorButtonText}>Go Back</Text>
           </Pressable>
@@ -134,7 +142,7 @@ const RoutineScreen = () => {
         <View style={styles.titleSection}>
           <Text style={styles.title}>{routine.title}</Text>
           <View style={styles.durationBadge}>
-            <Feather name="clock" size={14} color={Colors.primary} />
+            <ClockIcon size={14} color={Colors.primary} />
             <Text style={styles.durationText}>{routine.duration}</Text>
           </View>
         </View>
@@ -169,11 +177,11 @@ const RoutineScreen = () => {
           </View>
           <View style={styles.progressActions}>
             <Pressable onPress={markAllDone} style={styles.actionButton}>
-              <Feather name="check" size={16} color={Colors.onPrimary} />
+              <CheckIcon size={16} color={Colors.onPrimary} weight="bold" />
               <Text style={styles.actionButtonText}>Mark All</Text>
             </Pressable>
             <Pressable onPress={resetAll} style={styles.actionButtonSecondary}>
-              <Feather name="rotate-ccw" size={16} color={Colors.onSecondary} />
+              <ArrowCounterClockwiseIcon size={16} color={Colors.onSecondary} />
               <Text style={styles.actionButtonTextSecondary}>Reset</Text>
             </Pressable>
           </View>
@@ -184,7 +192,7 @@ const RoutineScreen = () => {
           <View style={styles.productsSection}>
             <View style={styles.sectionTitleRow}>
               <View style={styles.sectionIcon}>
-                <Feather name="shopping-bag" size={18} color="#F59E0B" />
+                <ToteIcon size={18} color="#F59E0B" />
               </View>
               <Text style={styles.sectionTitle}>Products Needed</Text>
             </View>
@@ -203,7 +211,7 @@ const RoutineScreen = () => {
         <View style={styles.instructionsSection}>
           <View style={styles.sectionTitleRow}>
             <View style={styles.sectionIcon}>
-              <Feather name="list" size={18} color={Colors.onPrimary} />
+              <ListIcon size={18} color={Colors.onPrimary} />
             </View>
             <Text style={styles.sectionTitle}>Step-by-Step Instructions</Text>
           </View>
@@ -228,7 +236,7 @@ const RoutineScreen = () => {
                       ]}
                     >
                       {isCompleted ? (
-                        <Ionicons name="checkmark" size={20} color="#fff" />
+                        <CheckIcon size={20} color="#fff" weight="bold" />
                       ) : (
                         <Text style={styles.stepNumber}>{index + 1}</Text>
                       )}
@@ -254,7 +262,7 @@ const RoutineScreen = () => {
         {allDone && (
           <View style={styles.completionBanner}>
             <View style={styles.completionIconWrapper}>
-              <Feather name="award" size={28} color="#FCD34D" />
+              <MedalIcon size={28} color="#FCD34D" />
             </View>
             <View style={styles.completionTextWrapper}>
               <Text style={styles.completionTitle}>Routine Complete!</Text>
@@ -278,8 +286,8 @@ const styles = StyleSheet.create({
   },
   centerContainer: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingHorizontal: 16,
     gap: 16,
   },
@@ -293,7 +301,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: Fonts.regular,
     color: Colors.onSecondary,
-    textAlign: 'center',
+    textAlign: "center",
   },
   errorButton: {
     marginTop: 8,
@@ -312,13 +320,13 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   imageWrapper: {
-    width: '100%',
+    width: "100%",
     height: 240,
     marginBottom: 20,
   },
   heroImage: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   titleSection: {
     paddingHorizontal: 16,
@@ -331,9 +339,9 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   durationBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'flex-start',
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "flex-start",
     gap: 6,
     backgroundColor: Colors.card,
     paddingHorizontal: 12,
@@ -367,9 +375,9 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
   },
   progressHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 16,
   },
   progressInfo: {
@@ -391,8 +399,8 @@ const styles = StyleSheet.create({
     height: 56,
     borderRadius: 28,
     backgroundColor: Colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   progressPercent: {
     fontSize: 18,
@@ -403,42 +411,42 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   progressBar: {
-    width: '100%',
+    width: "100%",
     height: 8,
     backgroundColor: Colors.border,
     borderRadius: 4,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   progressBarFill: {
-    height: '100%',
+    height: "100%",
     backgroundColor: Colors.primary,
     borderRadius: 4,
   },
   progressActions: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 10,
   },
   actionButton: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: 6,
     paddingVertical: 10,
     borderRadius: 12,
-    backgroundColor: 'rgba(139, 92, 246, 0.1)',
+    backgroundColor: "rgba(139, 92, 246, 0.1)",
     borderWidth: 1,
     borderColor: Colors.primary,
   },
   actionButtonSecondary: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: 6,
     paddingVertical: 10,
     borderRadius: 12,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     borderWidth: 1,
     borderColor: Colors.border,
   },
@@ -460,8 +468,8 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
   },
   sectionTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 16,
     gap: 10,
   },
@@ -470,8 +478,8 @@ const styles = StyleSheet.create({
     height: 32,
     borderRadius: 16,
     backgroundColor: Colors.tertiary,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   sectionTitle: {
     fontSize: 18,
@@ -482,15 +490,15 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   productRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    alignItems: "flex-start",
     gap: 12,
   },
   productDot: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#F59E0B',
+    backgroundColor: "#F59E0B",
     marginTop: 8,
   },
   productText: {
@@ -515,12 +523,12 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
   },
   instructionCardCompleted: {
-    backgroundColor: 'rgba(16, 185, 129, 0.15)',
-    borderColor: 'rgba(16, 185, 129, 0.5)',
+    backgroundColor: "rgba(16, 185, 129, 0.15)",
+    borderColor: "rgba(16, 185, 129, 0.5)",
   },
   instructionContent: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    alignItems: "flex-start",
     gap: 14,
   },
   stepIndicator: {
@@ -528,12 +536,12 @@ const styles = StyleSheet.create({
     height: 36,
     borderRadius: 18,
     backgroundColor: Colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     flexShrink: 0,
   },
   stepIndicatorCompleted: {
-    backgroundColor: '#34D399',
+    backgroundColor: "#34D399",
   },
   stepNumber: {
     fontSize: 16,
@@ -551,28 +559,28 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   instructionTextCompleted: {
-    textDecorationLine: 'line-through',
+    textDecorationLine: "line-through",
     color: Colors.onTertiary,
   },
   completionBanner: {
     marginHorizontal: 16,
     marginBottom: 24,
-    backgroundColor: 'rgba(251, 191, 36, 0.18)',
+    backgroundColor: "rgba(251, 191, 36, 0.18)",
     borderRadius: 20,
     padding: 20,
     borderWidth: 2,
-    borderColor: '#FCD34D',
-    flexDirection: 'row',
-    alignItems: 'center',
+    borderColor: "#FCD34D",
+    flexDirection: "row",
+    alignItems: "center",
     gap: 16,
   },
   completionIconWrapper: {
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: 'rgba(251, 191, 36, 0.3)',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "rgba(251, 191, 36, 0.3)",
+    alignItems: "center",
+    justifyContent: "center",
     flexShrink: 0,
   },
   completionTextWrapper: {

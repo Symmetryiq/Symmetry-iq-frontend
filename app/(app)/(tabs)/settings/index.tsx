@@ -1,9 +1,19 @@
-import ScreenWrapper from '@/components/common/screen-wrapper';
-import { POLICY_URL, TERMS_URL } from '@/constants';
-import { Colors, Fonts } from '@/constants/theme';
-import { verticalScale } from '@/helpers/scale';
-import { Feather, Ionicons } from '@expo/vector-icons';
-import React from 'react';
+import ScreenWrapper from "@/components/common/screen-wrapper";
+import { POLICY_URL, TERMS_URL } from "@/constants";
+import { Colors, Fonts } from "@/constants/theme";
+import { verticalScale } from "@/helpers/scale";
+import {
+  Book,
+  Calendar,
+  CaretRight,
+  FileText,
+  Gear,
+  GenderMale,
+  ShareNetwork,
+  Star,
+  User,
+} from "phosphor-react-native";
+import React from "react";
 import {
   Alert,
   Linking,
@@ -13,17 +23,18 @@ import {
   Share,
   StyleSheet,
   Text,
-  View
-} from 'react-native';
+  View,
+} from "react-native";
 
-const APP_STORE_URL = 'https://apps.apple.com/app/idYOUR_APP_ID';
-const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.bergman.symmetryiq';
+import LogoutButton from "@/components/buttons/logout-button";
+import { openBrowserLink } from "@/helpers/utils";
+import { useOnboardingStore } from "@/stores/onboarding";
+import { useUser } from "@clerk/expo";
+import { useRouter } from "expo-router";
 
-import LogoutButton from '@/components/buttons/logout-button';
-import { openBrowserLink } from '@/helpers/utils';
-import { useOnboardingStore } from '@/stores/onboarding';
-import { useUser } from '@clerk/clerk-expo';
-import { useRouter } from 'expo-router';
+const APP_STORE_URL = "https://apps.apple.com/app/idYOUR_APP_ID";
+const PLAY_STORE_URL =
+  "https://play.google.com/store/apps/details?id=com.bergman.symmetryiq";
 
 const SettingsScreen = () => {
   const { user } = useUser();
@@ -32,19 +43,22 @@ const SettingsScreen = () => {
 
   const handleShareApp = async () => {
     await Share.share({
-      message: Platform.OS === 'ios'
-        ? 'Check out Symmetry IQ - the app that helps you improve your facial symmetry! Download it here: ' + APP_STORE_URL
-        : 'Check out Symmetry IQ - the app that helps you improve your facial symmetry! Download it here: ' + PLAY_STORE_URL,
+      message:
+        Platform.OS === "ios"
+          ? "Check out Symmetry IQ - the app that helps you improve your facial symmetry! Download it here: " +
+            APP_STORE_URL
+          : "Check out Symmetry IQ - the app that helps you improve your facial symmetry! Download it here: " +
+            PLAY_STORE_URL,
     });
   };
 
   const handleRateApp = async () => {
-    const url = Platform.OS === 'ios' ? APP_STORE_URL : PLAY_STORE_URL;
+    const url = Platform.OS === "ios" ? APP_STORE_URL : PLAY_STORE_URL;
     const supported = await Linking.canOpenURL(url);
     if (supported) {
       await Linking.openURL(url);
     } else {
-      Alert.alert('Unable to open store', 'Please rate us on the app store.');
+      Alert.alert("Unable to open store", "Please rate us on the app store.");
     }
   };
 
@@ -59,40 +73,57 @@ const SettingsScreen = () => {
           <Text style={styles.sectionTitle}>Profile</Text>
 
           <View style={styles.card}>
-            <Pressable style={styles.settingItem} onPress={() => router.push('/settings/profile')}>
+            <Pressable
+              style={styles.settingItem}
+              onPress={() => router.push("/settings/profile")}
+            >
               <View style={styles.settingItemHeader}>
-                <Feather name="user" size={20} color={Colors.onBackground} />
+                <User size={20} color={Colors.onBackground} />
                 <Text style={styles.settingItemHeaderLabel}>Name</Text>
               </View>
               <View style={styles.settingItemRight}>
-                <Text style={styles.settingItemHeaderValue}>{user?.fullName}</Text>
-                <Ionicons name="chevron-forward" size={16} color={Colors.onMuted} />
+                <Text style={styles.settingItemHeaderValue}>
+                  {user?.fullName}
+                </Text>
+                <CaretRight size={16} color={Colors.onMuted} />
               </View>
             </Pressable>
 
             <View style={styles.seperator} />
 
-            <Pressable style={styles.settingItem} onPress={() => router.push('/settings/profile')}>
+            <Pressable
+              style={styles.settingItem}
+              onPress={() => router.push("/settings/profile")}
+            >
               <View style={styles.settingItemHeader}>
-                <Feather name="calendar" size={20} color={Colors.onBackground} />
+                <Calendar size={20} color={Colors.onBackground} />
                 <Text style={styles.settingItemHeaderLabel}>Age</Text>
               </View>
               <View style={styles.settingItemRight}>
-                <Text style={styles.settingItemHeaderValue}>{age || 'Not set'}</Text>
-                <Ionicons name="chevron-forward" size={16} color={Colors.onMuted} />
+                <Text style={styles.settingItemHeaderValue}>
+                  {age || "Not set"}
+                </Text>
+                <CaretRight size={16} color={Colors.onMuted} />
               </View>
             </Pressable>
 
             <View style={styles.seperator} />
 
-            <Pressable style={styles.settingItem} onPress={() => router.push('/settings/profile')}>
+            <Pressable
+              style={styles.settingItem}
+              onPress={() => router.push("/settings/profile")}
+            >
               <View style={styles.settingItemHeader}>
-                <Ionicons name="male" size={20} color={Colors.onBackground} />
+                <GenderMale size={20} color={Colors.onBackground} />
                 <Text style={styles.settingItemHeaderLabel}>Gender</Text>
               </View>
               <View style={styles.settingItemRight}>
-                <Text style={styles.settingItemHeaderValue}>{gender ? (gender.charAt(0).toUpperCase() + gender.slice(1)) : 'Not set'}</Text>
-                <Ionicons name="chevron-forward" size={16} color={Colors.onMuted} />
+                <Text style={styles.settingItemHeaderValue}>
+                  {gender
+                    ? gender.charAt(0).toUpperCase() + gender.slice(1)
+                    : "Not set"}
+                </Text>
+                <CaretRight size={16} color={Colors.onMuted} />
               </View>
             </Pressable>
           </View>
@@ -103,16 +134,20 @@ const SettingsScreen = () => {
           <Text style={styles.sectionTitle}>Preferences</Text>
 
           <View style={styles.card}>
-            <Pressable style={styles.settingItem} onPress={() => router.push('/settings/preferences')}>
+            <Pressable
+              style={styles.settingItem}
+              onPress={() => router.push("/settings/preferences")}
+            >
               <View style={styles.settingItemHeader}>
-                <Ionicons name="settings" size={20} color={Colors.onBackground} />
-                <Text style={styles.settingItemHeaderLabel}>App Preferences</Text>
+                <Gear size={20} color={Colors.onBackground} />
+                <Text style={styles.settingItemHeaderLabel}>
+                  App Preferences
+                </Text>
               </View>
-              <Ionicons name="chevron-forward" size={20} color={Colors.onBackground} />
+              <CaretRight size={20} color={Colors.onBackground} />
             </Pressable>
           </View>
         </View>
-
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>App</Text>
@@ -120,20 +155,22 @@ const SettingsScreen = () => {
           <View style={styles.card}>
             <Pressable style={styles.settingItem} onPress={handleShareApp}>
               <View style={styles.settingItemHeader}>
-                <Ionicons name="share-social" size={20} color={Colors.onBackground} />
+                <ShareNetwork size={20} color={Colors.onBackground} />
                 <Text style={styles.settingItemHeaderLabel}>Share App</Text>
               </View>
-              <Ionicons name="chevron-forward" size={20} color={Colors.onBackground} />
+              <CaretRight size={20} color={Colors.onBackground} />
             </Pressable>
 
             <View style={styles.seperator} />
 
             <Pressable style={styles.settingItem} onPress={handleRateApp}>
               <View style={styles.settingItemHeader}>
-                <Feather name="star" size={20} color={Colors.onBackground} />
-                <Text style={styles.settingItemHeaderLabel}>Leave a rating</Text>
+                <Star size={20} color={Colors.onBackground} />
+                <Text style={styles.settingItemHeaderLabel}>
+                  Leave a rating
+                </Text>
               </View>
-              <Ionicons name="chevron-forward" size={20} color={Colors.onBackground} />
+              <CaretRight size={20} color={Colors.onBackground} />
             </Pressable>
           </View>
         </View>
@@ -142,22 +179,32 @@ const SettingsScreen = () => {
           <Text style={styles.sectionTitle}>Information</Text>
 
           <View style={styles.card}>
-            <Pressable style={styles.settingItem} onPress={() => openBrowserLink(POLICY_URL)}>
+            <Pressable
+              style={styles.settingItem}
+              onPress={() => openBrowserLink(POLICY_URL)}
+            >
               <View style={styles.settingItemHeader}>
-                <Ionicons name="book" size={20} color={Colors.onBackground} />
-                <Text style={styles.settingItemHeaderLabel}>Privacy Policy</Text>
+                <Book size={20} color={Colors.onBackground} />
+                <Text style={styles.settingItemHeaderLabel}>
+                  Privacy Policy
+                </Text>
               </View>
-              <Ionicons name="chevron-forward" size={20} color={Colors.onBackground} />
+              <CaretRight size={20} color={Colors.onBackground} />
             </Pressable>
 
             <View style={styles.seperator} />
 
-            <Pressable style={styles.settingItem} onPress={() => openBrowserLink(TERMS_URL)}>
+            <Pressable
+              style={styles.settingItem}
+              onPress={() => openBrowserLink(TERMS_URL)}
+            >
               <View style={styles.settingItemHeader}>
-                <Ionicons name="document-text" size={20} color={Colors.onBackground} />
-                <Text style={styles.settingItemHeaderLabel}>Terms of Service</Text>
+                <FileText size={20} color={Colors.onBackground} />
+                <Text style={styles.settingItemHeaderLabel}>
+                  Terms of Service
+                </Text>
               </View>
-              <Ionicons name="chevron-forward" size={20} color={Colors.onBackground} />
+              <CaretRight size={20} color={Colors.onBackground} />
             </Pressable>
           </View>
         </View>
@@ -177,9 +224,9 @@ export default SettingsScreen;
 
 const styles = StyleSheet.create({
   header: {
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'flex-start',
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "flex-start",
     backgroundColor: Colors.card,
     borderColor: Colors.border,
     borderWidth: 1,
@@ -197,11 +244,11 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: 16,
-    width: '100%',
+    width: "100%",
   },
 
   section: {
-    width: '100%',
+    width: "100%",
     paddingVertical: 16,
   },
 
@@ -217,29 +264,29 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
     borderRadius: 28,
     padding: 16,
-    width: '100%',
+    width: "100%",
     marginTop: 16,
   },
 
   settingItem: {
-    flexDirection: 'row',
+    flexDirection: "row",
     padding: 8,
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   settingItemHeader: {
-    flexDirection: 'row',
+    flexDirection: "row",
     flex: 1,
     gap: 16,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
+    justifyContent: "flex-start",
+    alignItems: "center",
   },
 
   settingItemRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
 
@@ -263,7 +310,7 @@ const styles = StyleSheet.create({
   },
 
   versionContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingVertical: 16,
   },
 
@@ -276,9 +323,9 @@ const styles = StyleSheet.create({
   // Modal styles
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    justifyContent: "center",
+    alignItems: "center",
     padding: 24,
   },
 
@@ -286,7 +333,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.card,
     borderRadius: 24,
     padding: 24,
-    width: '100%',
+    width: "100%",
     maxWidth: 400,
   },
 
@@ -295,7 +342,7 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.semiBold,
     color: Colors.onBackground,
     marginBottom: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
 
   modalInput: {
@@ -309,7 +356,7 @@ const styles = StyleSheet.create({
   },
 
   modalButtons: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 12,
   },
 
@@ -318,7 +365,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     backgroundColor: Colors.muted,
-    alignItems: 'center',
+    alignItems: "center",
   },
 
   modalButtonCancelText: {
@@ -332,7 +379,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     backgroundColor: Colors.primary,
-    alignItems: 'center',
+    alignItems: "center",
   },
 
   modalButtonSaveText: {
@@ -342,7 +389,7 @@ const styles = StyleSheet.create({
   },
 
   genderOptions: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 12,
     marginBottom: 20,
   },
@@ -352,7 +399,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 16,
     backgroundColor: Colors.muted,
-    alignItems: 'center',
+    alignItems: "center",
     gap: 8,
   },
 

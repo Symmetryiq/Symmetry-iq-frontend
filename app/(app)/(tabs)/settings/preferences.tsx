@@ -1,18 +1,26 @@
-import ScreenWrapper from '@/components/common/screen-wrapper';
-import Typography from '@/components/common/typography';
-import { Colors, Fonts } from '@/constants/theme';
-import { verticalScale } from '@/helpers/scale';
-import { updateUserProfile } from '@/services/api/user.api';
-import { useUser } from '@clerk/clerk-expo';
-import { Ionicons } from '@expo/vector-icons';
-import React, { useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import ScreenWrapper from "@/components/common/screen-wrapper";
+import Typography from "@/components/common/typography";
+import { Colors, Fonts } from "@/constants/theme";
+import { verticalScale } from "@/helpers/scale";
+import { updateUserProfile } from "@/services/api/user.api";
+import { useUser } from "@clerk/expo";
+import { Bell, Info } from "phosphor-react-native";
+import React, { useState } from "react";
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  Text,
+  View,
+} from "react-native";
 
 const PreferencesScreen = () => {
   const { user } = useUser();
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(
-    ((user?.publicMetadata?.preferences as any)?.notifications ?? true) as boolean
+    ((user?.publicMetadata?.preferences as any)?.notifications ??
+      true) as boolean,
   );
 
   const toggleNotifications = async (value: boolean) => {
@@ -29,15 +37,15 @@ const PreferencesScreen = () => {
       // Reload user to get updated metadata
       await user?.reload();
     } catch (error) {
-      console.error('Error updating preferences:', error);
-      Alert.alert('Error', 'Failed to update preference. Please try again.');
+      console.error("Error updating preferences:", error);
+      Alert.alert("Error", "Failed to update preference. Please try again.");
       // Revert on error
       setNotificationsEnabled(!value);
     }
   };
 
   return (
-    <ScreenWrapper edges={['bottom']}>
+    <ScreenWrapper edges={["bottom"]}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={styles.content}
@@ -49,12 +57,16 @@ const PreferencesScreen = () => {
           <View style={styles.card}>
             <View style={styles.preferenceItem}>
               <View style={styles.preferenceItemLeft}>
-                <Ionicons name="notifications" size={24} color={Colors.onBackground} />
+                <Bell size={24} color={Colors.onBackground} />
                 <View style={styles.preferenceTextContainer}>
                   <Typography font="medium" size={18} color="onBackground">
                     Push Notifications
                   </Typography>
-                  <Typography size={14} color="onMuted" style={styles.preferenceDescription}>
+                  <Typography
+                    size={14}
+                    color="onMuted"
+                    style={styles.preferenceDescription}
+                  >
                     Receive reminders and updates
                   </Typography>
                 </View>
@@ -71,7 +83,7 @@ const PreferencesScreen = () => {
         </View>
 
         <View style={styles.infoContainer}>
-          <Ionicons name="information-circle" size={20} color={Colors.onMuted} />
+          <Info size={20} color={Colors.onMuted} />
           <Typography size={14} color="onMuted" style={styles.infoText}>
             More preference options coming soon
           </Typography>
@@ -94,7 +106,7 @@ const styles = StyleSheet.create({
   },
 
   section: {
-    width: '100%',
+    width: "100%",
     marginBottom: 24,
   },
 
@@ -111,20 +123,20 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
     borderRadius: 28,
     padding: 16,
-    width: '100%',
+    width: "100%",
   },
 
   preferenceItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingVertical: 8,
     minHeight: verticalScale(56),
   },
 
   preferenceItemLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 16,
     flex: 1,
     paddingRight: 16,
@@ -140,8 +152,8 @@ const styles = StyleSheet.create({
   },
 
   infoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
     paddingHorizontal: 16,
     paddingVertical: 12,

@@ -1,22 +1,22 @@
-import Button from '@/components/common/button';
-import ScreenWrapper from '@/components/common/screen-wrapper';
-import Typography from '@/components/common/typography';
-import { Colors } from '@/constants/theme';
-import { scale, verticalScale } from '@/helpers/scale';
-import { getLandmarks, getScores } from '@/helpers/scan';
-import { useScanStore } from '@/stores/scan-store';
-import { Feather } from '@expo/vector-icons';
-import { launchCameraAsync, launchImageLibraryAsync } from 'expo-image-picker';
-import { router } from 'expo-router';
-import { ClockIcon, UserIcon } from 'phosphor-react-native';
-import React, { useState } from 'react';
+import Button from "@/components/common/button";
+import ScreenWrapper from "@/components/common/screen-wrapper";
+import Typography from "@/components/common/typography";
+import { Colors } from "@/constants/theme";
+import { scale, verticalScale } from "@/helpers/scale";
+import { getLandmarks, getScores } from "@/helpers/scan";
+import { useScanStore } from "@/stores/scan-store";
+
+import { launchCameraAsync, launchImageLibraryAsync } from "expo-image-picker";
+import { router } from "expo-router";
+import { CameraIcon, ClockIcon, UserIcon } from "phosphor-react-native";
+import React, { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
   Image,
   StyleSheet,
   View,
-} from 'react-native';
+} from "react-native";
 
 const Scan = () => {
   const [image, setImage] = useState<string | null>(null);
@@ -27,7 +27,7 @@ const Scan = () => {
     if (!latestScan) return;
 
     router.push({
-      pathname: '/insights',
+      pathname: "/insights",
       params: {
         scanId: latestScan._id,
       },
@@ -36,7 +36,7 @@ const Scan = () => {
 
   const handleUploadFromGallery = async () => {
     const result = await launchImageLibraryAsync({
-      mediaTypes: 'images',
+      mediaTypes: "images",
       quality: 1,
     });
 
@@ -79,7 +79,7 @@ const Scan = () => {
       const response = await getScores(landmarks);
 
       if (!response.data?.model) {
-        throw new Error('Invalid response from scoring API');
+        throw new Error("Invalid response from scoring API");
       }
 
       const scores = normalizeScores(response.data.model);
@@ -88,13 +88,13 @@ const Scan = () => {
       const savedScan = await saveScanData(landmarks, scores);
 
       if (!savedScan) {
-        console.error('❌ Scan save returned null');
-        throw new Error('Failed to save scan to database');
+        console.error("❌ Scan save returned null");
+        throw new Error("Failed to save scan to database");
       }
 
       // Step 4: Navigate to results page with option to generate plan
       router.push({
-        pathname: '/(app)/(tabs)/scan/[result]',
+        pathname: "/(app)/(tabs)/scan/[result]",
         params: {
           result: savedScan.id,
           scores: JSON.stringify(scores),
@@ -104,31 +104,31 @@ const Scan = () => {
 
       setImage(null);
     } catch (error: any) {
-      console.error('❌ Error processing image:', error);
+      console.error("❌ Error processing image:", error);
 
-      let errorMessage = 'Failed to process image. Please try again.';
+      let errorMessage = "Failed to process image. Please try again.";
 
       if (error?.message) {
-        if (error.message.includes('No Face Detected')) {
+        if (error.message.includes("No Face Detected")) {
           errorMessage =
-            'No face detected in the image. Please ensure your face is clearly visible and try again.';
+            "No face detected in the image. Please ensure your face is clearly visible and try again.";
         } else if (
-          error.message.includes('network') ||
-          error.message.includes('Network')
+          error.message.includes("network") ||
+          error.message.includes("Network")
         ) {
           errorMessage =
-            'Network error. Please check your connection and try again.';
-        } else if (error.message.includes('Invalid response')) {
-          errorMessage = 'Invalid response from server. Please try again.';
+            "Network error. Please check your connection and try again.";
+        } else if (error.message.includes("Invalid response")) {
+          errorMessage = "Invalid response from server. Please try again.";
         } else {
           errorMessage = error.message;
         }
       }
 
-      Alert.alert('Processing Error', errorMessage, [
+      Alert.alert("Processing Error", errorMessage, [
         {
-          text: 'OK',
-          style: 'default',
+          text: "OK",
+          style: "default",
         },
       ]);
     } finally {
@@ -138,33 +138,61 @@ const Scan = () => {
 
   if (hasScannedToday()) {
     return (
-      <ScreenWrapper edges={['top']}>
+      <ScreenWrapper edges={["top"]}>
         <View style={styles.container}>
-          <View style={{ alignItems: 'center' }}>
-            <Typography color="onBackground" size={scale(36)} font='bold' style={{ textAlign: 'center' }}>
+          <View style={{ alignItems: "center" }}>
+            <Typography
+              color="onBackground"
+              size={scale(36)}
+              font="bold"
+              style={{ textAlign: "center" }}
+            >
               Scan Completed
             </Typography>
-            <Typography color="onSecondary" size={scale(16)} style={{ textAlign: 'center' }}>
+            <Typography
+              color="onSecondary"
+              size={scale(16)}
+              style={{ textAlign: "center" }}
+            >
               You have already scanned today. Please try again tomorrow.
             </Typography>
           </View>
 
-          <View style={{
-            alignSelf: 'center',
-            height: verticalScale(375),
-            flex: 1,
-            aspectRatio: 1,
-            overflow: 'hidden'
-          }}>
-            <Image source={require('@/assets/images/tick.jpg')} style={{ width: '100%', height: '100%' }} />
+          <View
+            style={{
+              alignSelf: "center",
+              height: verticalScale(375),
+              flex: 1,
+              aspectRatio: 1,
+              overflow: "hidden",
+            }}
+          >
+            <Image
+              source={require("@/assets/images/tick.jpg")}
+              style={{ width: "100%", height: "100%" }}
+            />
           </View>
 
-          <View style={{ gap: scale(8), }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: scale(8) }}>
+          <View style={{ gap: scale(8) }}>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: scale(8),
+              }}
+            >
               <ClockIcon size={scale(24)} color={Colors.onMuted} />
 
-              <Typography color="onSecondary" size={scale(16)} style={{ textAlign: 'center' }}>
-                Time: {new Date(latestScan?.scanDate!).toLocaleTimeString().toUpperCase()}
+              <Typography
+                color="onSecondary"
+                size={scale(16)}
+                style={{ textAlign: "center" }}
+              >
+                Time:{" "}
+                {new Date(latestScan?.scanDate!)
+                  .toLocaleTimeString()
+                  .toUpperCase()}
               </Typography>
             </View>
 
@@ -175,27 +203,27 @@ const Scan = () => {
             <Typography
               color="onMuted"
               size={scale(14)}
-              style={{ textAlign: 'center' }}
+              style={{ textAlign: "center" }}
             >
               You can scan again tomorrow.
             </Typography>
           </View>
         </View>
       </ScreenWrapper>
-    )
+    );
   }
 
   return (
-    <ScreenWrapper edges={['top']}>
+    <ScreenWrapper edges={["top"]}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <Feather name="camera" color={Colors.onBackground} size={56} />
+          <CameraIcon color={Colors.onBackground} size={56} />
 
-          <View style={{ alignItems: 'center' }}>
+          <View style={{ alignItems: "center" }}>
             <Typography size={28} font="bold" color="onBackground">
               Face Scan
             </Typography>
-            <Typography color="onSecondary" style={{ textAlign: 'center' }}>
+            <Typography color="onSecondary" style={{ textAlign: "center" }}>
               Capture or upload a clear, front-facing photo.
             </Typography>
           </View>
@@ -224,7 +252,7 @@ const Scan = () => {
 
             <Button
               style={{
-                backgroundColor: 'transparent',
+                backgroundColor: "transparent",
               }}
               onPress={handleUploadFromGallery}
             >
@@ -255,7 +283,7 @@ const Scan = () => {
 
             <Button
               style={{
-                backgroundColor: 'transparent',
+                backgroundColor: "transparent",
               }}
               onPress={() => {
                 setImage(null);
@@ -281,13 +309,13 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: scale(16),
     gap: verticalScale(20),
-    justifyContent: 'center',
+    justifyContent: "center",
     paddingVertical: verticalScale(40),
   },
 
   header: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     gap: verticalScale(12),
   },
 
@@ -295,13 +323,13 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 24,
     backgroundColor: Colors.muted,
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'hidden',
+    justifyContent: "center",
+    alignItems: "center",
+    overflow: "hidden",
   },
 
   image: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
 });

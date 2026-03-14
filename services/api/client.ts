@@ -1,4 +1,4 @@
-import { getClerkInstance } from '@clerk/clerk-expo';
+import { getClerkInstance } from '@clerk/expo';
 import axios from 'axios';
 
 const API_URL =

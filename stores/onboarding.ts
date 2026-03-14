@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Landmark } from 'react-native-mediapipe';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
@@ -40,6 +41,11 @@ export interface OnboardingState {
 
   onboardingCompleted: boolean;
 
+  // Demo scan data
+  demoLandmarks: Landmark[] | null;
+  demoScores: any | null;
+  demoImage: string | null;
+
   // Actions
   setName: (name: string) => void;
   setAge: (age: string) => void;
@@ -53,6 +59,11 @@ export interface OnboardingState {
   setCommitmentLevel: (level: CommitmentLevel) => void;
   setRating: (rating: number | null) => void;
   setOnboardingCompleted: (completed: boolean) => void;
+  setDemoScan: (
+    landmarks: Landmark[] | null,
+    scores: any | null,
+    image: string | null,
+  ) => void;
   reset: () => void;
 }
 
@@ -69,6 +80,9 @@ const initialState = {
   commitmentLevel: null as CommitmentLevel,
   rating: null as number | null,
   onboardingCompleted: false,
+  demoLandmarks: null as Landmark[] | null,
+  demoScores: null as any | null,
+  demoImage: null as string | null,
 };
 
 export const useOnboardingStore = create<OnboardingState>()(
@@ -88,6 +102,8 @@ export const useOnboardingStore = create<OnboardingState>()(
       setRating: (rating) => set({ rating }),
       setOnboardingCompleted: (onboardingCompleted) =>
         set({ onboardingCompleted }),
+      setDemoScan: (demoLandmarks, demoScores, demoImage) =>
+        set({ demoLandmarks, demoScores, demoImage }),
       reset: () => set(initialState),
     }),
     {
@@ -106,7 +122,10 @@ export const useOnboardingStore = create<OnboardingState>()(
         commitmentLevel: state.commitmentLevel,
         rating: state.rating,
         onboardingCompleted: state.onboardingCompleted,
+        demoLandmarks: state.demoLandmarks,
+        demoScores: state.demoScores,
+        demoImage: state.demoImage,
       }),
-    }
-  )
+    },
+  ),
 );

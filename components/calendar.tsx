@@ -1,14 +1,14 @@
-import { Colors } from '@/constants/theme';
-import { scale, verticalScale } from '@/helpers/scale';
-import React from 'react';
+import { Colors } from "@/constants/theme";
+import { scale, verticalScale } from "@/helpers/scale";
+import React from "react";
 import {
   FlatList,
   ListRenderItemInfo,
   Pressable,
   StyleSheet,
   View,
-} from 'react-native';
-import Typography from './common/typography';
+} from "react-native";
+import Typography from "./common/typography";
 
 type CalendarProps = {
   days?: number;
@@ -27,7 +27,7 @@ const buildDates = (start: Date, days: number) => {
     const d = new Date(
       start.getFullYear(),
       start.getMonth(),
-      start.getDate() + i
+      start.getDate() + i,
     );
     res.push(d);
   }
@@ -44,10 +44,10 @@ const Calendar = ({
   // Use availableDates if provided, otherwise build a range
   const dates = React.useMemo(
     () => availableDates ?? buildDates(startDate, days),
-    [availableDates, startDate, days]
+    [availableDates, startDate, days],
   );
   const [internalSelected, setInternalSelected] = React.useState<Date>(
-    () => selectedDate ?? dates[0]
+    () => selectedDate ?? dates[0],
   );
   const flatRef = React.useRef<FlatList<Date> | null>(null);
 
@@ -132,38 +132,38 @@ const CalendarItem = React.memo(
           <Typography
             font="semiBold"
             size={16}
-            color={isActive ? 'onPrimary' : 'onCard'}
+            color={isActive ? "onPrimary" : "onCard"}
           >
-            {dateNum.toString().padStart(2, '0')}
+            {dateNum.toString().padStart(2, "0")}
           </Typography>
 
           <Typography
             font="medium"
             size={14}
-            color={isActive ? 'onPrimary' : 'onCard'}
+            color={isActive ? "onPrimary" : "onCard"}
           >
-            {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][day]}
+            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][day]}
           </Typography>
         </View>
       </Pressable>
     );
-  }
+  },
 );
 
-CalendarItem.displayName = 'CalendarItem';
+CalendarItem.displayName = "CalendarItem";
 
 const styles = StyleSheet.create({
   listContainer: {
     paddingVertical: verticalScale(16),
     paddingHorizontal: scale(16),
-    alignItems: 'center',
+    alignItems: "center",
   },
 
   calendarItemWrapper: {
     height: verticalScale(64),
     width: scale(64),
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     borderRadius: 200,
     borderWidth: 1,
     borderColor: Colors.border,
@@ -176,14 +176,14 @@ const styles = StyleSheet.create({
   calendarItemWrapperToday: {
     borderColor: Colors.primary,
     borderWidth: 2,
-    borderStyle: 'dashed',
+    borderStyle: "dashed",
   },
 
   calendarItem: {
     height: verticalScale(56),
     width: scale(56),
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     borderRadius: 200,
     backgroundColor: Colors.card,
   },

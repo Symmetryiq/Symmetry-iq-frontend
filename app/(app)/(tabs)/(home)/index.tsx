@@ -1,20 +1,20 @@
-import Calendar from '@/components/calendar';
-import Checklist from '@/components/checklist';
-import ScreenWrapper from '@/components/common/screen-wrapper';
-import Section from '@/components/common/section';
-import Typography from '@/components/common/typography';
-import PastScore from '@/components/past-score';
-import RoutineCardLarge from '@/components/routine-card';
-import ScanCard from '@/components/scan-card';
-import { Colors } from '@/constants/theme';
-import { scale, verticalScale } from '@/helpers/scale';
-import { usePlanStore } from '@/stores/plan-store';
-import { useScanStore } from '@/stores/scan-store';
-import { useUser } from '@clerk/clerk-expo';
-import { router, useFocusEffect } from 'expo-router';
-import { BellIcon } from 'phosphor-react-native';
-import React, { useMemo, useState } from 'react';
-import { Image, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import Calendar from "@/components/calendar";
+import Checklist from "@/components/checklist";
+import ScreenWrapper from "@/components/common/screen-wrapper";
+import Section from "@/components/common/section";
+import Typography from "@/components/common/typography";
+import PastScore from "@/components/past-score";
+import RoutineCardLarge from "@/components/routine-card";
+import ScanCard from "@/components/scan-card";
+import { Colors } from "@/constants/theme";
+import { scale, verticalScale } from "@/helpers/scale";
+import { usePlanStore } from "@/stores/plan-store";
+import { useScanStore } from "@/stores/scan-store";
+import { useUser } from "@clerk/expo";
+import { router, useFocusEffect } from "expo-router";
+import { BellIcon } from "phosphor-react-native";
+import React, { useMemo, useState } from "react";
+import { Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
 
 const Home = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -27,7 +27,7 @@ const Home = () => {
     React.useCallback(() => {
       fetchCurrentPlan();
       fetchScans();
-    }, [])
+    }, []),
   );
 
   const planDates = useMemo(() => {
@@ -46,12 +46,12 @@ const Home = () => {
       const drDate = new Date(dr.date);
       drDate.setHours(0, 0, 0, 0);
       return drDate.getTime() === targetDate.getTime();
-    })
+    });
     return routineForDate?.routineId || null;
   }, [currentPlan, selectedDate]);
 
   const handlePressScanNow = () => {
-    router.push('/scan');
+    router.push("/scan");
   };
 
   // Helper to check if selected date is today
@@ -65,13 +65,13 @@ const Home = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const todayScan = scans.find(s => {
+    const todayScan = scans.find((s) => {
       const d = new Date(s.scanDate);
       d.setHours(0, 0, 0, 0);
       return d.getTime() === today.getTime();
     });
 
-    const previousDayScan = scans.find(s => {
+    const previousDayScan = scans.find((s) => {
       const d = new Date(s.scanDate);
       d.setHours(0, 0, 0, 0);
       return d.getTime() < today.getTime();
@@ -81,26 +81,26 @@ const Home = () => {
   }, [scans]);
 
   return (
-    <ScreenWrapper edges={['top']}>
+    <ScreenWrapper edges={["top"]}>
       <View style={{ flex: 1 }}>
         <View style={styles.header}>
           <View style={styles.headerContentContainer}>
             <Image
-              source={require('@/assets/images/icon.png')}
+              source={require("@/assets/images/logo-android.png")}
               style={styles.headerAvatar}
             />
 
             <View style={styles.headerContentWrapper}>
               <Typography color="onSecondary">Welcome back,</Typography>
               <Typography font="semiBold" size={20} color="onBackground">
-                {user?.firstName || 'User'}
+                {user?.firstName || "User"}
               </Typography>
             </View>
           </View>
 
           <Pressable
             style={styles.headerPressable}
-            onPress={() => router.push('/(app)/(tabs)/(home)/notifications')}
+            onPress={() => router.push("/(app)/(tabs)/(home)/notifications")}
           >
             <BellIcon weight="fill" size={24} color={Colors.onMuted} />
           </Pressable>
@@ -110,7 +110,11 @@ const Home = () => {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 24 }}
         >
-          <Calendar onSelect={setSelectedDate} selectedDate={selectedDate} availableDates={planDates} />
+          <Calendar
+            onSelect={setSelectedDate}
+            selectedDate={selectedDate}
+            availableDates={planDates}
+          />
 
           <View style={styles.contentContainer}>
             <Section>
@@ -127,24 +131,31 @@ const Home = () => {
                   {isToday ? "Today's Routine" : "Daily Routine"}
                 </Typography>
 
-                <RoutineCardLarge
-                  routineId={dailyRoutineId}
-                />
+                <RoutineCardLarge routineId={dailyRoutineId} />
               </Section>
             ) : (
               <Section>
                 <Typography font="semiBold" size={28} color="onSecondary">
                   Daily Routine
                 </Typography>
-                <View style={{ padding: 20, alignItems: 'center', backgroundColor: Colors.card, borderRadius: 24 }}>
-                  <Typography color="onSecondary">No routine scheduled for this date</Typography>
+                <View
+                  style={{
+                    padding: 20,
+                    alignItems: "center",
+                    backgroundColor: Colors.card,
+                    borderRadius: 24,
+                  }}
+                >
+                  <Typography color="onSecondary">
+                    No routine scheduled for this date
+                  </Typography>
                 </View>
               </Section>
             )}
 
             <Section>
               <Typography font="semiBold" size={28} color="onSecondary">
-                {isToday ? "Today's Task" : 'Daily Tasks'}
+                {isToday ? "Today's Task" : "Daily Tasks"}
               </Typography>
 
               <Checklist date={selectedDate} />
@@ -180,7 +191,7 @@ export default Home;
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
+    justifyContent: "center",
     paddingBottom: 32,
   },
 
@@ -188,15 +199,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: scale(16),
     paddingVertical: verticalScale(16),
     backgroundColor: Colors.card,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 
   headerContentContainer: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: scale(8),
   },
 
@@ -217,15 +228,15 @@ const styles = StyleSheet.create({
   },
 
   badge: {
-    position: 'absolute',
+    position: "absolute",
     top: -4,
     right: -4,
     backgroundColor: Colors.danger,
     borderRadius: 10,
     minWidth: 18,
     height: 18,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: 4,
   },
 
@@ -233,7 +244,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: scale(16),
     paddingVertical: verticalScale(16),
     gap: verticalScale(12),
-    flexDirection: 'row',
+    flexDirection: "row",
   },
 
   calendarItemContainer: {
@@ -242,8 +253,8 @@ const styles = StyleSheet.create({
     borderRadius: 200,
     borderWidth: 1,
     borderColor: Colors.border,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   calendarItemContainerActive: {
@@ -254,8 +265,8 @@ const styles = StyleSheet.create({
     width: scale(56),
     height: verticalScale(56),
     backgroundColor: Colors.card,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     gap: verticalScale(4),
     borderRadius: 200,
   },

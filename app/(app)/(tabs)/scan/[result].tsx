@@ -1,29 +1,38 @@
-import Button from '@/components/common/button';
-import ScreenWrapper from '@/components/common/screen-wrapper';
-import Typography from '@/components/common/typography';
-import { Colors, Fonts } from '@/constants/theme';
-import { getColorByScore, getLabelByScore } from '@/helpers/analyze';
-import { usePlanStore } from '@/stores/plan-store';
-import { Ionicons } from '@expo/vector-icons';
-import { router, useLocalSearchParams } from 'expo-router';
-import { useState } from 'react';
-import { ActivityIndicator, Alert, Image, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
-import PagerView from 'react-native-pager-view';
+import Button from "@/components/common/button";
+import ScreenWrapper from "@/components/common/screen-wrapper";
+import Typography from "@/components/common/typography";
+import { Colors, Fonts } from "@/constants/theme";
+import { getColorByScore, getLabelByScore } from "@/helpers/analyze";
+import { usePlanStore } from "@/stores/plan-store";
+import { router, useLocalSearchParams } from "expo-router";
+import { Info, X } from "phosphor-react-native";
+import { useState } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  Image,
+  Modal,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import PagerView from "react-native-pager-view";
 
 const DESCRIPTIONS: Record<string, string> = {
   overallSymmetry:
-    'Measures how balanced your facial features are across the vertical axis.',
-  eyeAlignment: 'Evaluates eye level, spacing, and horizontal alignment.',
+    "Measures how balanced your facial features are across the vertical axis.",
+  eyeAlignment: "Evaluates eye level, spacing, and horizontal alignment.",
   noseCentering:
-    'Checks how centrally aligned the nose is relative to facial midline.',
+    "Checks how centrally aligned the nose is relative to facial midline.",
   facialThirds:
-    'Assesses vertical facial proportions between forehead, midface, and jaw.',
-  cheekboneBalance: 'Measures balance and prominence of cheekbones.',
-  jawlineSymmetry: 'Evaluates jaw shape and bilateral symmetry.',
-  skinClarity: 'Estimates visible skin smoothness and clarity.',
-  facialPuffiness: 'Detects facial bloating or swelling indicators.',
-  chinAlignment: 'Measures chin centering and lower-face balance.',
-  eyebrowSymmetry: 'Checks height and shape symmetry of eyebrows.',
+    "Assesses vertical facial proportions between forehead, midface, and jaw.",
+  cheekboneBalance: "Measures balance and prominence of cheekbones.",
+  jawlineSymmetry: "Evaluates jaw shape and bilateral symmetry.",
+  skinClarity: "Estimates visible skin smoothness and clarity.",
+  facialPuffiness: "Detects facial bloating or swelling indicators.",
+  chinAlignment: "Measures chin centering and lower-face balance.",
+  eyebrowSymmetry: "Checks height and shape symmetry of eyebrows.",
 };
 
 export default function ScanResultScreen() {
@@ -42,15 +51,15 @@ export default function ScanResultScreen() {
       setGenerating(false);
 
       // Navigate to routines tab
-      router.replace('/(app)/(tabs)/routines');
+      router.replace("/(app)/(tabs)/routines");
     } catch (error: any) {
       setGenerating(false);
-      Alert.alert('Error', error.message || 'Failed to generate plan');
+      Alert.alert("Error", error.message || "Failed to generate plan");
     }
   };
 
   const renderCard = (key: string, label: string, value: number) => {
-    const isReversed = key === 'facialPuffiness';
+    const isReversed = key === "facialPuffiness";
     const color = getColorByScore(value, isReversed);
 
     return (
@@ -58,11 +67,7 @@ export default function ScanResultScreen() {
         <View style={styles.cardHeader}>
           <Text style={styles.cardTitle}>{label}</Text>
           <Pressable onPress={() => setInfoKey(key)}>
-            <Ionicons
-              name="information-circle-outline"
-              size={18}
-              color={Colors.onSecondary}
-            />
+            <Info size={18} color={Colors.onSecondary} />
           </Pressable>
         </View>
 
@@ -89,7 +94,7 @@ export default function ScanResultScreen() {
       {/* HEADER */}
       <View style={styles.header}>
         <Pressable onPress={() => router.back()}>
-          <Ionicons name="close" size={24} color={Colors.onBackground} />
+          <X size={24} color={Colors.onBackground} />
         </Pressable>
         <Text style={styles.headerTitle}>Your Facial Report</Text>
         <View style={{ width: 24 }} />
@@ -105,38 +110,38 @@ export default function ScanResultScreen() {
         {/* PAGE 1 */}
         <View key="1" style={styles.page}>
           {renderCard(
-            'overallSymmetry',
-            'Overall Symmetry',
-            data.overallSymmetry
+            "overallSymmetry",
+            "Overall Symmetry",
+            data.overallSymmetry,
           )}
-          {renderCard('facialThirds', 'Facial Thirds', data.facialThirds)}
-          {renderCard('eyeAlignment', 'Eye Alignment', data.eyeAlignment)}
+          {renderCard("facialThirds", "Facial Thirds", data.facialThirds)}
+          {renderCard("eyeAlignment", "Eye Alignment", data.eyeAlignment)}
           {renderCard(
-            'eyebrowSymmetry',
-            'Eyebrow Symmetry',
-            data.eyebrowSymmetry
+            "eyebrowSymmetry",
+            "Eyebrow Symmetry",
+            data.eyebrowSymmetry,
           )}
-          {renderCard('noseCentering', 'Nose Centering', data.noseCentering)}
+          {renderCard("noseCentering", "Nose Centering", data.noseCentering)}
           {renderCard(
-            'jawlineSymmetry',
-            'Jawline Symmetry',
-            data.jawlineSymmetry
+            "jawlineSymmetry",
+            "Jawline Symmetry",
+            data.jawlineSymmetry,
           )}
         </View>
 
         {/* PAGE 2 */}
         <View key="2" style={styles.page}>
           {renderCard(
-            'cheekboneBalance',
-            'Cheekbone Balance',
-            data.cheekboneBalance
+            "cheekboneBalance",
+            "Cheekbone Balance",
+            data.cheekboneBalance,
           )}
-          {renderCard('chinAlignment', 'Chin Alignment', data.chinAlignment)}
-          {renderCard('skinClarity', 'Skin Clarity', data.skinClarity)}
+          {renderCard("chinAlignment", "Chin Alignment", data.chinAlignment)}
+          {renderCard("skinClarity", "Skin Clarity", data.skinClarity)}
           {renderCard(
-            'facialPuffiness',
-            'Facial Puffiness',
-            data.facialPuffiness
+            "facialPuffiness",
+            "Facial Puffiness",
+            data.facialPuffiness,
           )}
         </View>
       </PagerView>
@@ -158,7 +163,7 @@ export default function ScanResultScreen() {
           <View style={styles.infoModal}>
             <Text style={styles.infoTitle}>About this score</Text>
             <Text style={styles.infoText}>
-              {infoKey ? DESCRIPTIONS[infoKey] : ''}
+              {infoKey ? DESCRIPTIONS[infoKey] : ""}
             </Text>
           </View>
         </Pressable>
@@ -169,10 +174,10 @@ export default function ScanResultScreen() {
 
 const styles = StyleSheet.create({
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     padding: 16,
-    alignItems: 'center',
+    alignItems: "center",
   },
 
   headerTitle: {
@@ -182,7 +187,7 @@ const styles = StyleSheet.create({
   },
 
   avatarWrap: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 12,
   },
 
@@ -193,14 +198,14 @@ const styles = StyleSheet.create({
   },
 
   page: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     paddingHorizontal: 16,
     gap: 12,
   },
 
   card: {
-    width: '48%',
+    width: "48%",
     borderRadius: 28,
     borderWidth: 1,
     padding: 16,
@@ -208,8 +213,8 @@ const styles = StyleSheet.create({
   },
 
   cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
 
   cardTitle: {
@@ -229,11 +234,11 @@ const styles = StyleSheet.create({
     height: 12,
     backgroundColor: Colors.border,
     borderRadius: 28,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
 
   fill: {
-    height: '100%',
+    height: "100%",
     borderRadius: 28,
   },
 
@@ -249,7 +254,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderColor: Colors.border,
     borderWidth: 1,
-    alignItems: 'center',
+    alignItems: "center",
   },
 
   closeText: {
@@ -260,8 +265,8 @@ const styles = StyleSheet.create({
 
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
     padding: 24,
   },
 

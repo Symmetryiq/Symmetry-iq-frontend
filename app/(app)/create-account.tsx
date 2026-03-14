@@ -1,100 +1,129 @@
-import AppleButton from '@/components/buttons/apple-button';
-import GoogleButton from '@/components/buttons/google-button';
-import Button from '@/components/common/button';
-import Input from '@/components/common/input';
-import KeyboardWrapper from '@/components/common/keyboard-wrapper';
-import { Label } from '@/components/common/label';
-import ScreenWrapper from '@/components/common/screen-wrapper';
-import Typography from '@/components/common/typography';
-import { Colors } from '@/constants/theme';
-import { scale, verticalScale } from '@/helpers/scale';
-import { useOnboardingStore } from '@/stores/onboarding';
-import { useSignUp } from '@clerk/clerk-expo';
-import { Link, useRouter } from 'expo-router';
-import {
-  LockIcon,
-  MailboxIcon
-} from 'phosphor-react-native';
-import React, { useState } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import AppleButton from "@/components/buttons/apple-button";
+import GoogleButton from "@/components/buttons/google-button";
+import Button from "@/components/common/button";
+import Input from "@/components/common/input";
+import KeyboardWrapper from "@/components/common/keyboard-wrapper";
+import { Label } from "@/components/common/label";
+import ScreenWrapper from "@/components/common/screen-wrapper";
+import Typography from "@/components/common/typography";
+import { Colors } from "@/constants/theme";
+import { scale, verticalScale } from "@/helpers/scale";
+import { useOnboardingStore } from "@/stores/onboarding";
+import { useAuth, useSignUp } from "@clerk/expo";
+import { Link, useRouter } from "expo-router";
+import { LockIcon, MailboxIcon } from "phosphor-react-native";
+import React from "react";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 
 const CreateAccount = () => {
-  const { signUp, setActive, isLoaded } = useSignUp();
-  const { name } = useOnboardingStore();
+  const { signUp, errors, fetchStatus } = useSignUp();
+  const { isSignedIn } = useAuth();
   const router = useRouter();
 
-  const [emailAddress, setEmailAddress] = React.useState('')
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { name } = useOnboardingStore();
 
-  const [pendingVerification, setPendingVerification] = React.useState(false)
-  const [code, setCode] = React.useState('')
+  const [emailAddress, setEmailAddress] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [code, setCode] = React.useState("");
 
-  const onSignUpPress = async () => {
-    if (!isLoaded) return
-    if (!emailAddress || !password) {
-      setError('All fields are required.');
+  // const [loading, setLoading] = useState(false);
+  // const [error, setError] = useState<string | null>(null);
+
+  // const [pendingVerification, setPendingVerification] = React.useState(false)
+
+  const handleSubmit = async () => {
+    // if (!emailAddress || !password) {
+    //   setError('All fields are required.');
+    //   return;
+    // }
+
+    // setLoading(true);
+    // setError(null);
+
+    // try {
+    //   await signUp.create({
+    //     emailAddress,
+    //     password,
+    //     firstName: name,
+    //   })
+
+    //   await signUp.prepareEmailAddressVerification({ strategy: 'email_code' })
+
+    //   setPendingVerification(true)
+    // } catch (err: any) {
+    //   const message =
+    //     err?.errors?.[0]?.longMessage ||
+    //     err?.errors?.[0]?.message ||
+    //     'Sign up failed. Please try again.';
+    //   setError(message);
+    // } finally {
+    //   setLoading(false);
+    // }
+
+    const { error } = await signUp.password({
+      emailAddress,
+      password,
+    });
+
+    if (error) {
+      console.error(JSON.stringify(error, null, 2));
       return;
     }
 
-    setLoading(true);
-    setError(null);
+    if (!error) await signUp.verifications.sendEmailCode();
+  };
 
-    try {
-      await signUp.create({
-        emailAddress,
-        password,
-        firstName: name,
-      })
+  const handleVerify = async () => {
+    // if (!isLoaded) return
+    // if (!code) {
+    //   setError('Verification code is required.');
+    //   return;
+    // }
 
-      await signUp.prepareEmailAddressVerification({ strategy: 'email_code' })
+    // setLoading(true);
+    // setError(null);
 
-      setPendingVerification(true)
-    } catch (err: any) {
-      const message =
-        err?.errors?.[0]?.longMessage ||
-        err?.errors?.[0]?.message ||
-        'Sign up failed. Please try again.';
-      setError(message);
-    } finally {
-      setLoading(false);
+    // try {
+    //   const signUpAttempt = await signUp.attemptEmailAddressVerification({
+    //     code,
+    //   })
+
+    //   if (signUpAttempt.status === 'complete') {
+    //     await setActive({ session: signUpAttempt.createdSessionId })
+    //   } else {
+    //     setError('Verification failed. Please try again.');
+    //   }
+    // } catch (err: any) {
+    //   const message =
+    //     err?.errors?.[0]?.longMessage ||
+    //     err?.errors?.[0]?.message ||
+    //     'Verification failed. Please try again.';
+
+    //   setError(message);
+    // } finally {
+    //   setLoading(false);
+    // }
+
+    await signUp.verifications.verifyEmailCode({
+      code,
+    });
+
+    if (signUp.status === "complete") {
+      await signUp.finalize();
+    } else {
+      console.error("Sign-up attempt not complete:", signUp);
     }
+  };
+
+  if (signUp.status === "complete" || isSignedIn) {
+    return null;
   }
 
-  const onVerifyPress = async () => {
-    if (!isLoaded) return
-    if (!code) {
-      setError('Verification code is required.');
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      const signUpAttempt = await signUp.attemptEmailAddressVerification({
-        code,
-      })
-
-      if (signUpAttempt.status === 'complete') {
-        await setActive({ session: signUpAttempt.createdSessionId })
-      } else {
-        setError('Verification failed. Please try again.');
-      }
-    } catch (err: any) {
-      const message =
-        err?.errors?.[0]?.longMessage ||
-        err?.errors?.[0]?.message ||
-        'Verification failed. Please try again.';
-
-      setError(message);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  if (pendingVerification) {
+  if (
+    signUp.status === "missing_requirements" &&
+    signUp.unverifiedFields.includes("email_address") &&
+    signUp.missingFields.length === 0
+  ) {
     return (
       <ScreenWrapper>
         <KeyboardWrapper style={styles.container}>
@@ -110,14 +139,18 @@ const CreateAccount = () => {
           </View>
 
           <View>
-            {error && (
+            {errors.fields.code && (
               <Typography color="danger" center style={{ marginBottom: 16 }}>
-                {error}
+                {errors.fields.code.message}
               </Typography>
             )}
 
             <View style={{ marginBottom: 16 }}>
-              <Label color="onSecondary" font="medium" style={{ marginBottom: 6 }}>
+              <Label
+                color="onSecondary"
+                font="medium"
+                style={{ marginBottom: 6 }}
+              >
                 Verification Code
               </Label>
 
@@ -133,19 +166,23 @@ const CreateAccount = () => {
               />
             </View>
 
-            <Button onPress={onVerifyPress} disabled={!code || !isLoaded} loading={loading}>
-              {loading ? (
+            <Button
+              onPress={handleVerify}
+              disabled={fetchStatus === "fetching"}
+              loading={fetchStatus === "fetching"}
+            >
+              {fetchStatus === "fetching" ? (
                 <ActivityIndicator color={Colors.onPrimary} />
               ) : (
-                <Typography>
-                  Verify
-                </Typography>
+                <Typography>Verify</Typography>
               )}
             </Button>
+
+            {/* TODO Add resend code button */}
           </View>
         </KeyboardWrapper>
       </ScreenWrapper>
-    )
+    );
   }
 
   return (
@@ -165,15 +202,31 @@ const CreateAccount = () => {
           </View>
 
           <View>
-            {error && (
+            {errors.fields.emailAddress && (
               <Typography color="danger" center style={{ marginBottom: 16 }}>
-                {error}
+                {errors.fields.emailAddress.message}
+              </Typography>
+            )}
+
+            {errors.fields.password && (
+              <Typography color="danger" center style={{ marginBottom: 16 }}>
+                {errors.fields.password.message}
+              </Typography>
+            )}
+
+            {errors && (
+              <Typography color="danger" center style={{ marginBottom: 16 }}>
+                {JSON.stringify(errors, null, 2)}
               </Typography>
             )}
 
             {/* Form */}
             <View style={{ marginBottom: 16 }}>
-              <Label color="onSecondary" font="medium" style={{ marginBottom: 6 }}>
+              <Label
+                color="onSecondary"
+                font="medium"
+                style={{ marginBottom: 6 }}
+              >
                 Email Address
               </Label>
 
@@ -190,7 +243,11 @@ const CreateAccount = () => {
             </View>
 
             <View style={{ marginBottom: 24 }}>
-              <Label color="onSecondary" font="medium" style={{ marginBottom: 6 }}>
+              <Label
+                color="onSecondary"
+                font="medium"
+                style={{ marginBottom: 6 }}
+              >
                 Password
               </Label>
 
@@ -205,15 +262,21 @@ const CreateAccount = () => {
               />
             </View>
 
-            <Button onPress={onSignUpPress} disabled={!emailAddress || !password} loading={loading}>
-              {loading ? (
+            <Button
+              onPress={handleSubmit}
+              disabled={
+                !emailAddress || !password || fetchStatus === "fetching"
+              }
+              loading={fetchStatus === "fetching"}
+            >
+              {fetchStatus === "fetching" ? (
                 <ActivityIndicator color={Colors.onPrimary} />
               ) : (
-                <Typography>
-                  Sign Up
-                </Typography>
+                <Typography>Sign Up</Typography>
               )}
             </Button>
+
+            <View nativeID="clerk-captcha" />
           </View>
 
           <View>
@@ -227,9 +290,18 @@ const CreateAccount = () => {
         </View>
 
         <View style={styles.redirect}>
-          <Typography color="onMuted" font="medium" size={14}>Already have an account?{' '}</Typography>
+          <Typography color="onMuted" font="medium" size={14}>
+            Already have an account?{" "}
+          </Typography>
           <Link href="/sign-in">
-            <Typography color="onSecondary" font="medium" size={14} style={{ textDecorationLine: 'underline' }}>Sign In</Typography>
+            <Typography
+              color="onSecondary"
+              font="medium"
+              size={14}
+              style={{ textDecorationLine: "underline" }}
+            >
+              Sign In
+            </Typography>
           </Link>
         </View>
       </KeyboardWrapper>
@@ -246,7 +318,7 @@ function Seperator() {
       <Typography color="onMuted">OR</Typography>
       <View style={styles.divider} />
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -254,19 +326,19 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.card,
     borderTopLeftRadius: 50,
     borderTopRightRadius: 50,
-    borderCurve: 'continuous',
+    borderCurve: "continuous",
     paddingHorizontal: scale(24),
     paddingVertical: 24,
   },
 
   error: {
-    alignSelf: 'center'
+    alignSelf: "center",
   },
 
   dividerContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: scale(16),
-    alignItems: 'center',
+    alignItems: "center",
     marginVertical: verticalScale(12),
   },
 
@@ -277,7 +349,7 @@ const styles = StyleSheet.create({
   },
 
   redirect: {
-    flexDirection: 'row',
-    alignSelf: 'center'
-  }
+    flexDirection: "row",
+    alignSelf: "center",
+  },
 });

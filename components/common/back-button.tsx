@@ -1,14 +1,14 @@
-import { Colors } from '@/constants/theme';
-import { useRouter } from 'expo-router';
-import { ArrowLeftIcon } from 'phosphor-react-native';
-import React from 'react';
-import { Pressable } from 'react-native';
+import { Colors } from "@/constants/theme";
+import { useRouter } from "expo-router";
+import { ArrowLeftIcon } from "phosphor-react-native";
+import React from "react";
+import { Pressable } from "react-native";
 
 type BackButtonProps = {
   color?: keyof typeof Colors;
 };
 
-const BackButton = ({ color = 'onBackground' }: BackButtonProps) => {
+const BackButton = ({ color = "onBackground" }: BackButtonProps) => {
   const router = useRouter();
 
   return (

@@ -1,16 +1,16 @@
-import { Colors } from '@/constants/theme';
-import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
-import React from 'react';
+import { Colors } from "@/constants/theme";
+import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
+import React from "react";
 import {
   Dimensions,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-} from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 const BottomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
   const tabWidth = width / state.routes.length;
@@ -24,15 +24,15 @@ const BottomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
       options.tabBarLabel !== undefined
         ? options.tabBarLabel
         : options.title !== undefined
-        ? options.title
-        : route.name;
+          ? options.title
+          : route.name;
     const Icon = options.tabBarIcon as React.ElementType | undefined;
     const isCenterTabItem =
       options.tabBarButton === undefined &&
       index === Math.floor(state.routes.length / 2);
     const onPress = () => {
       const event = navigation.emit({
-        type: 'tabPress',
+        type: "tabPress",
         target: route.key,
         canPreventDefault: true,
       });
@@ -44,7 +44,7 @@ const BottomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
 
     const onLongPress = () => {
       navigation.emit({
-        type: 'tabLongPress',
+        type: "tabLongPress",
         target: route.key,
       });
     };
@@ -111,7 +111,7 @@ const BottomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
             ]}
             numberOfLines={1}
           >
-            {typeof label === 'string' ? label : route.name}
+            {typeof label === "string" ? label : route.name}
           </Text>
         </View>
       </TouchableOpacity>
@@ -138,47 +138,47 @@ const styles = StyleSheet.create({
   },
 
   tabBar: {
-    flexDirection: 'row',
+    flexDirection: "row",
     height: 65,
-    alignItems: 'center',
+    alignItems: "center",
   },
 
   tab: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   tabContent: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   iconContainer: {
     width: 48,
     height: 36,
     borderRadius: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 4,
   },
 
   tabLabel: {
     fontSize: 11,
-    fontWeight: '500',
+    fontWeight: "500",
     marginTop: 2,
   },
 
   centerTab: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   centerButton: {
     width: 56,
     height: 56,
     borderRadius: 28,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 8,
     backgroundColor: Colors.primary,
     shadowColor: Colors.primary,

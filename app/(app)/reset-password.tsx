@@ -1,29 +1,30 @@
-import BackButton from '@/components/common/back-button';
-import Button from '@/components/common/button';
-import Input from '@/components/common/input';
-import { Label } from '@/components/common/label';
-import ScreenWrapper from '@/components/common/screen-wrapper';
-import Typography from '@/components/common/typography';
-import { Colors } from '@/constants/theme';
-import { scale, verticalScale } from '@/helpers/scale';
-import { isValidEmail } from '@/helpers/validation';
-import { useAuthStore } from '@/stores/auth-store';
-import { Link, useRouter } from 'expo-router';
-import { MailboxIcon, WarningIcon } from 'phosphor-react-native';
-import React, { useState } from 'react';
-import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
+import BackButton from "@/components/common/back-button";
+import Button from "@/components/common/button";
+import Input from "@/components/common/input";
+import KeyboardWrapper from "@/components/common/keyboard-wrapper";
+import { Label } from "@/components/common/label";
+import ScreenWrapper from "@/components/common/screen-wrapper";
+import Typography from "@/components/common/typography";
+import { Colors } from "@/constants/theme";
+import { scale, verticalScale } from "@/helpers/scale";
+import { isValidEmail } from "@/helpers/validation";
+import { useAuthStore } from "@/stores/auth-store";
+import { Link, useRouter } from "expo-router";
+import { MailboxIcon, WarningIcon } from "phosphor-react-native";
+import React, { useState } from "react";
+import { StyleSheet, View } from "react-native";
 
 const ResetPassword = () => {
   const { resetPassword, loading, error, clearError } = useAuthStore();
   const router = useRouter();
 
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [success, setSuccess] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
 
   const handleSubmit = async () => {
     if (!isValidEmail(email)) {
-      setLocalError('Invalid email');
+      setLocalError("Invalid email");
       return;
     }
 
@@ -53,10 +54,7 @@ const ResetPassword = () => {
           </Typography>
         </View>
 
-        <KeyboardAvoidingView
-          style={styles.form}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        >
+        <KeyboardWrapper style={styles.form}>
           <View style={{ gap: verticalScale(8) }}>
             <Label color="onMuted" font="medium">
               Email Address
@@ -93,7 +91,7 @@ const ResetPassword = () => {
 
           <Button onPress={handleSubmit} loading disabled={loading}>
             <Typography>
-              {loading ? 'Sending...' : 'Send Reset Email'}
+              {loading ? "Sending..." : "Send Reset Email"}
             </Typography>
           </Button>
 
@@ -103,7 +101,7 @@ const ResetPassword = () => {
               <Typography color="onPrimary">Sign In</Typography>
             </Link>
           </View>
-        </KeyboardAvoidingView>
+        </KeyboardWrapper>
       </View>
     </ScreenWrapper>
   );
@@ -114,14 +112,14 @@ export default ResetPassword;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     gap: verticalScale(8),
   },
 
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     gap: scale(16),
     paddingHorizontal: scale(16),
     paddingVertical: verticalScale(16),
@@ -133,14 +131,14 @@ const styles = StyleSheet.create({
     gap: verticalScale(8),
     borderTopLeftRadius: verticalScale(50),
     borderTopRightRadius: verticalScale(50),
-    borderCurve: 'continuous',
+    borderCurve: "continuous",
     paddingHorizontal: scale(16),
     paddingVertical: verticalScale(16),
   },
 
   contentHeader: {
     gap: verticalScale(8),
-    justifyContent: 'center',
+    justifyContent: "center",
     paddingVertical: verticalScale(16),
   },
 
@@ -150,15 +148,15 @@ const styles = StyleSheet.create({
   },
 
   error: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
     paddingVertical: verticalScale(8),
     borderRadius: verticalScale(8),
     gap: scale(8),
   },
 
   redirect: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: scale(8),
   },
 });

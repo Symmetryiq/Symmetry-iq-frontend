@@ -1,5 +1,5 @@
-import { Colors } from '@/constants/theme';
-import { Stack } from 'expo-router';
+import { Colors } from "@/constants/theme";
+import { Stack } from "expo-router";
 
 export default function RoutinesLayout() {
   return (
@@ -10,7 +10,10 @@ export default function RoutinesLayout() {
       }}
     >
       <Stack.Screen name="index" />
-      <Stack.Screen name="[result]" options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
+      <Stack.Screen
+        name="[result]"
+        options={{ presentation: "modal", animation: "slide_from_bottom" }}
+      />
     </Stack>
   );
 }

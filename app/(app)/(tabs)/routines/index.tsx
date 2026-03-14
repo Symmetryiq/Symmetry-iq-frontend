@@ -1,18 +1,19 @@
-import Calendar from '@/components/calendar';
-import ScreenWrapper from '@/components/common/screen-wrapper';
-import Section from '@/components/common/section';
-import Typography from '@/components/common/typography';
-import RoutineCardLarge from '@/components/routine-card';
-import { Colors } from '@/constants/theme';
-import { RoutineId } from '@/data/routines';
-import { verticalScale } from '@/helpers/scale';
-import { usePlanStore } from '@/stores/plan-store';
-import { useFocusEffect } from 'expo-router';
-import React, { useCallback, useState } from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
+import Calendar from "@/components/calendar";
+import ScreenWrapper from "@/components/common/screen-wrapper";
+import Section from "@/components/common/section";
+import Typography from "@/components/common/typography";
+import RoutineCardLarge from "@/components/routine-card";
+import { Colors } from "@/constants/theme";
+import { RoutineId } from "@/data/routines";
+import { verticalScale } from "@/helpers/scale";
+import { usePlanStore } from "@/stores/plan-store";
+import { useFocusEffect } from "expo-router";
+import React, { useCallback, useState } from "react";
+import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
 
 const Routines = () => {
-  const { currentPlan, loading, fetchCurrentPlan, selectDate, selectedDate } = usePlanStore();
+  const { currentPlan, loading, fetchCurrentPlan, selectDate, selectedDate } =
+    usePlanStore();
   const [dateRoutines, setDateRoutines] = useState<{
     today: RoutineId | null;
     bonus: RoutineId[];
@@ -29,7 +30,7 @@ const Routines = () => {
   useFocusEffect(
     useCallback(() => {
       fetchCurrentPlan();
-    }, [fetchCurrentPlan])
+    }, [fetchCurrentPlan]),
   );
 
   // Update displayed routines when plan or selected date changes
@@ -60,13 +61,14 @@ const Routines = () => {
       const isDailyCompleted = routineForDate?.completed;
 
       setDateRoutines({
-        today: isDailyCompleted ? null : (routineForDate?.routineId || null),
+        today: isDailyCompleted ? null : routineForDate?.routineId || null,
         bonus: currentPlan.bonusRoutines,
         upcoming: currentPlan.dailyRoutines
           .filter((dr) => new Date(dr.date) > today)
           .slice(0, 3)
           .map((dr) => dr.routineId),
-        completed: isDailyCompleted && routineForDate ? [routineForDate.routineId] : [],
+        completed:
+          isDailyCompleted && routineForDate ? [routineForDate.routineId] : [],
       });
     } else if (isPast) {
       setDateRoutines({
@@ -97,10 +99,17 @@ const Routines = () => {
 
   if (loading && !currentPlan) {
     return (
-      <ScreenWrapper edges={['top']}>
-        <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+      <ScreenWrapper edges={["top"]}>
+        <View
+          style={[
+            styles.container,
+            { justifyContent: "center", alignItems: "center" },
+          ]}
+        >
           <ActivityIndicator size="large" color={Colors.primary} />
-          <Typography style={{ marginTop: 16 }}>Loading your plan...</Typography>
+          <Typography style={{ marginTop: 16 }}>
+            Loading your plan...
+          </Typography>
         </View>
       </ScreenWrapper>
     );
@@ -108,12 +117,20 @@ const Routines = () => {
 
   if (!currentPlan) {
     return (
-      <ScreenWrapper edges={['top']}>
-        <View style={[styles.container, { justifyContent: 'center', alignItems: 'center', padding: 24 }]}>
-          <Typography size={24} font="bold" style={{ textAlign: 'center' }}>
+      <ScreenWrapper edges={["top"]}>
+        <View
+          style={[
+            styles.container,
+            { justifyContent: "center", alignItems: "center", padding: 24 },
+          ]}
+        >
+          <Typography size={24} font="bold" style={{ textAlign: "center" }}>
             No Active Plan
           </Typography>
-          <Typography color="onSecondary" style={{ textAlign: 'center', marginTop: 8 }}>
+          <Typography
+            color="onSecondary"
+            style={{ textAlign: "center", marginTop: 8 }}
+          >
             Complete a face scan to generate your personalized routine plan
           </Typography>
         </View>
@@ -122,7 +139,7 @@ const Routines = () => {
   }
 
   return (
-    <ScreenWrapper edges={['top']}>
+    <ScreenWrapper edges={["top"]}>
       <View style={styles.container}>
         <View style={styles.header}>
           <Typography font="bold" size={32}>
@@ -145,9 +162,7 @@ const Routines = () => {
                 Today&apos;s Routine
               </Typography>
 
-              <RoutineCardLarge
-                routineId={dateRoutines.today}
-              />
+              <RoutineCardLarge routineId={dateRoutines.today} />
             </Section>
           )}
 
@@ -158,10 +173,7 @@ const Routines = () => {
               </Typography>
 
               {dateRoutines.bonus.map((routineId) => (
-                <RoutineCardLarge
-                  key={routineId}
-                  routineId={routineId}
-                />
+                <RoutineCardLarge key={routineId} routineId={routineId} />
               ))}
             </Section>
           )}
@@ -189,10 +201,7 @@ const Routines = () => {
               </Typography>
 
               {dateRoutines.completed.map((routineId) => (
-                <RoutineCardLarge
-                  key={routineId}
-                  routineId={routineId}
-                />
+                <RoutineCardLarge key={routineId} routineId={routineId} />
               ))}
             </Section>
           )}
@@ -210,8 +219,8 @@ const styles = StyleSheet.create({
   },
 
   header: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingTop: verticalScale(16),
     paddingBottom: verticalScale(4),
   },
