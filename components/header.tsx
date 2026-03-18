@@ -1,5 +1,5 @@
 import { Colors } from "@/constants/theme";
-import { scale, verticalScale } from "@/helpers/scale";
+import { scale, verticalScale } from "@/helpers/scaling";
 import { useUser } from "@clerk/expo";
 import { useRouter } from "expo-router";
 import { BellIcon, CaretLeft } from "phosphor-react-native";

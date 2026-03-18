@@ -1,5 +1,5 @@
 import { Colors } from "@/constants/theme";
-import { scale, verticalScale } from "@/helpers/scale";
+import { scale, verticalScale } from "@/helpers/scaling";
 import { ButtonProps } from "@/helpers/types";
 import React from "react";
 import { Pressable, StyleSheet } from "react-native";

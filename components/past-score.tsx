@@ -1,6 +1,6 @@
 import { Colors } from "@/constants/theme";
-import { getColorByScore } from "@/helpers/analyze";
-import { scale, verticalScale } from "@/helpers/scale";
+import { scale, verticalScale } from "@/helpers/scaling";
+import { getColorByScore } from "@/helpers/scan";
 import { router } from "expo-router";
 import { ArrowRightIcon } from "phosphor-react-native";
 import React from "react";
@@ -72,7 +72,7 @@ const PastScore = ({ scan }: PastScoreProps) => {
             onPress={() =>
               router.push({
                 pathname: "/insights",
-                params: { scanId: scan["_id"] },
+                params: { scanId: scan.id },
               })
             }
             style={{

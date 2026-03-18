@@ -2,9 +2,9 @@ import Button from "@/components/common/button";
 import ScreenWrapper from "@/components/common/screen-wrapper";
 import Typography from "@/components/common/typography";
 import { Colors } from "@/constants/theme";
-import { scale, verticalScale } from "@/helpers/scale";
+import { scale, verticalScale } from "@/helpers/scaling";
 import { getLandmarks, getScores } from "@/helpers/scan";
-import { useOnboardingStore } from "@/stores/onboarding";
+import { useOnboardingStore } from "@/stores/onboarding-store";
 import { launchCameraAsync, launchImageLibraryAsync } from "expo-image-picker";
 import { router } from "expo-router";
 import { CameraIcon, UserIcon } from "phosphor-react-native";
@@ -60,11 +60,22 @@ const DemoScan = () => {
       const landmarks = await getLandmarks(image);
       const response = await getScores(landmarks);
 
-      if (!response.data?.model) {
+      if (!response) {
         throw new Error("Invalid response from scoring API");
       }
 
-      const scores = normalizeScores(response.data.model);
+      const scores = {
+        overallSymmetry: response.overall,
+        eyeAlignment: response.eye,
+        noseCentering: response.nose,
+        facialPuffiness: response.puff,
+        skinClarity: response.clar,
+        chinAlignment: response.chin,
+        facialThirds: response.thirds,
+        jawlineSymmetry: response.jaw,
+        cheekboneBalance: response.cheek,
+        eyebrowSymmetry: response.brow,
+      };
 
       // Save demo scan data in local state temporarily
       setDemoScan(landmarks, scores, image);

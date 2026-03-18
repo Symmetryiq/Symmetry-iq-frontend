@@ -7,10 +7,10 @@ import {
   SUBSCRIPTION_PLANS,
 } from "@/constants/subscriptions";
 import { Colors } from "@/constants/theme";
-import { scale, verticalScale } from "@/helpers/scale";
+import { scale, verticalScale } from "@/helpers/scaling";
 import { openBrowserLink } from "@/helpers/utils";
 import { updateUserProfile } from "@/services/api/user.api";
-import { useOnboardingStore } from "@/stores/onboarding";
+import { useOnboardingStore } from "@/stores/onboarding-store";
 import { usePlanStore } from "@/stores/plan-store";
 import { useScanStore } from "@/stores/scan-store";
 import { LinearGradient } from "expo-linear-gradient";
@@ -69,12 +69,12 @@ const Purchase = () => {
       });
 
       // Save the demo scan if it exists so routines are generated
-      if (demoLandmarks && demoScores) {
-        const newScan = await saveScanData(demoLandmarks, demoScores);
+      if (demoScores) {
+        const newScan = await saveScanData(demoScores);
 
         // If the scan was saved successfully, generate a new plan from it.
-        if (newScan && newScan._id) {
-          await generateNewPlan(newScan._id);
+        if (newScan && newScan.id) {
+          generateNewPlan(newScan.id, demoScores);
         }
 
         // Clear demo data

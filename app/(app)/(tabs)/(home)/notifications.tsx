@@ -1,14 +1,14 @@
 import ScreenWrapper from "@/components/common/screen-wrapper";
 import Typography from "@/components/common/typography";
 import { Colors } from "@/constants/theme";
-import { scale, verticalScale } from "@/helpers/scale";
+import { scale, verticalScale } from "@/helpers/scaling";
 import { router } from "expo-router";
 import { ArrowLeft, BellSimple, CheckCircle } from "phosphor-react-native";
 import React, { useState } from "react";
 import { FlatList, Pressable, StyleSheet, View } from "react-native";
 
 interface Notification {
-  _id: string;
+  id: string;
   title: string;
   body: string;
   read: boolean;
@@ -17,21 +17,21 @@ interface Notification {
 
 const mockData: Notification[] = [
   {
-    _id: "1",
+    id: "1",
     title: "Workout Completed",
     body: "Great job! You completed the Morning Yoga session spanning 45 minutes.",
     read: false,
     createdAt: new Date().toISOString(),
   },
   {
-    _id: "2",
+    id: "2",
     title: "New Achievement Unlocked",
     body: "You have reached a 7-day streak. Keep it up!",
     read: false,
     createdAt: new Date(Date.now() - 3600000).toISOString(),
   },
   {
-    _id: "3",
+    id: "3",
     title: "Reminder: Evening Meditation",
     body: "Your evening meditation session is scheduled in 30 minutes.",
     read: true,
@@ -141,7 +141,7 @@ const Notifications = () => {
 
   const handleNotificationPress = (id: string) => {
     setNotifications((prev) =>
-      prev.map((n) => (n._id === id ? { ...n, read: true } : n)),
+      prev.map((n) => (n.id === id ? { ...n, read: true } : n)),
     );
   };
 
@@ -152,7 +152,7 @@ const Notifications = () => {
   const renderItem = ({ item }: { item: Notification }) => (
     <NotificationItem
       notification={item}
-      onPress={() => handleNotificationPress(item._id)}
+      onPress={() => handleNotificationPress(item.id)}
     />
   );
 
@@ -178,7 +178,7 @@ const Notifications = () => {
 
       <FlatList
         data={notifications}
-        keyExtractor={(item) => item._id}
+        keyExtractor={(item) => item.id}
         renderItem={renderItem}
         contentContainerStyle={[
           styles.listContent,

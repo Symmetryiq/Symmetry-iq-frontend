@@ -8,6 +8,7 @@ import {
   ClockIcon,
   ListIcon,
   MedalIcon,
+  PlayIcon,
   ToteIcon,
   WarningCircleIcon,
 } from "phosphor-react-native";
@@ -273,6 +274,17 @@ const RoutineScreen = () => {
           </View>
         )}
       </ScrollView>
+
+      {/* Sticky Start Button */}
+      <View style={styles.stickyFooter}>
+        <Pressable
+          style={styles.startButton}
+          onPress={() => router.push(`/routine-player/${routine.id}`)}
+        >
+          <PlayIcon size={24} color={Colors.onPrimary} weight="fill" />
+          <Text style={styles.startButtonText}>Start Guided Routine</Text>
+        </Pressable>
+      </View>
     </SafeAreaView>
   );
 };
@@ -317,7 +329,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 24,
+    paddingBottom: 100, // Extra padding for sticky footer
   },
   imageWrapper: {
     width: "100%",
@@ -597,5 +609,30 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.regular,
     color: Colors.onSecondary,
     lineHeight: 20,
+  },
+  stickyFooter: {
+    position: "absolute",
+    bottom: 24,
+    left: 16,
+    right: 16,
+  },
+  startButton: {
+    flexDirection: "row",
+    backgroundColor: Colors.primary,
+    paddingVertical: 18,
+    borderRadius: 24,
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 12,
+    shadowColor: Colors.primary,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 8,
+  },
+  startButtonText: {
+    fontFamily: Fonts.bold,
+    fontSize: 18,
+    color: Colors.onPrimary,
   },
 });

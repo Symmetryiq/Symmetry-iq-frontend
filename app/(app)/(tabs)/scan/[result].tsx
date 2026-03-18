@@ -2,7 +2,7 @@ import Button from "@/components/common/button";
 import ScreenWrapper from "@/components/common/screen-wrapper";
 import Typography from "@/components/common/typography";
 import { Colors, Fonts } from "@/constants/theme";
-import { getColorByScore, getLabelByScore } from "@/helpers/analyze";
+import { getColorByScore, getLabelByScore } from "@/helpers/scan";
 import { usePlanStore } from "@/stores/plan-store";
 import { router, useLocalSearchParams } from "expo-router";
 import { Info, X } from "phosphor-react-native";
@@ -44,10 +44,10 @@ export default function ScanResultScreen() {
   const { generateNewPlan } = usePlanStore();
   const [generating, setGenerating] = useState(false);
 
-  const handleGeneratePlan = async () => {
+  const handleGeneratePlan = () => {
     try {
       setGenerating(true);
-      await generateNewPlan(scanId);
+      generateNewPlan(scanId, data);
       setGenerating(false);
 
       // Navigate to routines tab

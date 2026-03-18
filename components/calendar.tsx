@@ -1,5 +1,5 @@
 import { Colors } from "@/constants/theme";
-import { scale, verticalScale } from "@/helpers/scale";
+import { scale, verticalScale } from "@/helpers/scaling";
 import React from "react";
 import {
   FlatList,

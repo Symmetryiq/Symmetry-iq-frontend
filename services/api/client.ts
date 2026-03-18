@@ -12,7 +12,7 @@ const apiClient = axios.create({
   },
 });
 
-// Request interceptor to add Firebase auth token
+// Request interceptor to add Clerk auth token
 apiClient.interceptors.request.use(
   async (config) => {
     const clerk = getClerkInstance();

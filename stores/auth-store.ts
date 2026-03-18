@@ -1,47 +1,34 @@
-import { useUser } from '@clerk/expo';
 import { create } from 'zustand';
 
-type AuthState = {
-  loading: boolean;
+interface AuthState {
+  status: 'idle' | 'loading' | 'success' | 'error';
   error: string | null;
-  resetPassword: (email: string) => Promise<void>;
-  updateDisplayName: (name: string) => Promise<void>;
+
+  updateDisplayName: (user: any, name: string) => Promise<void>;
   clearError: () => void;
-};
+}
 
 export const useAuthStore = create<AuthState>((set) => ({
-  loading: false,
+  status: 'idle',
   error: null,
 
-  // TODO: Implement reset password
-  resetPassword: async (email) => {
-    set({ loading: true, error: null });
+  /**
+   * Update the user's display name via Clerk.
+   * The `user` object must be passed from the component (via useUser()).
+   * Password reset is handled by Clerk's built-in flow in reset-password.tsx.
+   */
+  updateDisplayName: async (user: any, name: string) => {
+    set({ status: 'loading', error: null });
     try {
-      console.log('Reset password for', email);
-    } catch (e: any) {
-      set({ error: e.message });
-    } finally {
-      set({ loading: false });
-    }
-  },
-
-  // FIXME: Accept the Clerk user object as a parameter, or use getClerkInstance() (like you do in client.ts).
-
-  updateDisplayName: async (name: string) => {
-    set({ loading: true, error: null });
-    try {
-      const { user } = useUser();
-
       if (user) {
-        await user.update({
-          firstName: name,
-        });
+        await user.update({ firstName: name });
+        set({ status: 'success' });
+      } else {
+        set({ status: 'idle' });
       }
     } catch (e: any) {
-      set({ error: e.message });
+      set({ status: 'error', error: e.message });
       throw e;
-    } finally {
-      set({ loading: false });
     }
   },
 

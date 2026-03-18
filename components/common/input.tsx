@@ -1,5 +1,5 @@
 import { Colors } from "@/constants/theme";
-import { scale, verticalScale } from "@/helpers/scale";
+import { scale, verticalScale } from "@/helpers/scaling";
 import { InputProps } from "@/helpers/types";
 import React, { useState } from "react";
 import { StyleSheet, TextInput, View } from "react-native";

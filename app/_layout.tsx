@@ -1,6 +1,9 @@
 import { ClerkProvider } from "@clerk/expo";
 import { tokenCache } from "@clerk/expo/token-cache";
 import { Slot } from "expo-router";
+import { GlobalError } from "@/components/global-error";
+
+export const ErrorBoundary = GlobalError;
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
 

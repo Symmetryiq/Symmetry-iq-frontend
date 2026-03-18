@@ -1,5 +1,5 @@
 import { Colors, Fonts } from "@/constants/theme";
-import { scale } from "@/helpers/scale";
+import { scale } from "@/helpers/scaling";
 import { TypographyProps } from "@/helpers/types";
 import React from "react";
 import { Text, TextStyle } from "react-native";

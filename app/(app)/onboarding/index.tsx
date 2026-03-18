@@ -1,7 +1,7 @@
 import Button from "@/components/common/button";
 import ScreenWrapper from "@/components/common/screen-wrapper";
 import Typography from "@/components/common/typography";
-import { scale, verticalScale } from "@/helpers/scale";
+import { scale, verticalScale } from "@/helpers/scaling";
 import { router } from "expo-router";
 import React from "react";
 import { StyleSheet, View } from "react-native";

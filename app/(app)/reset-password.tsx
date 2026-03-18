@@ -6,16 +6,18 @@ import { Label } from "@/components/common/label";
 import ScreenWrapper from "@/components/common/screen-wrapper";
 import Typography from "@/components/common/typography";
 import { Colors } from "@/constants/theme";
-import { scale, verticalScale } from "@/helpers/scale";
+import { scale, verticalScale } from "@/helpers/scaling";
 import { isValidEmail } from "@/helpers/validation";
-import { useAuthStore } from "@/stores/auth-store";
+import { useSignIn } from "@clerk/expo";
 import { Link, useRouter } from "expo-router";
 import { MailboxIcon, WarningIcon } from "phosphor-react-native";
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 
 const ResetPassword = () => {
-  const { resetPassword, loading, error, clearError } = useAuthStore();
+  const { signIn } = useSignIn();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   const [email, setEmail] = useState("");
@@ -29,8 +31,19 @@ const ResetPassword = () => {
     }
 
     setLocalError(null);
-    await resetPassword(email.trim());
-    setSuccess(true);
+    setIsLoading(true);
+    setError(null);
+    try {
+      await signIn?.create({
+        strategy: "reset_password_email_code" as any,
+        identifier: email.trim(),
+      });
+      setSuccess(true);
+    } catch (e: any) {
+      setError(e.errors?.[0]?.message || e.message || "Failed to send reset email");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -65,7 +78,7 @@ const ResetPassword = () => {
               value={email}
               onChangeText={(text) => {
                 setEmail(text);
-                clearError();
+                setError(null);
               }}
               keyboardType="email-address"
               autoCapitalize="none"
@@ -89,9 +102,9 @@ const ResetPassword = () => {
             </View>
           )}
 
-          <Button onPress={handleSubmit} loading disabled={loading}>
+          <Button onPress={handleSubmit} loading disabled={isLoading}>
             <Typography>
-              {loading ? "Sending..." : "Send Reset Email"}
+              {isLoading ? "Sending..." : "Send Reset Email"}
             </Typography>
           </Button>
 

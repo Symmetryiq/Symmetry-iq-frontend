@@ -1,5 +1,5 @@
 import { Colors, Fonts } from "@/constants/theme";
-import { useOnboardingStore } from "@/stores/onboarding";
+import { useOnboardingStore } from "@/stores/onboarding-store";
 import { useAuth, useUser } from "@clerk/expo";
 import { Stack } from "expo-router";
 import { useEffect } from "react";

@@ -1,4 +1,4 @@
-import { scale } from "@/helpers/scale";
+import { scale } from "@/helpers/scaling";
 import React from "react";
 import { StyleSheet, View, ViewStyle } from "react-native";
 

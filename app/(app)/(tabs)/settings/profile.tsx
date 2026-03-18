@@ -5,7 +5,7 @@ import Selectable from "@/components/common/selectable";
 import Typography from "@/components/common/typography";
 import { Colors, Fonts } from "@/constants/theme";
 import { updateUserProfile } from "@/services/api/user.api"; // Added import for updateUserProfile
-import { useOnboardingStore } from "@/stores/onboarding";
+import { useOnboardingStore } from "@/stores/onboarding-store";
 import { useUser } from "@clerk/expo";
 import { useRouter } from "expo-router";
 import { GenderFemaleIcon, GenderMaleIcon } from "phosphor-react-native";

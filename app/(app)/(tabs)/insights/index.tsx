@@ -1,15 +1,15 @@
 import Calendar from "@/components/calendar";
+import RoutineCard from "@/components/cards/routine-card";
 import CircularProgress from "@/components/common/circle-progress";
 import ScreenWrapper from "@/components/common/screen-wrapper";
 import Section from "@/components/common/section";
 import Typography from "@/components/common/typography";
 import Header from "@/components/header";
-import RoutineCardLarge from "@/components/routine-card";
 import { Colors, Fonts } from "@/constants/theme";
 import { Features } from "@/data/insights";
 import { getColorByScore } from "@/helpers/analyze";
 import { getRecommendedRoutines, ScoreKey } from "@/helpers/routine-mapping";
-import { scale, verticalScale } from "@/helpers/scale";
+import { scale, verticalScale } from "@/helpers/scaling";
 import { useScanStore } from "@/stores/scan-store";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
@@ -19,7 +19,7 @@ import PagerView from "react-native-pager-view";
 const Insights = () => {
   const [page, setPage] = useState(0);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const { latestScan, scans, fetchScans, loading } = useScanStore();
+  const { latestScan, scans, fetchScans, status } = useScanStore();
   const { scanId } = useLocalSearchParams<{ scanId: string }>();
 
   useFocusEffect(
@@ -31,7 +31,7 @@ const Insights = () => {
   // Sync selectedDate if scanId changes (pushed from home)
   React.useEffect(() => {
     if (scanId && scans.length > 0) {
-      const target = scans.find((s) => s.id === scanId || s._id === scanId);
+      const target = scans.find((s) => s.id === scanId);
       if (target) {
         setSelectedDate(new Date(target.scanDate));
       }
@@ -381,7 +381,7 @@ const Insights = () => {
                       justifyContent: "center",
                     }}
                   >
-                    <RoutineCardLarge routineId={r.id} />
+                    <RoutineCard routineId={r.id} />
                   </View>
                 ))}
               </PagerView>

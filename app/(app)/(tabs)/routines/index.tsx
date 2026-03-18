@@ -1,30 +1,22 @@
 import Calendar from "@/components/calendar";
+import RoutineCard from "@/components/cards/routine-card";
 import ScreenWrapper from "@/components/common/screen-wrapper";
 import Section from "@/components/common/section";
 import Typography from "@/components/common/typography";
-import RoutineCardLarge from "@/components/routine-card";
 import { Colors } from "@/constants/theme";
 import { RoutineId } from "@/data/routines";
-import { verticalScale } from "@/helpers/scale";
+import { verticalScale } from "@/helpers/scaling";
 import { usePlanStore } from "@/stores/plan-store";
 import { useFocusEffect } from "expo-router";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
 
+const formatDate = (date: Date): string => date.toISOString().split("T")[0];
+
 const Routines = () => {
-  const { currentPlan, loading, fetchCurrentPlan, selectDate, selectedDate } =
+  const { currentPlan, status, fetchCurrentPlan, getRoutinesForDate, completedRoutines } =
     usePlanStore();
-  const [dateRoutines, setDateRoutines] = useState<{
-    today: RoutineId | null;
-    bonus: RoutineId[];
-    upcoming: RoutineId[];
-    completed: RoutineId[];
-  }>({
-    today: null,
-    bonus: [],
-    upcoming: [],
-    completed: [],
-  });
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
   // Fetch plan when screen comes into focus
   useFocusEffect(
@@ -33,71 +25,74 @@ const Routines = () => {
     }, [fetchCurrentPlan]),
   );
 
-  // Update displayed routines when plan or selected date changes
-  React.useEffect(() => {
-    if (!currentPlan) {
-      setDateRoutines({ today: null, bonus: [], upcoming: [], completed: [] });
-      return;
+  const dateStr = formatDate(selectedDate);
+
+  const isToday = useMemo(() => {
+    return selectedDate.toDateString() === new Date().toDateString();
+  }, [selectedDate]);
+
+  // Get routines for the selected date using the store helper
+  const dateRoutines = useMemo(() => {
+    if (!currentPlan?.schedule) {
+      return { today: null, bonus: [] as RoutineId[], upcoming: [] as RoutineId[], completed: [] as string[] };
     }
 
+    const { assigned, completed } = getRoutinesForDate(dateStr);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-
     const selected = new Date(selectedDate);
     selected.setHours(0, 0, 0, 0);
 
-    const isToday = selected.getTime() === today.getTime();
+    const isTodayDate = selected.getTime() === today.getTime();
     const isPast = selected < today;
     const isFuture = selected > today;
 
-    // Find routine for selected date
-    const routineForDate = currentPlan.dailyRoutines.find((dr) => {
-      const drDate = new Date(dr.date);
-      drDate.setHours(0, 0, 0, 0);
-      return drDate.getTime() === selected.getTime();
-    });
+    // Find the first non-completed assigned routine for today
+    const firstAssigned = assigned.find((r) => !completed.includes(r)) || null;
 
-    if (isToday) {
-      const isDailyCompleted = routineForDate?.completed;
+    if (isTodayDate) {
+      // Get next 3 upcoming dates with routines
+      const upcomingRoutines: RoutineId[] = [];
+      const scheduleEntries = Object.entries(currentPlan.schedule);
+      for (const [entryDate, routines] of scheduleEntries) {
+        if (entryDate > dateStr && routines.length > 0 && upcomingRoutines.length < 3) {
+          upcomingRoutines.push(routines[0] as RoutineId);
+        }
+      }
 
-      setDateRoutines({
-        today: isDailyCompleted ? null : routineForDate?.routineId || null,
-        bonus: currentPlan.bonusRoutines,
-        upcoming: currentPlan.dailyRoutines
-          .filter((dr) => new Date(dr.date) > today)
-          .slice(0, 3)
-          .map((dr) => dr.routineId),
-        completed:
-          isDailyCompleted && routineForDate ? [routineForDate.routineId] : [],
-      });
+      return {
+        today: firstAssigned as RoutineId | null,
+        bonus: currentPlan.bonusRoutines || [],
+        upcoming: upcomingRoutines,
+        completed: completed as RoutineId[],
+      };
     } else if (isPast) {
-      setDateRoutines({
+      return {
         today: null,
-        bonus: [],
-        upcoming: [],
-        completed: routineForDate ? [routineForDate.routineId] : [],
-      });
-    } else if (isFuture) {
-      setDateRoutines({
+        bonus: [] as RoutineId[],
+        upcoming: [] as RoutineId[],
+        completed: completed.length > 0 ? completed as RoutineId[] : assigned as RoutineId[],
+      };
+    } else {
+      // Future
+      return {
         today: null,
-        bonus: [],
-        upcoming: routineForDate ? [routineForDate.routineId] : [],
-        completed: [],
-      });
+        bonus: [] as RoutineId[],
+        upcoming: assigned as RoutineId[],
+        completed: [] as RoutineId[],
+      };
     }
-  }, [currentPlan, selectedDate]);
+  }, [currentPlan, selectedDate, completedRoutines, dateStr, getRoutinesForDate]);
 
-  const handleDateSelect = (date: Date) => {
-    selectDate(date);
-  };
-
-  // Extract dates that have routines from the plan
-  const planDates = React.useMemo(() => {
-    if (!currentPlan) return undefined;
-    return currentPlan.dailyRoutines.map((dr) => new Date(dr.date));
+  // Extract dates that have routines from the plan schedule
+  const planDates = useMemo(() => {
+    if (!currentPlan?.schedule) return undefined;
+    return Object.entries(currentPlan.schedule)
+      .filter(([_, routines]) => routines.length > 0)
+      .map(([d]) => new Date(d));
   }, [currentPlan]);
 
-  if (loading && !currentPlan) {
+  if (status === "loading" && !currentPlan) {
     return (
       <ScreenWrapper edges={["top"]}>
         <View
@@ -147,7 +142,7 @@ const Routines = () => {
           </Typography>
 
           <Calendar
-            onSelect={handleDateSelect}
+            onSelect={setSelectedDate}
             selectedDate={selectedDate}
             availableDates={planDates}
           />
@@ -162,7 +157,7 @@ const Routines = () => {
                 Today&apos;s Routine
               </Typography>
 
-              <RoutineCardLarge routineId={dateRoutines.today} />
+              <RoutineCard routineId={dateRoutines.today} />
             </Section>
           )}
 
@@ -173,7 +168,7 @@ const Routines = () => {
               </Typography>
 
               {dateRoutines.bonus.map((routineId) => (
-                <RoutineCardLarge key={routineId} routineId={routineId} />
+                <RoutineCard key={routineId} routineId={routineId} />
               ))}
             </Section>
           )}
@@ -185,7 +180,7 @@ const Routines = () => {
               </Typography>
 
               {dateRoutines.upcoming.map((routineId) => (
-                <RoutineCardLarge
+                <RoutineCard
                   key={routineId}
                   routineId={routineId}
                   locked={true}
@@ -201,7 +196,7 @@ const Routines = () => {
               </Typography>
 
               {dateRoutines.completed.map((routineId) => (
-                <RoutineCardLarge key={routineId} routineId={routineId} />
+                <RoutineCard key={routineId} routineId={routineId as any} />
               ))}
             </Section>
           )}

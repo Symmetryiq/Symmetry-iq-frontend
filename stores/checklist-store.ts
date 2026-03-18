@@ -1,64 +1,88 @@
-import {
-  ChecklistTask,
-  getChecklist,
-  saveChecklist,
-} from '@/services/api/checklist.api';
+import { zustandStorage } from '@/lib/mmkv';
+import { getChecklist, saveChecklist } from '@/services/api/checklist.api';
+import { DailyChecklistTasks, type ChecklistTaskDef } from '@/data/checklist';
 import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
+
+export interface ChecklistTask extends ChecklistTaskDef {
+  completed: boolean;
+}
 
 interface ChecklistState {
   tasks: ChecklistTask[];
-  loading: boolean;
+  status: 'idle' | 'loading' | 'success' | 'error';
   error: string | null;
-  currentDate: string; // YYYY-MM-DD
+  currentDate: string;
 
   // Actions
   fetchChecklist: (date: string) => Promise<void>;
-  updateTask: (index: number, completed: boolean) => void;
+  updateTask: (taskId: string, completed: boolean) => void;
   saveToBackend: () => Promise<void>;
   clearError: () => void;
 }
 
-const formatDate = (date: Date): string => {
-  return date.toISOString().split('T')[0]; // YYYY-MM-DD
-};
+const formatDate = (date: Date): string => date.toISOString().split('T')[0];
 
-export const useChecklistStore = create<ChecklistState>((set, get) => ({
-  tasks: [],
-  loading: false,
-  error: null,
-  currentDate: formatDate(new Date()),
+export const useChecklistStore = create<ChecklistState>()(
+  persist(
+    (set, get) => ({
+      tasks: DailyChecklistTasks.map((t) => ({ ...t, completed: false })),
+      status: 'idle',
+      error: null,
+      currentDate: formatDate(new Date()),
 
-  fetchChecklist: async (date) => {
-    set({ loading: true, error: null, currentDate: date });
-    try {
-      const result = await getChecklist(date);
-      set({ tasks: result.checklist.tasks, loading: false });
-    } catch (error: any) {
-      set({ error: error.message, loading: false });
-    }
-  },
+      fetchChecklist: async (date) => {
+        set({ status: 'loading', error: null, currentDate: date });
+        try {
+          const result = await getChecklist(date);
+          const completedTaskIds: string[] =
+            result.checklist?.completedTaskIds || [];
 
-  updateTask: (index, completed) => {
-    set((state) => {
-      const updatedTasks = [...state.tasks];
-      if (updatedTasks[index]) {
-        updatedTasks[index] = { ...updatedTasks[index], completed };
-      }
-      return { tasks: updatedTasks };
-    });
+          set({
+            tasks: DailyChecklistTasks.map((t) => ({
+              ...t,
+              completed: completedTaskIds.includes(t.id),
+            })),
+            status: 'success',
+          });
+        } catch (error: any) {
+          set({ status: 'error', error: error.message });
+        }
+      },
 
-    // Auto-save after update
-    setTimeout(() => get().saveToBackend(), 500);
-  },
+      updateTask: (taskId, completed) => {
+        set((state) => ({
+          tasks: state.tasks.map((t) =>
+            t.id === taskId ? { ...t, completed } : t,
+          ),
+        }));
 
-  saveToBackend: async () => {
-    const { tasks, currentDate } = get();
-    try {
-      await saveChecklist(currentDate, tasks);
-    } catch (error: any) {
-      set({ error: error.message });
-    }
-  },
+        // Auto-save after update (debounced)
+        setTimeout(() => get().saveToBackend(), 500);
+      },
 
-  clearError: () => set({ error: null }),
-}));
+      saveToBackend: async () => {
+        const { tasks, currentDate } = get();
+        try {
+          const completedTaskIds = tasks
+            .filter((t) => t.completed)
+            .map((t) => t.id);
+          await saveChecklist(currentDate, completedTaskIds);
+        } catch (error: any) {
+          // Silent fail — data is persisted locally via MMKV
+          set({ error: error.message });
+        }
+      },
+
+      clearError: () => set({ error: null }),
+    }),
+    {
+      name: 'checklist-storage',
+      storage: createJSONStorage(() => zustandStorage),
+      partialize: (state) => ({
+        tasks: state.tasks,
+        currentDate: state.currentDate,
+      }),
+    },
+  ),
+);

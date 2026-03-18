@@ -2,13 +2,13 @@ import Button from "@/components/common/button";
 import ScreenWrapper from "@/components/common/screen-wrapper";
 import Typography from "@/components/common/typography";
 import { Colors } from "@/constants/theme";
-import { scale, verticalScale } from "@/helpers/scale";
+import { scale, verticalScale } from "@/helpers/scaling";
 import { getLandmarks, getScores } from "@/helpers/scan";
 import { useScanStore } from "@/stores/scan-store";
 
 import { launchCameraAsync, launchImageLibraryAsync } from "expo-image-picker";
 import { router } from "expo-router";
-import { CameraIcon, ClockIcon, UserIcon } from "phosphor-react-native";
+import { CameraIcon, UserIcon } from "phosphor-react-native";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
@@ -29,7 +29,7 @@ const Scan = () => {
     router.push({
       pathname: "/insights",
       params: {
-        scanId: latestScan._id,
+        scanId: latestScan.id,
       },
     });
   };
@@ -51,20 +51,6 @@ const Scan = () => {
     if (!result.canceled) setImage(result.assets[0].uri);
   };
 
-  function normalizeScores(scores: Record<string, number>) {
-    return {
-      overallSymmetry: scores.overall,
-      eyeAlignment: scores.eye,
-      noseCentering: scores.nose,
-      facialPuffiness: scores.puff,
-      skinClarity: scores.clar,
-      chinAlignment: scores.chin,
-      facialThirds: scores.thirds,
-      jawlineSymmetry: scores.jaw,
-      cheekboneBalance: scores.mid,
-      eyebrowSymmetry: scores.brow,
-    };
-  }
 
   const handleProcessImage = async () => {
     if (!image) return;
@@ -75,17 +61,26 @@ const Scan = () => {
       // Step 1: Extract landmarks from the image
       const landmarks = await getLandmarks(image);
 
-      // Step 2: Get scores from the landmarks
-      const response = await getScores(landmarks);
+      // Step 2: Compute scores locally (instant)
+      const result = getScores(landmarks);
 
-      if (!response.data?.model) {
-        throw new Error("Invalid response from scoring API");
-      }
+      const scores = {
+        overallSymmetry: result.overall,
+        eyeAlignment: result.eye,
+        noseCentering: result.nose,
+        facialPuffiness: result.puff,
+        skinClarity: result.clar,
+        chinAlignment: result.chin,
+        facialThirds: result.thirds,
+        jawlineSymmetry: result.jaw,
+        cheekboneBalance: result.cheek,
+        eyebrowSymmetry: result.brow,
+      };
 
-      const scores = normalizeScores(response.data.model);
+      console.log("scores", result);
 
       // Step 3: Save scan to backend
-      const savedScan = await saveScanData(landmarks, scores);
+      const savedScan = await saveScanData(scores);
 
       if (!savedScan) {
         console.error("❌ Scan save returned null");
@@ -119,7 +114,7 @@ const Scan = () => {
           errorMessage =
             "Network error. Please check your connection and try again.";
         } else if (error.message.includes("Invalid response")) {
-          errorMessage = "Invalid response from server. Please try again.";
+          errorMessage = "Invalid response from scoring engine. Please try again.";
         } else {
           errorMessage = error.message;
         }
@@ -136,82 +131,82 @@ const Scan = () => {
     }
   };
 
-  if (hasScannedToday()) {
-    return (
-      <ScreenWrapper edges={["top"]}>
-        <View style={styles.container}>
-          <View style={{ alignItems: "center" }}>
-            <Typography
-              color="onBackground"
-              size={scale(36)}
-              font="bold"
-              style={{ textAlign: "center" }}
-            >
-              Scan Completed
-            </Typography>
-            <Typography
-              color="onSecondary"
-              size={scale(16)}
-              style={{ textAlign: "center" }}
-            >
-              You have already scanned today. Please try again tomorrow.
-            </Typography>
-          </View>
+  // if (hasScannedToday()) {
+  //   return (
+  //     <ScreenWrapper edges={["top"]}>
+  //       <View style={styles.container}>
+  //         <View style={{ alignItems: "center" }}>
+  //           <Typography
+  //             color="onBackground"
+  //             size={scale(36)}
+  //             font="bold"
+  //             style={{ textAlign: "center" }}
+  //           >
+  //             Scan Completed
+  //           </Typography>
+  //           <Typography
+  //             color="onSecondary"
+  //             size={scale(16)}
+  //             style={{ textAlign: "center" }}
+  //           >
+  //             You have already scanned today. Please try again tomorrow.
+  //           </Typography>
+  //         </View>
 
-          <View
-            style={{
-              alignSelf: "center",
-              height: verticalScale(375),
-              flex: 1,
-              aspectRatio: 1,
-              overflow: "hidden",
-            }}
-          >
-            <Image
-              source={require("@/assets/images/tick.jpg")}
-              style={{ width: "100%", height: "100%" }}
-            />
-          </View>
+  //         <View
+  //           style={{
+  //             alignSelf: "center",
+  //             height: verticalScale(375),
+  //             flex: 1,
+  //             aspectRatio: 1,
+  //             overflow: "hidden",
+  //           }}
+  //         >
+  //           <Image
+  //             source={require("@/assets/images/tick.jpg")}
+  //             style={{ width: "100%", height: "100%" }}
+  //           />
+  //         </View>
 
-          <View style={{ gap: scale(8) }}>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: scale(8),
-              }}
-            >
-              <ClockIcon size={scale(24)} color={Colors.onMuted} />
+  //         <View style={{ gap: scale(8) }}>
+  //           <View
+  //             style={{
+  //               flexDirection: "row",
+  //               alignItems: "center",
+  //               justifyContent: "center",
+  //               gap: scale(8),
+  //             }}
+  //           >
+  //             <ClockIcon size={scale(24)} color={Colors.onMuted} />
 
-              <Typography
-                color="onSecondary"
-                size={scale(16)}
-                style={{ textAlign: "center" }}
-              >
-                Time:{" "}
-                {new Date(latestScan?.scanDate!)
-                  .toLocaleTimeString()
-                  .toUpperCase()}
-              </Typography>
-            </View>
+  //             <Typography
+  //               color="onSecondary"
+  //               size={scale(16)}
+  //               style={{ textAlign: "center" }}
+  //             >
+  //               Time:{" "}
+  //               {new Date(latestScan?.scanDate!)
+  //                 .toLocaleTimeString()
+  //                 .toUpperCase()}
+  //             </Typography>
+  //           </View>
 
-            <Button onPress={handlePressViewResults}>
-              <Typography font="semiBold">View Results</Typography>
-            </Button>
+  //           <Button onPress={handlePressViewResults}>
+  //             <Typography font="semiBold">View Results</Typography>
+  //           </Button>
 
-            <Typography
-              color="onMuted"
-              size={scale(14)}
-              style={{ textAlign: "center" }}
-            >
-              You can scan again tomorrow.
-            </Typography>
-          </View>
-        </View>
-      </ScreenWrapper>
-    );
-  }
+  //           <Typography
+  //             color="onMuted"
+  //             size={scale(14)}
+  //             style={{ textAlign: "center" }}
+  //           >
+  //             You can scan again tomorrow.
+  //           </Typography>
+  //         </View>
+  //       </View>
+  //     </ScreenWrapper>
+  //   );
+  // }
 
   return (
     <ScreenWrapper edges={["top"]}>

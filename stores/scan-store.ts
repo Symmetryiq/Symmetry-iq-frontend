@@ -1,35 +1,22 @@
-import { getScans, saveScan } from '@/services/api/scan.api';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Landmark } from 'react-native-mediapipe';
+import { zustandStorage } from '@/lib/mmkv';
+import { getScans, saveScan, type Scores } from '@/services/api/scan.api';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 export interface Scan {
   id: string;
-  _id: string;
-  scores: {
-    overallSymmetry: number;
-    eyeAlignment: number;
-    noseCentering: number;
-    facialPuffiness: number;
-    skinClarity: number;
-    chinAlignment: number;
-    facialThirds: number;
-    jawlineSymmetry: number;
-    cheekboneBalance: number;
-    eyebrowSymmetry: number;
-  };
+  scores: Scores;
   scanDate: string;
 }
 
 interface ScanState {
   scans: Scan[];
   latestScan: Scan | null;
-  loading: boolean;
+  status: 'idle' | 'loading' | 'success' | 'error';
   error: string | null;
 
   // Actions
-  saveScanData: (landmarks: Landmark[], scores: any) => Promise<Scan | null>;
+  saveScanData: (scores: Scores) => Promise<Scan | null>;
   fetchScans: () => Promise<void>;
   clearError: () => void;
   hasScannedToday: () => boolean;
@@ -40,13 +27,13 @@ export const useScanStore = create<ScanState>()(
     (set, get) => ({
       scans: [],
       latestScan: null,
-      loading: false,
+      status: 'idle',
       error: null,
 
-      saveScanData: async (landmarks, scores) => {
-        set({ loading: true, error: null });
+      saveScanData: async (scores) => {
+        set({ status: 'loading', error: null });
         try {
-          const result = await saveScan({ landmarks, scores });
+          const result = await saveScan({ scores });
 
           const newScan = result.scan;
 
@@ -57,23 +44,23 @@ export const useScanStore = create<ScanState>()(
           set((state) => ({
             scans: [newScan, ...state.scans],
             latestScan: newScan,
-            loading: false,
+            status: 'success',
           }));
 
           return newScan;
         } catch (error: any) {
-          set({ error: error.message, loading: false });
+          set({ status: 'error', error: error.message });
           return null;
         }
       },
 
       fetchScans: async () => {
-        set({ loading: true, error: null });
+        set({ status: 'loading', error: null });
         try {
           const result = await getScans();
-          set({ scans: result.scans, loading: false });
+          set({ scans: result.scans, status: 'success' });
         } catch (error: any) {
-          set({ error: error.message, loading: false });
+          set({ status: 'error', error: error.message });
         }
       },
 
@@ -95,7 +82,7 @@ export const useScanStore = create<ScanState>()(
     }),
     {
       name: 'scan-storage',
-      storage: createJSONStorage(() => AsyncStorage),
-    }
-  )
+      storage: createJSONStorage(() => zustandStorage),
+    },
+  ),
 );

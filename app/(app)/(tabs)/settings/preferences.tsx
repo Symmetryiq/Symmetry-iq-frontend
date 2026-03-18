@@ -1,7 +1,7 @@
 import ScreenWrapper from "@/components/common/screen-wrapper";
 import Typography from "@/components/common/typography";
 import { Colors, Fonts } from "@/constants/theme";
-import { verticalScale } from "@/helpers/scale";
+import { verticalScale } from "@/helpers/scaling";
 import { updateUserProfile } from "@/services/api/user.api";
 import { useUser } from "@clerk/expo";
 import { Bell, Info } from "phosphor-react-native";

@@ -1,5 +1,5 @@
 import { Colors } from "@/constants/theme";
-import { scale, verticalScale } from "@/helpers/scale";
+import { scale, verticalScale } from "@/helpers/scaling";
 import { useChecklistStore } from "@/stores/checklist-store";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
@@ -84,14 +84,14 @@ const Checklist = ({ date }: ChecklistProps) => {
 
       <View style={styles.tasksList}>
         {tasks.map((item, index) => (
-          <React.Fragment key={index}>
+          <React.Fragment key={item.id}>
             <ChecklistItem
               title={item.title}
               description={item.description}
               completed={item.completed}
               onToggle={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                updateTask(index, !item.completed);
+                updateTask(item.id, !item.completed);
               }}
             />
 

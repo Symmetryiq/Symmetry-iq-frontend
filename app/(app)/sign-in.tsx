@@ -7,7 +7,7 @@ import { Label } from "@/components/common/label";
 import ScreenWrapper from "@/components/common/screen-wrapper";
 import Typography from "@/components/common/typography";
 import { Colors } from "@/constants/theme";
-import { scale, verticalScale } from "@/helpers/scale";
+import { scale, verticalScale } from "@/helpers/scaling";
 import { useSignIn } from "@clerk/expo";
 import { Link, useRouter } from "expo-router";
 import { LockIcon, MailboxIcon } from "phosphor-react-native";

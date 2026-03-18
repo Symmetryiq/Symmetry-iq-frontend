@@ -1,133 +1,138 @@
+import { zustandStorage } from '@/lib/mmkv';
+import { generatePlan, type GeneratedPlan, type Scores } from '@/lib/plan-engine';
+import { fetchRemotePlan, syncPlan, syncRoutineComplete } from '@/services/api/plan.api';
 import { RoutineId } from '@/data/routines';
-import {
-  generatePlan,
-  getCurrentPlan,
-  markRoutineComplete,
-} from '@/services/api/plan.api';
 import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
-interface DailyRoutine {
-  date: string;
-  routineId: RoutineId;
-  completed: boolean;
-  completedAt?: string;
-}
-
-interface Plan {
-  _id: string;
-  userId: string;
+export interface Plan extends GeneratedPlan {
+  id: string;
   scanId: string;
-  startDate: string;
-  endDate: string;
-  dailyRoutines: DailyRoutine[];
-  bonusRoutines: RoutineId[];
+  status: 'active' | 'completed' | 'replaced';
 }
 
 interface PlanState {
   currentPlan: Plan | null;
-  loading: boolean;
+  /** IDs of routines completed for each date: { "2026-03-15": ["hard-mewing-hold"] } */
+  completedRoutines: Record<string, string[]>;
+  status: 'idle' | 'loading' | 'success' | 'error';
   error: string | null;
-  selectedDate: Date;
 
   // Actions
+  generateNewPlan: (scanId: string, scores: Scores) => Plan;
   fetchCurrentPlan: () => Promise<void>;
-  generateNewPlan: (scanId: string) => Promise<void>;
-  selectDate: (date: Date) => void;
-  completeRoutine: (routineId: RoutineId, date?: Date) => Promise<void>;
+  completeRoutine: (routineId: RoutineId, date: string, durationSeconds?: number) => void;
+  getRoutinesForDate: (date: string) => { assigned: string[]; completed: string[] };
   clearError: () => void;
 }
 
-export const usePlanStore = create<PlanState>((set, get) => ({
-  currentPlan: null,
-  loading: false,
-  error: null,
-  selectedDate: new Date(),
+const formatDate = (date: Date): string => date.toISOString().split('T')[0];
 
-  fetchCurrentPlan: async () => {
-    set({ loading: true, error: null });
-    try {
-      const result = await getCurrentPlan();
-      set({ currentPlan: result.plan, loading: false });
-    } catch (error: any) {
-      // No active plan is not an error worth showing
-      if (error.message.includes('No active plan')) {
-        set({ currentPlan: null, loading: false });
-      } else {
-        set({ error: error.message, loading: false });
-      }
-    }
-  },
+export const usePlanStore = create<PlanState>()(
+  persist(
+    (set, get) => ({
+      currentPlan: null,
+      completedRoutines: {},
+      status: 'idle',
+      error: null,
 
-  generateNewPlan: async (scanId) => {
-    set({ loading: true, error: null });
-    try {
-      const result = await generatePlan(scanId);
-      set({ currentPlan: result.plan, loading: false });
-    } catch (error: any) {
-      set({ error: error.message, loading: false });
-    }
-  },
+      /**
+       * Generate a new plan locally from scan scores.
+       * The plan is created instantly on-device and synced to backend in background.
+       */
+      generateNewPlan: (scanId, scores) => {
+        const generated = generatePlan(scores);
+        const plan: Plan = {
+          ...generated,
+          id: `plan_${Date.now()}`, // Temporary local ID, replaced by backend on sync
+          scanId,
+          status: 'active',
+        };
 
-  selectDate: (date) => {
-    set({ selectedDate: date });
-  },
+        set({ currentPlan: plan, completedRoutines: {}, status: 'success', error: null });
 
-  completeRoutine: async (routineId, date) => {
-    const { currentPlan } = get();
-    if (!currentPlan) return;
-
-    set({ loading: true, error: null });
-    try {
-      // If date is provided, use it. Otherwise use today.
-      const targetDateStr = date
-        ? date.toISOString()
-        : new Date().toISOString(); // Note: This might need format adjustment based on how 'date' string is stored in DB
-
-      // The backend expects full ISO or parsable string.
-      // Our local `dr.date` is likely a string from JSON.
-
-      await markRoutineComplete(currentPlan._id, routineId, targetDateStr);
-
-      // Update local state
-      set((state) => {
-        if (!state.currentPlan) return state;
-
-        const updatedRoutines = state.currentPlan.dailyRoutines.map((dr) => {
-          // Check if this is the routine we want to complete
-          const isSameRoutine = dr.routineId === routineId;
-
-          // Check date if provided.
-          // We need to compare just the day part usually.
-          const drDate = new Date(dr.date);
-          drDate.setHours(0, 0, 0, 0);
-
-          const target = new Date(targetDateStr);
-          target.setHours(0, 0, 0, 0);
-
-          const isSameDate = drDate.getTime() === target.getTime();
-
-          if (isSameRoutine && isSameDate) {
-            return {
-              ...dr,
-              completed: true,
-              completedAt: new Date().toISOString(),
-            };
-          }
-          return dr;
+        // Background sync — don't block UI
+        syncPlan({ scanId, ...generated }).catch(() => {
+          // Will retry on next sync cycle
         });
 
-        return {
-          currentPlan: {
-            ...state.currentPlan,
-            dailyRoutines: updatedRoutines,
-          },
-          loading: false,
-        };
-      });
-    } catch (error: any) {
-      set({ error: error.message, loading: false });
-    }
-  },
+        return plan;
+      },
 
-  clearError: () => set({ error: null }),
-}));
+      /**
+       * Hydrate plan from backend (e.g. after reinstall or MMKV wipe).
+       * Only needed if local storage is empty.
+       */
+      fetchCurrentPlan: async () => {
+        set({ status: 'loading', error: null });
+        try {
+          const result = await fetchRemotePlan();
+          if (result.plan) {
+            set({
+              currentPlan: {
+                ...result.plan,
+                schedule: result.plan.schedule || {},
+              },
+              status: 'success',
+            });
+          } else {
+            set({ currentPlan: null, status: 'success' });
+          }
+        } catch (error: any) {
+          // No plan is fine — not an error
+          if (error.message?.includes('No active plan') || error.message?.includes('404')) {
+            set({ currentPlan: null, status: 'idle' });
+          } else {
+            set({ status: 'error', error: error.message });
+          }
+        }
+      },
+
+      /**
+       * Mark a routine as completed. Updates local state instantly,
+       * syncs to backend in background.
+       */
+      completeRoutine: (routineId, date, durationSeconds) => {
+        const { currentPlan, completedRoutines } = get();
+
+        // Update local state immediately
+        const dayCompleted = completedRoutines[date] || [];
+        if (!dayCompleted.includes(routineId)) {
+          set({
+            completedRoutines: {
+              ...completedRoutines,
+              [date]: [...dayCompleted, routineId],
+            },
+          });
+        }
+
+        // Background sync
+        if (currentPlan) {
+          syncRoutineComplete(currentPlan.id, routineId, date, durationSeconds).catch(() => {
+            // Will retry on next sync cycle
+          });
+        }
+      },
+
+      /**
+       * Get the assigned and completed routines for a specific date.
+       */
+      getRoutinesForDate: (date) => {
+        const { currentPlan, completedRoutines } = get();
+        const assigned = currentPlan?.schedule[date] || [];
+        const completed = completedRoutines[date] || [];
+        return { assigned, completed };
+      },
+
+      clearError: () => set({ error: null }),
+    }),
+    {
+      name: 'plan-storage',
+      storage: createJSONStorage(() => zustandStorage),
+      partialize: (state) => ({
+        currentPlan: state.currentPlan,
+        completedRoutines: state.completedRoutines,
+      }),
+    },
+  ),
+);

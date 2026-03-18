@@ -1,5 +1,5 @@
 import { Colors } from "@/constants/theme";
-import { scale, verticalScale } from "@/helpers/scale";
+import { scale, verticalScale } from "@/helpers/scaling";
 import { SelectableProps } from "@/helpers/types";
 import { CheckIcon } from "phosphor-react-native";
 import React, { useEffect } from "react";

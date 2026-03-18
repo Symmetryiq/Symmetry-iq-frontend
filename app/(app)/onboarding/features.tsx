@@ -2,7 +2,7 @@ import Button from "@/components/common/button";
 import ScreenWrapper from "@/components/common/screen-wrapper";
 import Typography from "@/components/common/typography";
 import { Colors } from "@/constants/theme";
-import { scale, verticalScale } from "@/helpers/scale";
+import { scale, verticalScale } from "@/helpers/scaling";
 import { router } from "expo-router";
 import { CheckCircle } from "phosphor-react-native";
 import React from "react";

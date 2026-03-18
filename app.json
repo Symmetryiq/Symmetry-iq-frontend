@@ -11,6 +11,7 @@
     "scheme": "symmetryiq",
     "userInterfaceStyle": "dark",
     "backgroundColor": "#16141f",
+    "jsEngine": "hermes",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,

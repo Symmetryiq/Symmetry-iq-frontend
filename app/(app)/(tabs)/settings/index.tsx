@@ -1,7 +1,7 @@
 import ScreenWrapper from "@/components/common/screen-wrapper";
 import { POLICY_URL, TERMS_URL } from "@/constants";
 import { Colors, Fonts } from "@/constants/theme";
-import { verticalScale } from "@/helpers/scale";
+import { verticalScale } from "@/helpers/scaling";
 import {
   Book,
   Calendar,
@@ -11,6 +11,7 @@ import {
   GenderMale,
   ShareNetwork,
   Star,
+  Trophy,
   User,
 } from "phosphor-react-native";
 import React from "react";
@@ -28,8 +29,9 @@ import {
 
 import LogoutButton from "@/components/buttons/logout-button";
 import { openBrowserLink } from "@/helpers/utils";
-import { useOnboardingStore } from "@/stores/onboarding";
+import { useOnboardingStore } from "@/stores/onboarding-store";
 import { useUser } from "@clerk/expo";
+import Constants from "expo-constants";
 import { useRouter } from "expo-router";
 
 const APP_STORE_URL = "https://apps.apple.com/app/idYOUR_APP_ID";
@@ -46,9 +48,9 @@ const SettingsScreen = () => {
       message:
         Platform.OS === "ios"
           ? "Check out Symmetry IQ - the app that helps you improve your facial symmetry! Download it here: " +
-            APP_STORE_URL
+          APP_STORE_URL
           : "Check out Symmetry IQ - the app that helps you improve your facial symmetry! Download it here: " +
-            PLAY_STORE_URL,
+          PLAY_STORE_URL,
     });
   };
 
@@ -125,6 +127,19 @@ const SettingsScreen = () => {
                 </Text>
                 <CaretRight size={16} color={Colors.onMuted} />
               </View>
+            </Pressable>
+
+            <View style={styles.seperator} />
+
+            <Pressable
+              style={styles.settingItem}
+              onPress={() => router.push("/achievements")}
+            >
+              <View style={styles.settingItemHeader}>
+                <Trophy size={20} color={Colors.onBackground} />
+                <Text style={styles.settingItemHeaderLabel}>Achievements</Text>
+              </View>
+              <CaretRight size={20} color={Colors.onBackground} />
             </Pressable>
           </View>
         </View>
@@ -213,7 +228,9 @@ const SettingsScreen = () => {
           <LogoutButton />
         </View>
         <View style={styles.versionContainer}>
-          <Text style={styles.versionText}>Version 1.0.0</Text>
+          <Text style={styles.versionText}>
+            Version {Constants.expoConfig?.version || "1.0.0"}
+          </Text>
         </View>
       </ScrollView>
     </ScreenWrapper>

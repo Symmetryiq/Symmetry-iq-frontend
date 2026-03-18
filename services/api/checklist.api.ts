@@ -1,13 +1,7 @@
 import apiClient from './client';
 
-export interface ChecklistTask {
-  title: string;
-  description: string;
-  completed: boolean;
-}
-
-export const saveChecklist = async (date: string, tasks: ChecklistTask[]) => {
-  const response = await apiClient.post('/checklist', { date, tasks });
+export const saveChecklist = async (date: string, completedTaskIds: string[]) => {
+  const response = await apiClient.post('/checklist', { date, completedTaskIds });
   return response.data;
 };
 

@@ -4,7 +4,7 @@ import ScreenWrapper from "@/components/common/screen-wrapper";
 import Selectable from "@/components/common/selectable";
 import Typography from "@/components/common/typography";
 import { Colors } from "@/constants/theme";
-import { scale, verticalScale } from "@/helpers/scale";
+import { scale, verticalScale } from "@/helpers/scaling";
 import {
   ChewingSide,
   CommitmentLevel,
@@ -13,7 +13,7 @@ import {
   Gender,
   SleepPosition,
   useOnboardingStore,
-} from "@/stores/onboarding";
+} from "@/stores/onboarding-store";
 import { useRouter } from "expo-router";
 import {
   ArrowLeftIcon,
