@@ -16,7 +16,6 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.bergmanmedia.symmetryiq",
-      "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSLocationWhenInUseUsageDescription": "This app uses location data optionally to improve user accessibility and reports.",
@@ -27,13 +26,7 @@
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.bergmanmedia.symmetryiq",
-      "googleServicesFile": "./google-services.json",
-      "icon": "./assets/images/logo-android.png",
-      "softwareKeyboardLayoutMode": "pan"
-    },
-    "web": {
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "googleServicesFile": "./google-services.json"
     },
     "plugins": [
       "expo-router",
@@ -81,7 +74,17 @@
       "expo-apple-authentication",
       "./plugins/with-model-ios",
       "./plugins/with-model-android",
-      "@clerk/expo"
+      "@clerk/expo",
+      [
+        "@sentry/react-native/expo",
+        {
+          "url": "https://sentry.io/",
+          "note": "Use SENTRY_AUTH_TOKEN env to authenticate with Sentry.",
+          "project": "react-native",
+          "organization": "symmetryiq"
+        }
+      ],
+      "@sentry/react-native"
     ],
     "experiments": {
       "typedRoutes": true,

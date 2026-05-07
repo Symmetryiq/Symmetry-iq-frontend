@@ -1,20 +1,26 @@
-import { ClerkProvider } from "@clerk/expo";
-import { tokenCache } from "@clerk/expo/token-cache";
-import { Slot } from "expo-router";
-import { GlobalError } from "@/components/global-error";
+import { CLERK_PUBLISHABLE_KEY, SENTRY_DSN } from '@/constants/env';
+import { ClerkProvider } from '@clerk/expo';
+import { tokenCache } from '@clerk/expo/token-cache';
+import { Slot } from 'expo-router';
+import React from 'react';
+import * as Sentry from "@sentry/react-native";
 
-export const ErrorBoundary = GlobalError;
+Sentry.init({
+  dsn: "https://385a2f11b7c6860d02e437fd42462a6a@o4511122627821568.ingest.us.sentry.io/4511122634113024",
+  enableLogs: true,
+  sendDefaultPii: true,
+  debug: true
+});
 
-const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
-
-if (!publishableKey) {
-  throw new Error("Add your Clerk Publishable Key to the .env file");
-}
-
-export default function RootLayout() {
+function RootLayout() {
   return (
-    <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
+    <ClerkProvider
+      publishableKey="pk_test_ZXBpYy1nYXItODYuY2xlcmsuYWNjb3VudHMuZGV2JA"
+      tokenCache={tokenCache}
+    >
       <Slot />
     </ClerkProvider>
   );
 }
+
+export default Sentry.wrap(RootLayout);

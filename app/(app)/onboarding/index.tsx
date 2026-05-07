@@ -1,64 +1,62 @@
-import Button from "@/components/common/button";
-import ScreenWrapper from "@/components/common/screen-wrapper";
-import Typography from "@/components/common/typography";
-import { scale, verticalScale } from "@/helpers/scaling";
-import { router } from "expo-router";
-import React from "react";
-import { StyleSheet, View } from "react-native";
-import Animated, { FadeIn } from "react-native-reanimated";
+import Button from '@/components/Button';
+import ScreenView from '@/components/ScreenView';
+import ThemedText from '@/components/ThemedText';
+import { navigateTo } from '@/utils/router.util';
+import { verticalScale } from '@/utils/scaling.util';
+import { Image } from 'expo-image';
+import { ArrowRightIcon } from 'phosphor-react-native';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
 
 const WelcomeScreen = () => {
-  const handlePress = () => {
-    router.push("/onboarding/features");
-  };
-
   return (
-    <ScreenWrapper>
-      <View style={styles.container}>
-        <View
-          style={{ flex: 1, justifyContent: "center", gap: verticalScale(16) }}
-        >
-          <Animated.Image
-            entering={FadeIn.duration(700)}
-            source={require("@/assets/images/face-symmetry.jpg")}
-            style={styles.welcomeImage}
-            resizeMode={"contain"}
-          />
+    <ScreenView>
+      <View style={styles.contentContainer}>
+        <Image
+          source={require('@/assets/images/welcome.jpg')}
+          style={styles.image}
+          contentFit="cover"
+        />
 
-          <View style={{ alignItems: "center" }}>
-            <Typography color="onBackground" font="bold" size={32}>
-              Symmetry IQ
-            </Typography>
-            <Typography color="onSecondary" font="regular" size={16}>
-              Become Symmetrical.
-            </Typography>
-          </View>
+        <View style={styles.textContainer}>
+          <ThemedText variant="h1" color="onPrimary">
+            Symmetry IQ
+          </ThemedText>
+          <ThemedText color="onSecondary">Become Symmetrical</ThemedText>
         </View>
-
-        <Button onPress={handlePress}>
-          <Typography color="onPrimary" font="semiBold" size={16}>
-            Get Started
-          </Typography>
-        </Button>
       </View>
-    </ScreenWrapper>
+
+      <Button
+        title="Get Started"
+        size="lg"
+        iconPosition="right"
+        icon={ArrowRightIcon}
+        onPress={() => navigateTo('/onboarding/features')}
+      />
+    </ScreenView>
   );
 };
 
 export default WelcomeScreen;
 
 const styles = StyleSheet.create({
-  container: {
+  contentContainer: {
     flex: 1,
-    justifyContent: "space-between",
-    paddingHorizontal: scale(16),
-    marginVertical: verticalScale(16),
+    justifyContent: 'center',
+    gap: verticalScale(16),
   },
 
-  welcomeImage: {
-    height: verticalScale(300),
-    aspectRatio: 1,
-    borderRadius: verticalScale(56),
-    alignSelf: "center",
+  image: {
+    width: '100%',
+    height: verticalScale(350),
+    borderRadius: 56,
+    borderCurve: 'continuous',
+    alignSelf: 'center',
+    overflow: 'hidden',
+  },
+
+  textContainer: {
+    gap: verticalScale(4),
+    alignItems: 'center',
   },
 });

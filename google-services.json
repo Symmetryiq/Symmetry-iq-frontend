@@ -7,20 +7,12 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:460134598118:android:eed99c2c9fc05383b14227",
+        "mobilesdk_app_id": "1:460134598118:android:a32468a8c1a637feb14227",
         "android_client_info": {
           "package_name": "com.bergmanmedia.symmetryiq"
         }
       },
       "oauth_client": [
-        {
-          "client_id": "460134598118-5hikp7raui498nkplj6ir5ptb7o3ibtp.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.bergmanmedia.symmetryiq",
-            "certificate_hash": "3d65698c37f49f3ff120435824e3262e4d121369"
-          }
-        },
         {
           "client_id": "460134598118-8e5q5uvibaorq77g564070cmchns9as3.apps.googleusercontent.com",
           "client_type": 3

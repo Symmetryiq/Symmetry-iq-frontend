@@ -1,72 +1,43 @@
-import { Colors } from "@/constants/theme";
-import { scale, verticalScale } from "@/helpers/scaling";
-import { useUser } from "@clerk/expo";
-import { useRouter } from "expo-router";
-import { BellIcon, CaretLeft } from "phosphor-react-native";
-import React from "react";
-import { Image, Pressable, StyleSheet, View } from "react-native";
-import Typography from "./common/typography";
+import { RADIUS, SHADOW } from '@/constants/theme';
+import { navigateTo } from '@/utils/router.util';
+import { scale, verticalScale } from '@/utils/scaling.util';
+import { Image } from 'expo-image';
+import { BellIcon } from 'phosphor-react-native';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import Button from './Button';
+import ThemedText from './ThemedText';
 
 type HeaderProps = {
-  showContent?: boolean;
-  showIcon?: boolean;
-  showBackIcon?: boolean;
+  name: string;
+  profileImage: string;
 };
 
-const Header = ({
-  showContent = true,
-  showIcon = true,
-  showBackIcon = false,
-}: HeaderProps) => {
-  const router = useRouter();
-  const { user } = useUser();
-
+const Header = ({ name, profileImage }: HeaderProps) => {
   return (
-    <View style={styles.header}>
-      <View>
-        {showBackIcon && (
-          <Pressable
-            onPress={() => router.back()}
-            style={styles.backIconWrapper}
-          >
-            <CaretLeft size={scale(24)} color={Colors.onMuted} />
-          </Pressable>
-        )}
-
-        {showContent && (
-          <View style={styles.contentWrapper}>
-            <View
-              style={{
-                height: verticalScale(50),
-                aspectRatio: 1,
-                borderRadius: scale(12),
-                overflow: "hidden",
-              }}
-            >
-              <Image
-                source={require("@/assets/images/icon.png")}
-                style={{ height: "100%", width: "100%", resizeMode: "contain" }}
-              />
-            </View>
-
-            <View>
-              <Typography>Welcome back,</Typography>
-              <Typography font="semiBold" size={20} color="onBackground">
-                {user?.firstName || "User"}
-              </Typography>
-            </View>
-          </View>
-        )}
+    <View style={styles.container}>
+      <View style={styles.profileImageContainer}>
+        <Image
+          source={profileImage}
+          style={styles.profileImage}
+          contentFit="cover"
+        />
       </View>
 
-      {showIcon && (
-        <Pressable
-          onPress={() => router.push("/notifications")}
-          style={styles.iconWrapper}
-        >
-          <BellIcon size={scale(24)} color={Colors.onMuted} />
-        </Pressable>
-      )}
+      <View style={styles.greetingContainer}>
+        <ThemedText variant="bodySmall" color="onSecondary">
+          Good Morning,
+        </ThemedText>
+        <ThemedText variant="h3">{name}</ThemedText>
+      </View>
+
+      <Button
+        iconOnly
+        icon={BellIcon}
+        variant="icon"
+        size="sm"
+        onPress={() => navigateTo('/notifications')}
+      />
     </View>
   );
 };
@@ -74,31 +45,25 @@ const Header = ({
 export default Header;
 
 const styles = StyleSheet.create({
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: scale(16),
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: scale(16),
     paddingVertical: verticalScale(16),
   },
-
-  contentWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: scale(12),
+  profileImageContainer: {
+    width: scale(44),
+    height: scale(44),
+    borderRadius: RADIUS.full,
+    overflow: 'hidden',
+    boxShadow: SHADOW.sm,
   },
-
-  backIconWrapper: {
-    paddingHorizontal: scale(8),
-    paddingVertical: verticalScale(8),
-    backgroundColor: Colors.muted,
-    borderRadius: 200,
+  profileImage: {
+    width: '100%',
+    height: '100%',
   },
-
-  iconWrapper: {
-    paddingHorizontal: scale(8),
-    paddingVertical: verticalScale(8),
-    backgroundColor: Colors.muted,
-    borderRadius: 200,
+  greetingContainer: {
+    flex: 1,
   },
 });

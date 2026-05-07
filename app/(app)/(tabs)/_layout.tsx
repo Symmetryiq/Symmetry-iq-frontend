@@ -1,70 +1,70 @@
-import BottomTab from "@/components/bottom-tab";
-import HomeIcon from "@/components/icons/home-icon";
-import InsightsIcon from "@/components/icons/insights-icon";
-import RoutinesIcon from "@/components/icons/routines-icon";
-import ScanIcon from "@/components/icons/scan-icon";
-import SettingsIcon from "@/components/icons/settings-icon";
-import { Colors } from "@/constants/theme";
-import { Tabs } from "expo-router";
-import React from "react";
+import TabBar from '@/components/TabBar';
+import HomeIcon from '@/components/icons/HomeIcon';
+import InsightsIcon from '@/components/icons/InsightIcon';
+import RoutinesIcon from '@/components/icons/RoutineIcon';
+import ScanIcon from '@/components/icons/ScanIcon';
+import SettingsIcon from '@/components/icons/SettingIcon';
+import { COLOR } from '@/constants/theme';
+import { Tabs } from 'expo-router';
+import React from 'react';
 
-const TabsLayout = () => {
+export default function TabsLayout() {
   return (
     <Tabs
-      tabBar={(props) => <BottomTab {...props} />}
       screenOptions={{
+        tabBarStyle: { alignItems: 'center' },
+        sceneStyle: { backgroundColor: COLOR.background },
         headerShown: false,
-        sceneStyle: { backgroundColor: Colors.background },
-        animation: "fade",
+        tabBarActiveTintColor: COLOR.primaryLight,
+        tabBarInactiveTintColor: COLOR.onCard,
       }}
+      tabBar={(props) => <TabBar {...props} />}
     >
       <Tabs.Screen
-        name="(home)"
+        name="index"
         options={{
-          title: "Home",
-          tabBarIcon: ({ color, size }) => (
-            <HomeIcon size={size} color={color} />
+          title: 'Home',
+          tabBarIcon: (props) => (
+            <HomeIcon size={props.size} color={props.color} />
           ),
         }}
       />
       <Tabs.Screen
         name="routines"
         options={{
-          title: "Routines",
-          tabBarIcon: ({ color, size }) => (
-            <RoutinesIcon size={size} color={color} />
+          title: 'Routines',
+          tabBarIcon: (props) => (
+            <RoutinesIcon size={props.size} color={props.color} />
           ),
         }}
       />
       <Tabs.Screen
         name="scan"
         options={{
-          title: "Scan",
-          tabBarIcon: ({ color, size }) => (
-            <ScanIcon size={size} color={color} />
+          title: 'Scan',
+          tabBarIcon: (props) => (
+            <ScanIcon size={props.size} color={props.color} />
           ),
         }}
       />
       <Tabs.Screen
         name="insights"
         options={{
-          title: "Insights",
-          tabBarIcon: ({ color, size }) => (
-            <InsightsIcon size={size} color={color} />
+          title: 'Insights',
+          tabBarIcon: (props) => (
+            <InsightsIcon size={props.size} color={props.color} />
           ),
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
-          title: "Settings",
-          tabBarIcon: ({ color, size }) => (
-            <SettingsIcon size={size} color={color} />
+          title: 'Settings',
+          tabBarIcon: (props) => (
+            <SettingsIcon size={props.size} color={props.color} />
           ),
         }}
       />
     </Tabs>
   );
-};
-
-export default TabsLayout;
+}

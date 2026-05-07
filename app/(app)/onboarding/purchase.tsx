@@ -1,345 +1,480 @@
-import Button from "@/components/common/button";
-import ScreenWrapper from "@/components/common/screen-wrapper";
-import Typography from "@/components/common/typography";
-import { POLICY_URL, TERMS_URL } from "@/constants";
+import Button from '@/components/Button';
+import ScreenView from '@/components/ScreenView';
+import ThemedText from '@/components/ThemedText';
+import { PRIVACY_POLICY_URL, TERMS_OF_SERVICE_URL } from '@/constants/app';
+import { COLOR, FONT, RADIUS, SHADOW, SPACE, TEXT } from '@/constants/theme';
+import { useOnboardingStore } from '@/hooks/useOnboardingStore';
+import { openURL } from '@/utils/router.util';
 import {
-  PREMIUM_FEATURES,
-  SUBSCRIPTION_PLANS,
-} from "@/constants/subscriptions";
-import { Colors } from "@/constants/theme";
-import { scale, verticalScale } from "@/helpers/scaling";
-import { openBrowserLink } from "@/helpers/utils";
-import { updateUserProfile } from "@/services/api/user.api";
-import { useOnboardingStore } from "@/stores/onboarding-store";
-import { usePlanStore } from "@/stores/plan-store";
-import { useScanStore } from "@/stores/scan-store";
-import { LinearGradient } from "expo-linear-gradient";
+  CheckCircleIcon,
+  CrownIcon,
+  SparkleIcon,
+} from 'phosphor-react-native';
+import React, { useCallback, useState } from 'react';
 import {
-  BookOpen,
-  CheckCircle,
-  ListChecks,
-  Prohibit,
-  Scan,
-  ShieldCheck,
-  Sparkle,
-  Star,
-} from "phosphor-react-native";
-import React, { useState } from "react";
-import { Dimensions, Pressable, StyleSheet, View } from "react-native";
+  Alert,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native';
 
-const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+/* ─── Types ────────────────────────────────────────────────── */
 
-const IconMap: Record<string, any> = {
-  Scan,
-  Brain: Sparkle,
-  ListChecks,
-  BookOpen,
+type PlanTier = 'weekly' | 'monthly' | 'yearly';
 
-  Prohibit,
+type PlanOption = {
+  id: PlanTier;
+  label: string;
+  price: string;
+  period: string;
+  badge?: string;
+  savings?: string;
+  trialLabel?: string;
 };
 
-const Purchase = () => {
-  const {
-    setOnboardingCompleted,
-    age,
-    gender,
-    demoLandmarks,
-    demoScores,
-    setDemoScan,
-  } = useOnboardingStore();
-  const { saveScanData } = useScanStore();
-  const { generateNewPlan } = usePlanStore();
-  const [selectedPlan, setSelectedPlan] = useState("yearly");
+const PLANS: PlanOption[] = [
+  {
+    id: 'weekly',
+    label: 'Weekly',
+    price: '$4.99',
+    period: '/week',
+    trialLabel: '3-day free trial',
+  },
+  {
+    id: 'monthly',
+    label: 'Monthly',
+    price: '$14.99',
+    period: '/month',
+    badge: 'Most Popular',
+    trialLabel: '7-day free trial',
+  },
+  {
+    id: 'yearly',
+    label: 'Yearly',
+    price: '$49.99',
+    period: '/year',
+    badge: 'Best Value',
+    savings: 'Save 80%',
+    trialLabel: '7-day free trial',
+  },
+];
 
-  // useEffect(() => {
-  //   initializePaywall();
-  // }, [])
+const FEATURES = [
+  'All 10 facial feature scores unlocked',
+  'Personalized 4-week routine plans',
+  'Daily guided exercises & routines',
+  'Progress tracking with scan history',
+  'Daily task checklist & reminders',
+  'Tips & insights to maximize results',
+];
 
-  // const packages = getPackages().then((packages) => {
-  //   console.log(packages);
-  // })
+/* ─── Sub-components ───────────────────────────────────────── */
 
-  const handleCompleteOnboarding = async () => {
+function PlanCard({
+  plan,
+  selected,
+  onSelect,
+}: {
+  plan: PlanOption;
+  selected: boolean;
+  onSelect: () => void;
+}) {
+  return (
+    <Pressable
+      style={[styles.planCard, selected && styles.planCardSelected]}
+      onPress={onSelect}
+    >
+      {plan.badge && (
+        <View
+          style={[
+            styles.planBadge,
+            plan.id === 'yearly' && styles.planBadgeBestValue,
+          ]}
+        >
+          <ThemedText variant="badge" color="onPrimary">
+            {plan.badge}
+          </ThemedText>
+        </View>
+      )}
+
+      <View style={styles.planHeader}>
+        <View style={styles.planRadio}>
+          {selected && <View style={styles.planRadioInner} />}
+        </View>
+
+        <View style={styles.planInfo}>
+          <ThemedText variant="h4">{plan.label}</ThemedText>
+          {plan.trialLabel && (
+            <ThemedText variant="badge" color="primaryLight">
+              {plan.trialLabel}
+            </ThemedText>
+          )}
+        </View>
+
+        <View style={styles.planPricing}>
+          <ThemedText variant="h3" color="onBackground">
+            {plan.price}
+          </ThemedText>
+          <ThemedText variant="caption" color="onMuted">
+            {plan.period}
+          </ThemedText>
+        </View>
+      </View>
+
+      {plan.savings && (
+        <View style={styles.savingsBadge}>
+          <ThemedText
+            variant="badge"
+            style={{ color: COLOR.green, fontFamily: FONT.semiBold }}
+          >
+            {plan.savings}
+          </ThemedText>
+        </View>
+      )}
+    </Pressable>
+  );
+}
+
+function FeatureItem({ text }: { text: string }) {
+  return (
+    <View style={styles.featureItem}>
+      <CheckCircleIcon color={COLOR.green} size={20} weight="fill" />
+      <ThemedText variant="body" style={styles.featureText}>
+        {text}
+      </ThemedText>
+    </View>
+  );
+}
+
+/* ─── Main ─────────────────────────────────────────────────── */
+
+const PurchaseScreen = () => {
+  const completeOnboarding = useOnboardingStore((s) => s.completeOnboarding);
+  const [selectedPlan, setSelectedPlan] = useState<PlanTier>('yearly');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubscribe = useCallback(async () => {
+    setLoading(true);
+
+    // TODO: Integrate with RevenueCat / StoreKit for actual purchase
+    // For now, simulate a short delay and complete onboarding
     try {
-      // Sync onboarding data to backend metadata
-      await updateUserProfile({
-        age: age,
-        gender: gender,
-        notifications: true, // Default to true
-      });
-
-      // Save the demo scan if it exists so routines are generated
-      if (demoScores) {
-        const newScan = await saveScanData(demoScores);
-
-        // If the scan was saved successfully, generate a new plan from it.
-        if (newScan && newScan.id) {
-          generateNewPlan(newScan.id, demoScores);
-        }
-
-        // Clear demo data
-        setDemoScan(null, null, null);
-      }
-
-      // Mark onboarding as completed
-      setOnboardingCompleted(true);
-    } catch (error) {
-      console.error("Error syncing onboarding data:", error);
-      // Still complete onboarding even if API fails - data is in store
-      setOnboardingCompleted(true);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      completeOnboarding();
+    } catch {
+      Alert.alert(
+        'Purchase Failed',
+        'Something went wrong. Please try again.',
+        [{ text: 'OK' }],
+        { userInterfaceStyle: 'dark' },
+      );
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [completeOnboarding, selectedPlan]);
+
+  const handleRestore = useCallback(() => {
+    // TODO: Integrate with RevenueCat / StoreKit for restore
+    Alert.alert(
+      'Restore Purchases',
+      'No previous purchases found. Please subscribe to continue.',
+      [{ text: 'OK' }],
+      { userInterfaceStyle: 'dark' },
+    );
+  }, []);
+
+  const selected = PLANS.find((p) => p.id === selectedPlan)!;
 
   return (
-    <ScreenWrapper style={styles.wrapper}>
-      <LinearGradient
-        colors={[Colors.primaryLight, "transparent", Colors.background]}
-        locations={[0, 0.4, 0.9]}
-        style={StyleSheet.absoluteFill}
-      />
-
-      <View style={styles.container}>
-        {/* Header Section */}
-        <View style={styles.header}>
-          <View style={styles.logoContainer}>
-            <Star size={32} weight="fill" color={Colors.primary} />
+    <ScreenView style={styles.screen}>
+      <ScrollView
+        contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* ── Hero ── */}
+        <View style={styles.hero}>
+          <View style={styles.heroIconCircle}>
+            <CrownIcon color={COLOR.primaryLight} size={36} weight="fill" />
           </View>
-          <Typography size={28} font="bold" center style={styles.title}>
-            Symmetry Premium
-          </Typography>
-          <Typography size={15} color="onMuted" center style={styles.subtitle}>
-            Your ultimate tool for facial aesthetics
-          </Typography>
+
+          <ThemedText variant="h1" style={styles.heroTitle}>
+            Unlock Your{'\n'}Full Potential
+          </ThemedText>
+
+          <ThemedText
+            variant="body"
+            color="onSecondary"
+            style={styles.heroSubtitle}
+          >
+            Get unlimited access to all features and start your transformation
+            today.
+          </ThemedText>
         </View>
 
-        {/* Features Grid - 2 Column Layout to save vertical space */}
-        <View style={styles.featuresGrid}>
-          {PREMIUM_FEATURES.map((feature, index) => {
-            const Icon = IconMap[feature.icon] || ShieldCheck;
-            return (
-              <View key={index} style={styles.featureItemWrapper}>
-                <View style={styles.featureIconSmall}>
-                  <Icon size={18} weight="fill" color={Colors.primary} />
-                </View>
-                <Typography size={13} font="medium" style={styles.featureTitle}>
-                  {feature.title}
-                </Typography>
-              </View>
-            );
-          })}
-        </View>
-
-        {/* Plans Section - Compressed height */}
-        <View style={styles.plansContainer}>
-          {SUBSCRIPTION_PLANS.map((plan) => (
-            <Pressable
-              key={plan.id}
-              style={[
-                styles.planCard,
-                selectedPlan === plan.id && styles.selectedPlanCard,
-              ]}
-              onPress={() => setSelectedPlan(plan.id)}
-            >
-              <View style={styles.planInfo}>
-                <Typography size={16} font="bold">
-                  {plan.title.split(" ")[0]} Premium
-                </Typography>
-                <Typography size={12} color="onMuted">
-                  {plan.duration}
-                </Typography>
-              </View>
-
-              <View style={styles.planPriceAndBadge}>
-                {plan.badge && (
-                  <View style={styles.smallBadge}>
-                    <Typography size={10} font="bold" color="onPrimary">
-                      {plan.badge}
-                    </Typography>
-                  </View>
-                )}
-                <View style={styles.priceRow}>
-                  <Typography size={20} font="bold">
-                    {plan.price}
-                  </Typography>
-                  {selectedPlan === plan.id && (
-                    <CheckCircle
-                      size={22}
-                      weight="fill"
-                      color={Colors.primary}
-                    />
-                  )}
-                </View>
-              </View>
-            </Pressable>
+        {/* ── Features ── */}
+        <View style={styles.featuresCard}>
+          {FEATURES.map((feature, i) => (
+            <FeatureItem key={i} text={feature} />
           ))}
         </View>
 
-        {/* Action Section */}
-        <View style={styles.footer}>
-          <Button onPress={handleCompleteOnboarding} style={styles.ctaButton}>
-            <Typography font="bold" color="onPrimary" size={18}>
-              Start Your Glow Up
-            </Typography>
-          </Button>
+        {/* ── Plans ── */}
+        <View style={styles.plansSection}>
+          <ThemedText variant="h3" style={styles.plansTitle}>
+            Choose Your Plan
+          </ThemedText>
+
+          {PLANS.map((plan) => (
+            <PlanCard
+              key={plan.id}
+              plan={plan}
+              selected={selectedPlan === plan.id}
+              onSelect={() => setSelectedPlan(plan.id)}
+            />
+          ))}
+        </View>
+
+        {/* ── CTA ── */}
+        <View style={styles.ctaSection}>
+          <Button
+            title={
+              selected.trialLabel
+                ? `Start Free Trial`
+                : `Subscribe ${selected.price}${selected.period}`
+            }
+            variant="primary"
+            size="lg"
+            icon={SparkleIcon}
+            iconPosition="right"
+            onPress={handleSubscribe}
+            loading={loading}
+          />
+
+          <Pressable onPress={handleRestore} hitSlop={8}>
+            <ThemedText
+              variant="label"
+              color="onMuted"
+              style={styles.restoreText}
+            >
+              Restore Purchases
+            </ThemedText>
+          </Pressable>
+        </View>
+
+        {/* ── Legal footer ── */}
+        <View style={styles.legalSection}>
+          <ThemedText
+            variant="badge"
+            color="onMuted"
+            style={styles.legalText}
+          >
+            {selected.trialLabel
+              ? `After the free trial, your subscription will automatically renew at ${selected.price}${selected.period}. `
+              : `Your subscription will automatically renew at ${selected.price}${selected.period}. `}
+            Cancel anytime. By subscribing, you agree to our{' '}
+          </ThemedText>
 
           <View style={styles.legalLinks}>
-            <Pressable hitSlop={10}>
-              <Typography size={12} color="onMuted">
-                Restore
-              </Typography>
+            <Pressable onPress={() => openURL(TERMS_OF_SERVICE_URL)}>
+              <ThemedText variant="badge" style={styles.legalLink}>
+                Terms of Service
+              </ThemedText>
             </Pressable>
-            <Typography size={12} color="onMuted">
-              •
-            </Typography>
-            <Pressable hitSlop={10} onPress={() => openBrowserLink(TERMS_URL)}>
-              <Typography size={12} color="onMuted">
-                Terms
-              </Typography>
-            </Pressable>
-            <Typography size={12} color="onMuted">
-              •
-            </Typography>
-            <Pressable hitSlop={10} onPress={() => openBrowserLink(POLICY_URL)}>
-              <Typography size={12} color="onMuted">
-                Privacy
-              </Typography>
+
+            <ThemedText variant="badge" color="onMuted">
+              {' '}and{' '}
+            </ThemedText>
+
+            <Pressable onPress={() => openURL(PRIVACY_POLICY_URL)}>
+              <ThemedText variant="badge" style={styles.legalLink}>
+                Privacy Policy
+              </ThemedText>
             </Pressable>
           </View>
-
-          <Typography
-            size={10}
-            color="onMuted"
-            center
-            style={styles.disclaimer}
-          >
-            Recurring billing. Cancel anytime.
-          </Typography>
         </View>
-      </View>
-    </ScreenWrapper>
+      </ScrollView>
+    </ScreenView>
   );
 };
 
-export default Purchase;
+export default PurchaseScreen;
+
+/* ─── Styles ───────────────────────────────────────────────── */
 
 const styles = StyleSheet.create({
-  wrapper: {
-    backgroundColor: Colors.background,
+  screen: {
     flex: 1,
   },
+
   container: {
-    flex: 1,
-    paddingHorizontal: scale(20),
-    justifyContent: "space-between",
-    paddingVertical: verticalScale(16),
+    gap: SPACE['2xl'],
+    paddingBottom: SPACE['3xl'],
   },
-  header: {
-    alignItems: "center",
-    marginTop: verticalScale(8),
+
+  /* ── Hero ── */
+
+  hero: {
+    alignItems: 'center',
+    gap: SPACE.md,
+    paddingTop: SPACE.xl,
   },
-  logoContainer: {
-    width: scale(60),
-    height: scale(60),
-    borderRadius: 200,
-    backgroundColor: Colors.primaryLight,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: verticalScale(12),
-  },
-  title: {
-    marginBottom: verticalScale(4),
-  },
-  subtitle: {
-    opacity: 0.8,
-    paddingHorizontal: scale(20),
-  },
-  featuresGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-    marginVertical: verticalScale(16),
-    gap: verticalScale(10),
-  },
-  featureItemWrapper: {
-    width: "48%",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255,255,255,0.03)",
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.05)",
-    padding: scale(8),
-    borderRadius: 12,
-    gap: scale(8),
-  },
-  featureIconSmall: {
-    width: scale(28),
-    height: scale(28),
-    borderRadius: 8,
-    backgroundColor: Colors.primaryLight,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  featureTitle: {
-    flex: 1,
-  },
-  plansContainer: {
-    gap: verticalScale(10),
-  },
-  planCard: {
-    backgroundColor: Colors.card,
-    borderRadius: 16,
-    paddingVertical: verticalScale(14),
-    paddingHorizontal: scale(16),
+
+  heroIconCircle: {
+    width: 80,
+    height: 80,
+    borderRadius: RADIUS.full,
+    backgroundColor: 'hsla(250, 50%, 50%, 0.15)',
+    justifyContent: 'center',
+    alignItems: 'center',
     borderWidth: 2,
-    borderColor: "transparent",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    borderColor: 'hsla(250, 50%, 70%, 0.25)',
+    boxShadow: SHADOW.primary,
   },
-  selectedPlanCard: {
-    borderColor: Colors.primary,
-    backgroundColor: "rgba(74, 58, 255, 0.08)",
+
+  heroTitle: {
+    textAlign: 'center',
+    lineHeight: 44,
   },
+
+  heroSubtitle: {
+    textAlign: 'center',
+    maxWidth: 300,
+    lineHeight: 24,
+  },
+
+  /* ── Features ── */
+
+  featuresCard: {
+    backgroundColor: COLOR.card,
+    borderRadius: RADIUS['2xl'],
+    borderWidth: 1,
+    borderColor: COLOR.border,
+    padding: SPACE.xl,
+    gap: SPACE.lg,
+    boxShadow: SHADOW.sm,
+  },
+
+  featureItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACE.md,
+  },
+
+  featureText: {
+    flex: 1,
+  },
+
+  /* ── Plans ── */
+
+  plansSection: {
+    gap: SPACE.md,
+  },
+
+  plansTitle: {
+    textAlign: 'center',
+  },
+
+  planCard: {
+    backgroundColor: COLOR.card,
+    borderRadius: RADIUS['2xl'],
+    borderWidth: 2,
+    borderColor: COLOR.border,
+    padding: SPACE.lg,
+    gap: SPACE.sm,
+    boxShadow: SHADOW.sm,
+  },
+
+  planCardSelected: {
+    borderColor: COLOR.primary,
+    backgroundColor: 'hsla(250, 50%, 50%, 0.06)',
+    boxShadow: SHADOW.primary,
+  },
+
+  planBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: COLOR.primary,
+    paddingHorizontal: SPACE.md,
+    paddingVertical: 3,
+    borderRadius: RADIUS.full,
+  },
+
+  planBadgeBestValue: {
+    backgroundColor: COLOR.green,
+  },
+
+  planHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACE.md,
+  },
+
+  planRadio: {
+    width: 22,
+    height: 22,
+    borderRadius: RADIUS.full,
+    borderWidth: 2,
+    borderColor: COLOR.border,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  planRadioInner: {
+    width: 12,
+    height: 12,
+    borderRadius: RADIUS.full,
+    backgroundColor: COLOR.primary,
+  },
+
   planInfo: {
-    gap: verticalScale(2),
+    flex: 1,
+    gap: 2,
   },
-  planPriceAndBadge: {
-    alignItems: "flex-end",
-    gap: verticalScale(4),
+
+  planPricing: {
+    alignItems: 'flex-end',
   },
-  priceRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: scale(8),
+
+  savingsBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: 'hsla(125, 50%, 50%, 0.12)',
+    paddingHorizontal: SPACE.sm,
+    paddingVertical: 2,
+    borderRadius: RADIUS.full,
+    marginLeft: 34,
   },
-  smallBadge: {
-    backgroundColor: Colors.primary,
-    paddingHorizontal: scale(8),
-    paddingVertical: verticalScale(2),
-    borderRadius: 6,
+
+  /* ── CTA ── */
+
+  ctaSection: {
+    gap: SPACE.md,
+    alignItems: 'center',
   },
-  footer: {
-    alignItems: "center",
-    gap: verticalScale(12),
-    marginTop: verticalScale(10),
+
+  restoreText: {
+    textDecorationLine: 'underline',
   },
-  ctaButton: {
-    width: "100%",
-    paddingVertical: verticalScale(16),
-    borderRadius: 16,
-    shadowColor: Colors.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
+
+  /* ── Legal ── */
+
+  legalSection: {
+    alignItems: 'center',
+    paddingHorizontal: SPACE.md,
   },
+
+  legalText: {
+    textAlign: 'center',
+    lineHeight: 18,
+  },
+
   legalLinks: {
-    flexDirection: "row",
-    gap: scale(12),
-    opacity: 0.6,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
   },
-  disclaimer: {
-    opacity: 0.5,
+
+  legalLink: {
+    color: COLOR.primaryLight,
+    textDecorationLine: 'underline',
   },
 });

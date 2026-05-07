@@ -1,111 +1,92 @@
-import Button from "@/components/common/button";
-import ScreenWrapper from "@/components/common/screen-wrapper";
-import Typography from "@/components/common/typography";
-import { Colors } from "@/constants/theme";
-import { scale, verticalScale } from "@/helpers/scaling";
-import { router } from "expo-router";
-import { CheckCircle } from "phosphor-react-native";
-import React from "react";
-import { Image, StyleSheet, View } from "react-native";
-import Animated, { FadeIn } from "react-native-reanimated";
+import Button from '@/components/Button';
+import ScreenView from '@/components/ScreenView';
+import ThemedText from '@/components/ThemedText';
+import { SPACE, THEME } from '@/constants/theme';
+import { navigateTo } from '@/utils/router.util';
+import { verticalScale } from '@/utils/scaling.util';
+import { Image } from 'expo-image';
+import { ArrowRightIcon } from 'phosphor-react-native';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
 
-const features = [
-  "Works in any lighting",
-  "Completely private, stored securely",
-  "Real time tracking",
+const FEATURES = [
+  { emoji: '💡', text: 'Works in any lighting' },
+  { emoji: '🔒', text: 'Completely private, stored securely' },
+  { emoji: '📊', text: 'Real-time tracking & insights' },
 ];
 
 const FeaturesScreen = () => {
-  const handleSetupStart = () => {
-    router.push("/onboarding/steps");
-  };
-
   return (
-    <ScreenWrapper>
-      <View style={styles.container}>
-        <Animated.View
-          entering={FadeIn.duration(700)}
-          style={styles.imageWrapper}
-        >
-          <Image
-            source={require("@/assets/images/face-analysis.jpg")}
-            resizeMode="cover"
-            style={styles.image}
-          />
-        </Animated.View>
-        {/* <Animated.Image style={styles.image} /> */}
-        <View style={{ flex: 1, marginVertical: verticalScale(28) }}>
-          <Typography color="onBackground" font="bold" size={32}>
+    <ScreenView padded={false} edges={['bottom']}>
+      <Image
+        source={require('@/assets/images/feature.jpg')}
+        style={styles.image}
+        contentFit="cover"
+      />
+
+      <View style={styles.body}>
+        <View style={styles.header}>
+          <ThemedText variant="h1" color="onBackground">
             Smart Face Scanning
-          </Typography>
-
-          <Typography color="onSecondary" font="regular" size={16}>
+          </ThemedText>
+          <ThemedText variant="body" color="onMuted">
             AI-powered analysis built for clarity, improvement and confidence
-          </Typography>
-
-          <View style={styles.listContainer}>
-            {features.map((value, idx) => {
-              return (
-                <View key={idx} style={styles.listItem}>
-                  <CheckCircle
-                    size={24}
-                    color={Colors.onBackground}
-                    weight="fill"
-                  />
-
-                  <Typography color="onMuted" font="regular" size={16}>
-                    {value}
-                  </Typography>
-                </View>
-              );
-            })}
-          </View>
+          </ThemedText>
         </View>
 
-        <Button onPress={handleSetupStart}>
-          <Typography color="onPrimary" font="bold" size={16}>
-            Continue
-          </Typography>
-        </Button>
+        <View style={styles.featureList}>
+          {FEATURES.map((f) => (
+            <View key={f.text} style={styles.featureRow}>
+              <ThemedText style={styles.emoji}>{f.emoji}</ThemedText>
+              <ThemedText variant="body" color="onSecondary">
+                {f.text}
+              </ThemedText>
+            </View>
+          ))}
+        </View>
+
+        <Button
+          title="Start"
+          size="lg"
+          iconPosition="right"
+          icon={ArrowRightIcon}
+          onPress={() => navigateTo('/onboarding/questions')}
+        />
       </View>
-    </ScreenWrapper>
+    </ScreenView>
   );
 };
 
 export default FeaturesScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "space-between",
-    paddingHorizontal: scale(16),
-    paddingVertical: verticalScale(16),
-  },
-
-  imageWrapper: {
-    width: "100%",
-    height: verticalScale(350),
-    borderRadius: 56,
-    borderCurve: "continuous",
-    alignSelf: "center",
-    overflow: "hidden",
-  },
-
   image: {
-    height: "100%",
-    width: "100%",
-    aspectRatio: 1,
+    width: '100%',
+    height: verticalScale(350),
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
   },
-
-  listContainer: {
-    gap: verticalScale(16),
-    paddingVertical: verticalScale(16),
+  body: {
+    padding: THEME.PADDING.screen,
+    flex: 1,
+    gap: verticalScale(SPACE['2xl']),
+  },
+  header: {
+    gap: SPACE.xs,
+  },
+  featureList: {
+    gap: SPACE.lg,
     flex: 1,
   },
-
-  listItem: {
-    flexDirection: "row",
-    gap: scale(16),
-    alignItems: "center",
+  featureRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACE.md,
+  },
+  emoji: {
+    fontSize: 24,
+  },
+  footer: {
+    paddingBottom: SPACE.sm,
   },
 });

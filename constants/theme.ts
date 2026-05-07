@@ -1,199 +1,191 @@
-import { moderateScale, moderateVerticalScale } from '@/helpers/scaling';
+import { Platform } from 'react-native';
 
-// ─── Colors ─────────────────────────────────────────────────────────────────────
-export const Colors = {
-  // Base
+export const COLOR = {
   background: 'hsl(250, 20%, 10%)',
-  surface: 'hsl(250, 18%, 13%)',
-  card: '#211f2eff',
-  primaryLight: 'hsla(250, 50%, 50%, 0.2)',
-  primary: 'hsl(250, 50%, 50%)',
-  primaryDark: 'hsl(250, 55%, 40%)',
-  secondary: 'hsl(250, 15%, 25%)',
-  tertiary: 'hsl(250, 18%, 30%)',
-  muted: 'hsl(250, 15%, 20%)',
-  border: 'hsl(250, 15%, 30%)',
-  borderLight: 'hsl(250, 12%, 22%)',
-  borderInput: 'hsl(250, 15%, 22%)',
-
-  // Input / Interactive
-  inputBackground: 'hsl(250, 18%, 14%)',
-  focusRing: 'hsla(250, 60%, 55%, 0.5)',
-  overlay: 'hsla(250, 25%, 5%, 0.65)',
-  shimmer: 'hsla(250, 15%, 30%, 0.4)',
-
-  // Text
   onBackground: 'hsl(250, 15%, 90%)',
-  onCard: 'hsl(250, 15%, 90%)',
-  onPrimary: 'hsl(250, 10%, 98%)',
-  onSecondary: 'hsl(250, 15%, 80%)',
-  onTertiary: 'hsl(250, 15%, 90%)',
+  card: 'hsl(250, 20%, 15%)',
+  onCard: 'hsl(250, 15%, 85%)',
+  muted: 'hsl(250, 15%, 20%)',
   onMuted: 'hsl(250, 10%, 55%)',
 
-  // Semantic
-  success: 'hsl(145, 55%, 52%)',
-  successLight: 'hsla(145, 55%, 52%, 0.15)',
-  warning: 'hsl(42, 78%, 60%)',
-  warningLight: 'hsla(42, 78%, 60%, 0.15)',
-  danger: 'hsl(0, 65%, 55%)',
-  dangerLight: 'hsla(0, 65%, 55%, 0.15)',
-  info: 'hsl(210, 70%, 60%)',
-  infoLight: 'hsla(210, 70%, 60%, 0.15)',
-  onState: 'hsl(250, 10%, 98%)',
+  primary: 'hsl(250, 50%, 50%)',
+  primaryLight: 'hsl(250, 50%, 70%)',
+  onPrimary: 'hsl(250, 10%, 98%)',
 
-  // Gradient helpers — use with expo-linear-gradient or similar
-  gradientPrimary: ['hsl(250, 55%, 50%)', 'hsl(270, 55%, 45%)'] as const,
-  gradientCard: ['hsl(250, 18%, 15%)', 'hsl(250, 18%, 12%)'] as const,
+  secondary: 'hsl(250, 15%, 25%)',
+  onSecondary: 'hsl(250, 15%, 80%)',
+  accent: 'hsl(250, 18%, 30%)',
+  onAccent: 'hsl(250, 15%, 90%)',
+
+  border: 'hsl(250, 15%, 30%)',
+  borderInput: 'hsl(250, 15%, 22%)',
+  borderRing: 'hsla(250, 70%, 50%, 0.9)',
+
+  green: 'hsl(125, 50%, 50%)',
+  yellow: 'hsl(45, 50%, 50%)',
+  red: 'hsl(0, 50%, 50%)',
+  blue: 'hsl(225, 50%, 50%)',
 } as const;
 
-// ─── Fonts ──────────────────────────────────────────────────────────────────────
-export const Fonts = {
-  regular: 'Outfit_400Regular',
-  medium: 'Outfit_500Medium',
-  semiBold: 'Outfit_600SemiBold',
-  bold: 'Outfit_700Bold',
+export const FONT = {
+  regular: Platform.select({
+    android: 'Outfit_400Regular',
+    ios: 'Outfit-Regular',
+  }),
+  medium: Platform.select({
+    android: 'Outfit_500Medium',
+    ios: 'Outfit-Medium',
+  }),
+  semiBold: Platform.select({
+    android: 'Outfit_600SemiBold',
+    ios: 'Outfit-SemiBold',
+  }),
+  bold: Platform.select({
+    android: 'Outfit_700Bold',
+    ios: 'Outfit-Bold',
+  }),
 } as const;
 
-// ─── Spacing (4-point grid, moderately scaled) ──────────────────────────────────
-export const Spacing = {
-  xs: moderateScale(4),
-  sm: moderateScale(8),
-  md: moderateScale(12),
-  lg: moderateScale(16),
-  xl: moderateScale(20),
-  '2xl': moderateScale(24),
-  '3xl': moderateScale(32),
-  '4xl': moderateScale(40),
-  '5xl': moderateScale(48),
-  '6xl': moderateScale(64),
+export const SPACE = {
+  xs: 4,
+  sm: 8,
+  md: 12,
+  lg: 16,
+  xl: 20,
+  '2xl': 24,
+  '3xl': 28,
 } as const;
 
-// ─── Border Radii (scaled) ──────────────────────────────────────────────────────
-export const Radii = {
-  xs: moderateScale(4),
-  sm: moderateScale(8),
-  md: moderateScale(12),
-  lg: moderateScale(16),
-  xl: moderateScale(20),
-  '2xl': moderateScale(24),
-  full: 9999,
+export const RADIUS = {
+  xs: 4,
+  sm: 8,
+  md: 12,
+  lg: 16,
+  xl: 20,
+  '2xl': 24,
+  '3xl': 28,
+  full: 1000,
 } as const;
 
-// ─── Box Shadows (new unified API) ─────────────────────────────────────────────
-export const Shadows = {
-  sm: {
-    boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.35)',
-  },
-  md: {
-    boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.45)',
-  },
-  lg: {
-    boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.55)',
-  },
-  glow: {
-    boxShadow: `0px 0px 20px ${Colors.primaryLight}`,
-  },
+export const SHADOW = {
+  xs: '0 8 16 -4 hsla(250, 30%, 5%, 0.3)',
+  sm: [
+    {
+      offsetX: 0,
+      offsetY: 1,
+      blurRadius: 2,
+      spreadDistance: -5,
+      color: 'hsla(250, 30%, 5%, 0.6)',
+    },
+    {
+      offsetX: 0,
+      offsetY: 8,
+      blurRadius: 16,
+      spreadDistance: -4,
+      color: 'hsla(250, 30%, 5%, 0.6)',
+    },
+  ],
+  md: [
+    {
+      offsetX: 0,
+      offsetY: 2,
+      blurRadius: 4,
+      spreadDistance: -5,
+      color: 'hsla(250, 30%, 5%, 0.6)',
+    },
+    {
+      offsetX: 0,
+      offsetY: 8,
+      blurRadius: 16,
+      spreadDistance: -4,
+      color: 'hsla(250, 30%, 5%, 0.6)',
+    },
+  ],
+  lg: [
+    {
+      offsetX: 0,
+      offsetY: 4,
+      blurRadius: 6,
+      spreadDistance: -5,
+      color: 'hsla(250, 30%, 5%, 0.6)',
+    },
+    {
+      offsetX: 0,
+      offsetY: 8,
+      blurRadius: 16,
+      spreadDistance: -4,
+      color: 'hsla(250, 30%, 5%, 0.6)',
+    },
+  ],
+  xl: [
+    {
+      offsetX: 0,
+      offsetY: 8,
+      blurRadius: 10,
+      spreadDistance: -5,
+      color: 'hsla(250, 30%, 5%, 0.6)',
+    },
+    {
+      offsetX: 0,
+      offsetY: 8,
+      blurRadius: 16,
+      spreadDistance: -4,
+      color: 'hsla(250, 30%, 5%, 0.6)',
+    },
+  ],
+  '2xl': '0 8 16 -4 hsla(250, 30%, 5%, 1)',
+  primary: [
+    {
+      offsetX: 0,
+      offsetY: 4,
+      blurRadius: 6,
+      spreadDistance: -5,
+      color: 'hsla(250, 50%, 50%, 0.15)',
+    },
+    {
+      offsetX: 0,
+      offsetY: 8,
+      blurRadius: 16,
+      spreadDistance: -4,
+      color: 'hsla(250, 50%, 50%, 0.15)',
+    },
+  ],
 } as const;
 
-// ─── Typography Presets ─────────────────────────────────────────────────────────
-export const Typography = {
-  h1: {
-    fontFamily: Fonts.bold,
-    fontSize: moderateScale(32),
-    lineHeight: moderateVerticalScale(40),
-    letterSpacing: -0.5,
-  },
-  h2: {
-    fontFamily: Fonts.bold,
-    fontSize: moderateScale(26),
-    lineHeight: moderateVerticalScale(34),
-    letterSpacing: -0.3,
-  },
-  h3: {
-    fontFamily: Fonts.semiBold,
-    fontSize: moderateScale(22),
-    lineHeight: moderateVerticalScale(30),
-    letterSpacing: 0,
-  },
-  h4: {
-    fontFamily: Fonts.semiBold,
-    fontSize: moderateScale(18),
-    lineHeight: moderateVerticalScale(26),
-    letterSpacing: 0,
-  },
-  subtitle1: {
-    fontFamily: Fonts.medium,
-    fontSize: moderateScale(16),
-    lineHeight: moderateVerticalScale(24),
-    letterSpacing: 0.1,
-  },
-  subtitle2: {
-    fontFamily: Fonts.medium,
-    fontSize: moderateScale(14),
-    lineHeight: moderateVerticalScale(20),
-    letterSpacing: 0.1,
-  },
-  body1: {
-    fontFamily: Fonts.regular,
-    fontSize: moderateScale(16),
-    lineHeight: moderateVerticalScale(24),
-    letterSpacing: 0.15,
-  },
-  body2: {
-    fontFamily: Fonts.regular,
-    fontSize: moderateScale(14),
-    lineHeight: moderateVerticalScale(20),
-    letterSpacing: 0.15,
-  },
-  caption: {
-    fontFamily: Fonts.regular,
-    fontSize: moderateScale(12),
-    lineHeight: moderateVerticalScale(16),
-    letterSpacing: 0.2,
-  },
-  overline: {
-    fontFamily: Fonts.semiBold,
-    fontSize: moderateScale(11),
-    lineHeight: moderateVerticalScale(16),
-    letterSpacing: 1.5,
-  },
-  button: {
-    fontFamily: Fonts.semiBold,
-    fontSize: moderateScale(15),
-    lineHeight: moderateVerticalScale(22),
-    letterSpacing: 0.3,
-  },
+export const TEXT = {
+  displayLarge: { fontFamily: FONT.bold, fontSize: 56 },
+  displayMedium: { fontFamily: FONT.bold, fontSize: 48 },
+  displaySmall: { fontFamily: FONT.bold, fontSize: 40 },
+
+  h1: { fontFamily: FONT.bold, fontSize: 36 },
+  h2: { fontFamily: FONT.semiBold, fontSize: 28 },
+  h3: { fontFamily: FONT.semiBold, fontSize: 24 },
+  h4: { fontFamily: FONT.semiBold, fontSize: 20 },
+  h5: { fontFamily: FONT.semiBold, fontSize: 18 },
+
+  bodyLarge: { fontFamily: FONT.regular, fontSize: 18 },
+  body: { fontFamily: FONT.regular, fontSize: 16 },
+  bodySmall: { fontFamily: FONT.regular, fontSize: 14 },
+
+  button: { fontFamily: FONT.semiBold, fontSize: 16 },
+  label: { fontFamily: FONT.medium, fontSize: 14 },
+  caption: { fontFamily: FONT.regular, fontSize: 14 },
+  badge: { fontFamily: FONT.medium, fontSize: 12 },
 } as const;
 
-// ─── Animation Presets (for react-native-reanimated) ────────────────────────────
-export const Animation = {
-  duration: {
-    fast: 150,
-    normal: 300,
-    slow: 500,
-  },
-  easing: {
-    // Used with Easing from react-native-reanimated
-    // e.g. withTiming(value, { duration: Animation.duration.normal })
-  },
-  spring: {
-    gentle: { damping: 20, stiffness: 150, mass: 1 },
-    bouncy: { damping: 12, stiffness: 200, mass: 0.8 },
-    snappy: { damping: 18, stiffness: 300, mass: 0.9 },
-  },
-} as const;
+export const THEME = {
+  COLOR,
+  FONT,
+  SPACE,
+  RADIUS,
+  SHADOW,
+  TEXT,
 
-// ─── Layout Constants ───────────────────────────────────────────────────────────
-export const Layout = {
-  screenPadding: moderateScale(20),
-  hitSlop: { top: 10, bottom: 10, left: 10, right: 10 },
-  minTouchTarget: moderateScale(44),
-  tabBarHeight: moderateVerticalScale(60),
-  headerHeight: moderateVerticalScale(56),
-  bottomInset: moderateVerticalScale(34),
-  iconSize: {
-    sm: moderateScale(18),
-    md: moderateScale(22),
-    lg: moderateScale(28),
+  PADDING: {
+    screen: SPACE.xl,
+    card: SPACE.lg,
+    button: SPACE.lg,
+    input: SPACE.lg,
+    icon: SPACE.sm,
   },
 } as const;

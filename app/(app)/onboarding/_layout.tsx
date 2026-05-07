@@ -1,17 +1,16 @@
-import { Colors } from "@/constants/theme";
-import { Stack } from "expo-router";
-import React from "react";
+import { StyleSheet, Text, View } from 'react-native'
+import React from 'react'
+import { Stack } from 'expo-router'
+import { COLOR, FONT } from '@/constants/theme'
 
-const OnboardingLayout = () => {
-  return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-        contentStyle: { backgroundColor: Colors.background },
-        animation: "slide_from_right",
-      }}
-    />
-  );
-};
+export default function OnboardingLayout() {
+    return (
+        <Stack screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: COLOR.background },
+            animation: 'slide_from_right',
+        }} />
+    )
+}
 
-export default OnboardingLayout;
+const styles = StyleSheet.create({})
