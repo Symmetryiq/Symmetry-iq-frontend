@@ -9,8 +9,8 @@ export const ROUTINES: Routine[] = [
       'Trains strong tongue posture to support midface lift and facial balance.',
     image: require('@/assets/images/routines/hard_mewing_hold.jpg'),
     products: [],
-    primaryTargets: ['midface_ratio'],
-    secondaryTargets: ['overall_symmetry', 'jawline_symmetry'],
+    primaryTargets: ['jawline_symmetry'],
+    secondaryTargets: ['overall_symmetry', 'chin_alignment'],
     steps: [
       { order: 1, instruction: 'Close your mouth and keep lips sealed.' },
       {
@@ -151,8 +151,8 @@ export const ROUTINES: Routine[] = [
     summary: 'Reduces facial puffiness and enhances jaw definition.',
     image: require('@/assets/images/routines/gua_sha_jawline.jpg'),
     products: [{ name: 'Gua Sha Stone' }, { name: 'Facial Oil' }],
-    primaryTargets: ['facial_puffiness'],
-    secondaryTargets: ['jawline_symmetry', 'cheekbone_balance'],
+    primaryTargets: ['jawline_symmetry'],
+    secondaryTargets: ['overall_symmetry', 'chin_alignment'],
     steps: [
       { order: 1, instruction: 'Apply facial oil.' },
       { order: 2, instruction: 'Hold the Gua Sha tool at a shallow angle.' },
@@ -168,8 +168,8 @@ export const ROUTINES: Routine[] = [
     summary: 'Stimulates cheek muscles to improve cheekbone definition.',
     image: require('@/assets/images/routines/cheekbone_lift_massage.jpg'),
     products: [{ name: 'Facial Oil', optional: true }],
-    primaryTargets: ['cheekbone_balance'],
-    secondaryTargets: ['facial_puffiness'],
+    primaryTargets: ['overall_symmetry'],
+    secondaryTargets: ['eye_alignment'],
     steps: [
       { order: 1, instruction: 'Apply facial oil.' },
       { order: 2, instruction: 'Place fingers under cheekbones.' },
@@ -203,7 +203,7 @@ export const ROUTINES: Routine[] = [
     image: require('@/assets/images/routines/orb_oculi_training.jpg'),
     products: [{ name: 'Mirror', optional: true }],
     primaryTargets: ['eye_alignment'],
-    secondaryTargets: ['eyebrow_symmetry'],
+    secondaryTargets: ['overall_symmetry'],
     steps: [
       { order: 1, instruction: 'Look in a mirror.' },
       { order: 2, instruction: 'Place fingers at outer eye corners.' },

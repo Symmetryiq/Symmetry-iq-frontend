@@ -3,19 +3,104 @@ import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 
-/**
- * Send a push notification to a specific Expo Push Token
- * @param expoPushToken The Expo Push Token to send the notification to
- */
-export async function sendPushNotification(expoPushToken: string) {
-  const message = {
-    to: expoPushToken,
-    sound: 'default',
-    title: 'Original Title',
-    body: 'And here is the body!',
-    data: { someData: 'goes here' },
-  };
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowBanner: true,
+    shouldShowList: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
 
+export type NotificationPayload = {
+  title: string;
+  body: string;
+  data?: Record<string, unknown>;
+};
+
+async function ensureAndroidChannel() {
+  if (Platform.OS !== 'android') return;
+  await Notifications.setNotificationChannelAsync('default', {
+    name: 'default',
+    importance: Notifications.AndroidImportance.MAX,
+    vibrationPattern: [0, 250, 250, 250],
+    lightColor: '#FF231F7C',
+  });
+}
+
+/**
+ * Requests permission and returns an Expo push token.
+ * Returns null on simulator, denial, or any failure — never throws.
+ */
+export async function registerForPushNotificationsAsync(): Promise<
+  string | null
+> {
+  await ensureAndroidChannel();
+
+  if (!Device.isDevice) return null;
+
+  const { status: existingStatus } = await Notifications.getPermissionsAsync();
+  let finalStatus = existingStatus;
+  if (existingStatus !== 'granted') {
+    const { status } = await Notifications.requestPermissionsAsync();
+    finalStatus = status;
+  }
+  if (finalStatus !== 'granted') return null;
+
+  const projectId =
+    Constants?.expoConfig?.extra?.eas?.projectId ??
+    Constants?.easConfig?.projectId;
+  if (!projectId) return null;
+
+  try {
+    const token = await Notifications.getExpoPushTokenAsync({ projectId });
+    return token.data;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Schedules a local notification that fires after a short delay,
+ * letting the user verify permissions, the handler, and listeners.
+ */
+export async function triggerLocalTestNotification(
+  payload: NotificationPayload = {
+    title: 'Test notification',
+    body: 'Push notifications are working.',
+    data: { source: 'local-test' },
+  },
+  delaySeconds = 2,
+): Promise<string> {
+  return Notifications.scheduleNotificationAsync({
+    content: {
+      title: payload.title,
+      body: payload.body,
+      data: payload.data ?? {},
+      sound: 'default',
+    },
+    trigger:
+      delaySeconds > 0
+        ? {
+            type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+            seconds: delaySeconds,
+          }
+        : null,
+  });
+}
+
+/**
+ * Sends a remote push via Expo's push API. Useful for testing token delivery
+ * end-to-end from inside the app.
+ */
+export async function sendRemoteTestPush(
+  expoPushToken: string,
+  payload: NotificationPayload = {
+    title: 'Remote test',
+    body: 'Sent through the Expo push service.',
+    data: { source: 'remote-test' },
+  },
+): Promise<void> {
   await fetch('https://exp.host/--/api/v2/push/send', {
     method: 'POST',
     headers: {
@@ -23,65 +108,12 @@ export async function sendPushNotification(expoPushToken: string) {
       'Accept-encoding': 'gzip, deflate',
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(message),
+    body: JSON.stringify({
+      to: expoPushToken,
+      sound: 'default',
+      title: payload.title,
+      body: payload.body,
+      data: payload.data ?? {},
+    }),
   });
-}
-
-/**
- * Handle push notification registration errors
- * @param errorMessage The error message to display
- */
-export function handleRegistrationError(errorMessage: string) {
-  alert(errorMessage);
-  throw new Error(errorMessage);
-}
-
-/**
- * Register for push notifications
- * @returns The Expo Push Token
- */
-export async function registerForPushNotificationsAsync() {
-  if (Platform.OS === 'android') {
-    await Notifications.setNotificationChannelAsync('default', {
-      name: 'default',
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#FF231F7C',
-    });
-  }
-
-  if (Device.isDevice) {
-    const { status: existingStatus } =
-      await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-    if (existingStatus !== 'granted') {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
-    if (finalStatus !== 'granted') {
-      handleRegistrationError(
-        'Permission not granted to get push token for push notification!',
-      );
-      return;
-    }
-    const projectId =
-      Constants?.expoConfig?.extra?.eas?.projectId ??
-      Constants?.easConfig?.projectId;
-    if (!projectId) {
-      handleRegistrationError('Project ID not found');
-    }
-    try {
-      const pushTokenString = (
-        await Notifications.getExpoPushTokenAsync({
-          projectId,
-        })
-      ).data;
-      console.log(pushTokenString);
-      return pushTokenString;
-    } catch (e: unknown) {
-      handleRegistrationError(`${e}`);
-    }
-  } else {
-    handleRegistrationError('Must use physical device for push notifications');
-  }
 }

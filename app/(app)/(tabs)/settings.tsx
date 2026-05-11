@@ -192,11 +192,12 @@ const SettingScreen = () => {
     }
   }, []);
 
-  const handleRestorePurchases = useCallback(() => {
-    // TODO: Integrate with RevenueCat / StoreKit
+  const handleRestorePurchases = useCallback(async () => {
+    // RevenueCat is disabled while we test in preview. Re-enable along with
+    // usePurchasesBootstrap in app/(app)/_layout.tsx.
     Alert.alert(
-      'Restore Purchases',
-      'Your purchases have been restored successfully.',
+      'Coming Soon',
+      'Subscription restore is temporarily unavailable in this build.',
       [{ text: 'OK' }],
       { userInterfaceStyle: 'dark' },
     );
@@ -278,7 +279,9 @@ const SettingScreen = () => {
           <SettingsItem
             icon={StarIcon}
             label="Restore Purchases"
-            sublabel="Recover previous subscriptions"
+            sublabel={
+              'Recover previous subscriptions'
+            }
             onPress={handleRestorePurchases}
             showArrow={false}
           />

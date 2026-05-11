@@ -260,7 +260,7 @@ const ScoreScreen = () => {
           {scanDate}
         </ThemedText>
         <ThemedText color="onSecondary" style={styles.heroSubtitle}>
-          Swipe to explore all 10 feature scores.
+          Swipe to explore your feature scores.
         </ThemedText>
       </View>
 

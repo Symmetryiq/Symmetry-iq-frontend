@@ -12,6 +12,7 @@ import {
   TEXT,
   THEME,
 } from '@/constants/theme';
+import { useIsPremium } from '@/hooks/usePurchasesStore';
 import { useScanStore } from '@/hooks/useScanStore';
 import { Feature, FeatureID } from '@/types/feature.types';
 import {
@@ -192,6 +193,7 @@ function PageDots({ total, active, onDotPress }: PageDotsProps) {
 
 const DemoResultScreen = () => {
   const currentScan = useScanStore((s) => s.currentScan);
+  const isPremium = useIsPremium();
   const [activePage, setActivePage] = useState(0);
   const [modalFeature, setModalFeature] = useState<Feature | null>(null);
   const flatListRef = useRef<FlatList>(null);
@@ -250,7 +252,7 @@ const DemoResultScreen = () => {
           Your Scan Results
         </ThemedText>
         <ThemedText color="onSecondary" style={styles.heroSubtitle}>
-          Swipe to explore all 10 feature scores.
+          Swipe to explore your feature scores.
         </ThemedText>
       </View>
 
@@ -274,7 +276,7 @@ const DemoResultScreen = () => {
                   title={feature.title}
                   score={scores[feature.id]}
                   polarity={feature.polarity}
-                  locked={true}
+                  locked={!isPremium && !FREE_FEATURE_IDS.has(feature.id)}
                   onInfoPress={() => openFeatureInfo(feature.id)}
                 />
               ))}

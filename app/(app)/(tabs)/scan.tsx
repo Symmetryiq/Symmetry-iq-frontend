@@ -193,66 +193,66 @@ const ScanScreen = () => {
   const hasImage = imageUri !== null;
 
   /* ── Already scanned today ── */
-  // if (scannedToday && todaysScan) {
-  //   return (
-  //     <ScreenView edges={['top', 'left', 'right']} style={styles.container}>
-  //       <View style={styles.header}>
-  //         <ScanIcon color={COLOR.primaryLight} size={48} />
+  if (scannedToday && todaysScan) {
+    return (
+      <ScreenView edges={['top', 'left', 'right']} style={styles.container}>
+        <View style={styles.header}>
+          <ScanIcon color={COLOR.primaryLight} size={48} />
 
-  //         <View style={styles.content}>
-  //           <ThemedText variant="h1">Face Scan</ThemedText>
-  //           <ThemedText color="onSecondary" style={styles.description}>
-  //             AI-powered symmetry analysis in seconds
-  //           </ThemedText>
-  //         </View>
-  //       </View>
+          <View style={styles.content}>
+            <ThemedText variant="h1">Face Scan</ThemedText>
+            <ThemedText color="onSecondary" style={styles.description}>
+              AI-powered symmetry analysis in seconds
+            </ThemedText>
+          </View>
+        </View>
 
-  //       {/* Today's scan preview */}
-  //       <View style={styles.preview}>
-  //         <Image
-  //           source={{ uri: todaysScan.imageUri }}
-  //           style={styles.image}
-  //         />
-  //         <View style={styles.scannedBadge}>
-  //           <CheckCircleIcon color={COLOR.onPrimary} size={16} weight="fill" />
-  //           <ThemedText variant="badge" color="onPrimary">
-  //             Scanned Today
-  //           </ThemedText>
-  //         </View>
-  //       </View>
+        {/* Today's scan preview */}
+        <View style={styles.preview}>
+          <Image
+            source={{ uri: todaysScan.imageUri }}
+            style={styles.image}
+          />
+          <View style={styles.scannedBadge}>
+            <CheckCircleIcon color={COLOR.onPrimary} size={16} weight="fill" />
+            <ThemedText variant="badge" color="onPrimary">
+              Scanned Today
+            </ThemedText>
+          </View>
+        </View>
 
-  //       {/* Next scan countdown */}
-  //       <View style={styles.countdownRow}>
-  //         <ClockCountdownIcon
-  //           color={COLOR.onMuted}
-  //           size={16}
-  //           weight="bold"
-  //         />
-  //         <ThemedText variant="bodySmall" color="onMuted">
-  //           Next scan available in{' '}
-  //           <ThemedText
-  //             variant="bodySmall"
-  //             color="primaryLight"
-  //             style={{ fontFamily: FONT.semiBold }}
-  //           >
-  //             {countdown}
-  //           </ThemedText>
-  //         </ThemedText>
-  //       </View>
+        {/* Next scan countdown */}
+        <View style={styles.countdownRow}>
+          <ClockCountdownIcon
+            color={COLOR.onMuted}
+            size={16}
+            weight="bold"
+          />
+          <ThemedText variant="bodySmall" color="onMuted">
+            Next scan available in{' '}
+            <ThemedText
+              variant="bodySmall"
+              color="primaryLight"
+              style={{ fontFamily: FONT.semiBold }}
+            >
+              {countdown}
+            </ThemedText>
+          </ThemedText>
+        </View>
 
-  //       <Button
-  //         title="View Results"
-  //         variant="primary"
-  //         onPress={() =>
-  //           router.push({
-  //             pathname: '/score/[id]',
-  //             params: { id: todaysScan.id },
-  //           })
-  //         }
-  //       />
-  //     </ScreenView>
-  //   );
-  // }
+        <Button
+          title="View Results"
+          variant="primary"
+          onPress={() =>
+            router.push({
+              pathname: '/score/[id]',
+              params: { id: todaysScan.id },
+            })
+          }
+        />
+      </ScreenView>
+    );
+  }
 
   /* ── Normal scan flow ── */
   return (

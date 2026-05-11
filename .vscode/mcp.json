@@ -1,0 +1,13 @@
+{
+	"servers": {
+		"expo-mcp": {
+			"url": "https://mcp.expo.dev/mcp",
+			"type": "http"
+		},
+		"revenuecat-mcp": {
+			"url": "https://mcp.revenuecat.ai/mcp",
+			"type": "http"
+		}
+	},
+	"inputs": []
+}

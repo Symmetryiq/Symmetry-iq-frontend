@@ -138,8 +138,10 @@ export function generateMonthlyPlan(
   scores: ScanScores,
   scanId: string,
 ): MonthlyPlan {
-  const ranked = rankFeatures(scores);
   const featureIndex = buildFeatureRoutineIndex();
+  const ranked = rankFeatures(scores).filter(
+    (f) => (featureIndex.get(f.id)?.length ?? 0) > 0,
+  );
 
   const weeks = Array.from({ length: TOTAL_WEEKS }, (_, weekIdx) =>
     generateWeek(ranked, featureIndex, weekIdx),

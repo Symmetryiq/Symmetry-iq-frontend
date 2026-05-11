@@ -19,6 +19,12 @@
       "skillPath": "plugins/expo/skills/building-native-ui/SKILL.md",
       "computedHash": "a0316d2ce842d2dd8067a144e339cf502329dc7701f9f5122268fdb3d4c980f7"
     },
+    "creating-reanimated-animations": {
+      "source": "estevg/skills",
+      "sourceType": "github",
+      "skillPath": "plugins/creating-reanimated-animations/skills/creating-reanimated-animations/SKILL.md",
+      "computedHash": "3bbe9f16bc5ff898c55854a9c657aa999f55b748f676d17b19c39e5ab4899831"
+    },
     "eas-update-insights": {
       "source": "expo/skills",
       "sourceType": "github",

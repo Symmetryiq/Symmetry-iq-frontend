@@ -3,14 +3,12 @@ import { FeatureID } from '@/types/feature.types';
 import { faceLandmarkDetectionOnImage, Landmark } from 'react-native-mediapipe';
 import { LandmarkModelError, NoFaceDetectedError } from './error.util';
 import {
-  calculateCheekboneBalance,
   calculateChinAlignment,
   calculateEyeAlignment,
-  calculateEyebrowSymmetry,
-  calculateFacialPuffiness,
+  calculateEyeSpacingRatio,
   calculateFacialThirds,
   calculateJawlineSymmetry,
-  calculateMidfaceRatio,
+  calculateLowerFaceProportion,
   calculateNoseCentering,
   calculateOverallSymmetry,
 } from './scan.util';
@@ -57,12 +55,10 @@ export function calculateScores(
     overall_symmetry: Math.round(calculateOverallSymmetry(landmarks)),
     eye_alignment: Math.round(calculateEyeAlignment(landmarks)),
     nose_centering: Math.round(calculateNoseCentering(landmarks)),
-    facial_puffiness: Math.round(calculateFacialPuffiness(landmarks)),
-    facial_thirds: Math.round(calculateFacialThirds(landmarks)),
     jawline_symmetry: Math.round(calculateJawlineSymmetry(landmarks)),
-    midface_ratio: Math.round(calculateMidfaceRatio(landmarks)),
-    cheekbone_balance: Math.round(calculateCheekboneBalance(landmarks)),
     chin_alignment: Math.round(calculateChinAlignment(landmarks)),
-    eyebrow_symmetry: Math.round(calculateEyebrowSymmetry(landmarks)),
+    lower_face_proportion: Math.round(calculateLowerFaceProportion(landmarks)),
+    eye_spacing_ratio: Math.round(calculateEyeSpacingRatio(landmarks)),
+    facial_thirds: Math.round(calculateFacialThirds(landmarks)),
   };
 }
