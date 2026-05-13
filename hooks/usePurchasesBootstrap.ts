@@ -5,11 +5,34 @@ import {
   identifyUser,
   isConfigured,
   logoutUser,
-} from '@/utils/purchases.util';
-import { useUser } from '@clerk/expo';
-import { useEffect } from 'react';
-import Purchases from 'react-native-purchases';
-import { usePurchasesStore } from './usePurchasesStore';
+} from "@/utils/purchases.util";
+import { useUser } from "@clerk/expo";
+import { useEffect } from "react";
+import { Platform } from "react-native";
+import Purchases from "react-native-purchases";
+import { usePurchasesStore } from "./usePurchasesStore";
+
+function activeRevenueCatKey(): { source: string; raw: string | undefined } {
+  if (__DEV__) {
+    return {
+      source: "test-store (dev)",
+      raw: process.env.EXPO_PUBLIC_REVENUECAT_TEST_API_KEY,
+    };
+  }
+  if (Platform.OS === "ios") {
+    return {
+      source: "ios-production",
+      raw: process.env.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY,
+    };
+  }
+  if (Platform.OS === "android") {
+    return {
+      source: "android-production",
+      raw: process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY,
+    };
+  }
+  return { source: `unsupported:${Platform.OS}`, raw: undefined };
+}
 
 /**
  * Bootstraps RevenueCat once the user lands inside the protected app:
@@ -32,18 +55,20 @@ export function usePurchasesBootstrap() {
     let cancelled = false;
 
     async function bootstrap() {
-      const rawKey = process.env.EXPO_PUBLIC_REVENUECAT_TEST_STORE_API_KEY;
+      const { source, raw } = activeRevenueCatKey();
       const keyPreview =
-        rawKey && rawKey.length > 0
-          ? `${rawKey.slice(0, 6)}…(${rawKey.length})`
-          : '<empty>';
-      console.log('[Purchases] EXPO_PUBLIC_REVENUECAT_TEST_STORE_API_KEY =', keyPreview);
+        raw && raw.length > 0
+          ? `${raw.slice(0, 6)}…(${raw.length})`
+          : "<empty>";
+      console.log(
+        `[Purchases] active key source=${source} value=${keyPreview}`,
+      );
 
       const ok = configurePurchases(user?.id ?? null);
       if (!ok) {
         setReady(false);
         setOfferingsError(
-          `RevenueCat API key missing (got ${keyPreview}). Check EAS env vars.`,
+          `RevenueCat API key missing for ${source} (got ${keyPreview}). Check EAS env vars.`,
         );
         return;
       }
@@ -53,7 +78,7 @@ export function usePurchasesBootstrap() {
           const info = await identifyUser(user.id);
           if (!cancelled) setCustomerInfo(info);
         } catch (e) {
-          console.warn('[Purchases] identifyUser failed', e);
+          console.warn("[Purchases] identifyUser failed", e);
         }
       } else {
         try {
@@ -61,14 +86,14 @@ export function usePurchasesBootstrap() {
           const info = await getCustomerInfo();
           if (!cancelled) setCustomerInfo(info);
         } catch (e) {
-          console.warn('[Purchases] anonymous customer info failed', e);
+          console.warn("[Purchases] anonymous customer info failed", e);
         }
       }
 
       setLoadingOfferings(true);
       try {
         const offering = await getCurrentOffering();
-        console.log('[Purchases] offering loaded', {
+        console.log("[Purchases] offering loaded", {
           identifier: offering?.identifier,
           packageCount: offering?.availablePackages?.length ?? 0,
           hasWeekly: !!offering?.weekly,
@@ -90,11 +115,13 @@ export function usePurchasesBootstrap() {
           }
         }
       } catch (e) {
-        console.warn('[Purchases] getCurrentOffering failed', e);
+        console.warn("[Purchases] getCurrentOffering failed", e);
         if (!cancelled) {
           setOffering(null);
           const msg =
-            e instanceof Error ? e.message : 'Could not load subscription plans.';
+            e instanceof Error
+              ? e.message
+              : "Could not load subscription plans.";
           setOfferingsError(`Failed to load offerings: ${msg}`);
         }
       } finally {
@@ -122,7 +149,7 @@ export function usePurchasesBootstrap() {
   useEffect(() => {
     if (!isConfigured()) return;
 
-    const listener = (info: import('react-native-purchases').CustomerInfo) => {
+    const listener = (info: import("react-native-purchases").CustomerInfo) => {
       setCustomerInfo(info);
     };
 

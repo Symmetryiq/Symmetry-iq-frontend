@@ -91,7 +91,6 @@
       "reactCompiler": true
     },
     "extra": {
-      "EXPO_PUBLIC_CLERK_GOOGLE_IOS_URL_SCHEME": "com.googleusercontent.apps.460134598118-qmvrfbjf85e8r7nbjptp3ogbagr7bj1v",
       "router": {},
       "eas": {
         "projectId": "51228dab-19a8-4c7f-ac85-cb808412e5a1"

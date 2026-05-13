@@ -11,7 +11,7 @@
         "@react-navigation/bottom-tabs": "^7.4.0",
         "@react-navigation/elements": "^2.6.3",
         "@react-navigation/native": "^7.1.8",
-        "@sentry/react-native": "~7.2.0",
+        "@sentry/react-native": "^8.11.1",
         "@shopify/flash-list": "2.0.2",
         "axios": "^1.13.2",
         "expo": "~54.0.33",
@@ -602,43 +602,45 @@
 
     "@scure/bip39": ["@scure/bip39@1.6.0", "", { "dependencies": { "@noble/hashes": "~1.8.0", "@scure/base": "~1.2.5" } }, "sha512-+lF0BbLiJNwVlev4eKelw1WWLaiKXw7sSl8T6FvBlWkdX+94aGJ4o8XjUdlyhTCjd8c+B3KT3JfS8P0bLRNU6A=="],
 
-    "@sentry-internal/browser-utils": ["@sentry-internal/browser-utils@10.12.0", "", { "dependencies": { "@sentry/core": "10.12.0" } }, "sha512-dozbx389jhKynj0d657FsgbBVOar7pX3mb6GjqCxslXF0VKpZH2Xks0U32RgDY/nK27O+o095IWz7YvjVmPkDw=="],
+    "@sentry-internal/browser-utils": ["@sentry-internal/browser-utils@10.51.0", "", { "dependencies": { "@sentry/core": "10.51.0" } }, "sha512-lNKBS4P7RUvf1niojXQWe9bU3gnBUCbST4Dj0pSiyat1N96cXVyHkeE+uGxowD0RrVWhs+kGHiVX3FcmRWF6sA=="],
 
-    "@sentry-internal/feedback": ["@sentry-internal/feedback@10.12.0", "", { "dependencies": { "@sentry/core": "10.12.0" } }, "sha512-0+7ceO6yQPPqfxRc9ue/xoPHKcnB917ezPaehGQNfAFNQB9PNTG1y55+8mRu0Fw+ANbZeCt/HyoCmXuRdxmkpg=="],
+    "@sentry-internal/feedback": ["@sentry-internal/feedback@10.51.0", "", { "dependencies": { "@sentry/core": "10.51.0" } }, "sha512-bCM95bcpphx28e6aU0bwRLxOgwosYsdNzezM1sM0pVOkb0TB3hDFRamramVDK+/Hp1o8qmRxS4c5w/A7YBZGkA=="],
 
-    "@sentry-internal/replay": ["@sentry-internal/replay@10.12.0", "", { "dependencies": { "@sentry-internal/browser-utils": "10.12.0", "@sentry/core": "10.12.0" } }, "sha512-/1093gSNGN5KlOBsuyAl33JkzGiG38kCnxswQLZWpPpR6LBbR1Ddb18HjhDpoQNNEZybJBgJC3a5NKl43C2TSQ=="],
+    "@sentry-internal/replay": ["@sentry-internal/replay@10.51.0", "", { "dependencies": { "@sentry-internal/browser-utils": "10.51.0", "@sentry/core": "10.51.0" } }, "sha512-jCpI5HXSwK6ZT2HX70+mDRciAocHzSiDk4DTgvzV69Wvd+Ei5WLgE+d39eaEPsm8lUC0Ydntb5sJIB6uG9D4bw=="],
 
-    "@sentry-internal/replay-canvas": ["@sentry-internal/replay-canvas@10.12.0", "", { "dependencies": { "@sentry-internal/replay": "10.12.0", "@sentry/core": "10.12.0" } }, "sha512-W/z1/+69i3INNfPjD1KuinSNaRQaApjzwb37IFmiyF440F93hxmEYgXHk3poOlYYaigl2JMYbysGPWOiXnqUXA=="],
+    "@sentry-internal/replay-canvas": ["@sentry-internal/replay-canvas@10.51.0", "", { "dependencies": { "@sentry-internal/replay": "10.51.0", "@sentry/core": "10.51.0" } }, "sha512-8PW1Pp+Yl3lPwYqhBCr5SgkuhDanu9ZLzUqD2bPKL/ElqbM2eDVIWxq4z4ZzePrmZa6IcCjTv6sVQJ7Z4dLyLA=="],
 
-    "@sentry/babel-plugin-component-annotate": ["@sentry/babel-plugin-component-annotate@4.3.0", "", {}, "sha512-OuxqBprXRyhe8Pkfyz/4yHQJc5c3lm+TmYWSSx8u48g5yKewSQDOxkiLU5pAk3WnbLPy8XwU/PN+2BG0YFU9Nw=="],
+    "@sentry/babel-plugin-component-annotate": ["@sentry/babel-plugin-component-annotate@5.2.1", "", {}, "sha512-QQ9AL5EXIbSK26ObLVtiU6l3tCUdpGSJ/6VwDkPhC3qvtoksSlcoU9Yzm7XC0NBcvu1N2abL5R7gckKGZ4JewQ=="],
 
-    "@sentry/browser": ["@sentry/browser@10.12.0", "", { "dependencies": { "@sentry-internal/browser-utils": "10.12.0", "@sentry-internal/feedback": "10.12.0", "@sentry-internal/replay": "10.12.0", "@sentry-internal/replay-canvas": "10.12.0", "@sentry/core": "10.12.0" } }, "sha512-lKyaB2NFmr7SxPjmMTLLhQ7xfxaY3kdkMhpzuRI5qwOngtKt4+FtvNYHRuz+PTtEFv4OaHhNNbRn6r91gWguQg=="],
+    "@sentry/browser": ["@sentry/browser@10.51.0", "", { "dependencies": { "@sentry-internal/browser-utils": "10.51.0", "@sentry-internal/feedback": "10.51.0", "@sentry-internal/replay": "10.51.0", "@sentry-internal/replay-canvas": "10.51.0", "@sentry/core": "10.51.0" } }, "sha512-Zdc0sKfenxUtW/OGhtJ7xHFN44bXR7YqxJ1zBDzlZfW0nTbeTTUZBq9z5NUw6qdS0Vs/i3V4qzAKTbRKWfqSEA=="],
 
-    "@sentry/cli": ["@sentry/cli@2.55.0", "", { "dependencies": { "https-proxy-agent": "^5.0.0", "node-fetch": "^2.6.7", "progress": "^2.0.3", "proxy-from-env": "^1.1.0", "which": "^2.0.2" }, "optionalDependencies": { "@sentry/cli-darwin": "2.55.0", "@sentry/cli-linux-arm": "2.55.0", "@sentry/cli-linux-arm64": "2.55.0", "@sentry/cli-linux-i686": "2.55.0", "@sentry/cli-linux-x64": "2.55.0", "@sentry/cli-win32-arm64": "2.55.0", "@sentry/cli-win32-i686": "2.55.0", "@sentry/cli-win32-x64": "2.55.0" }, "bin": { "sentry-cli": "bin/sentry-cli" } }, "sha512-cynvcIM2xL8ddwELyFRSpZQw4UtFZzoM2rId2l9vg7+wDREPDocMJB9lEQpBIo3eqhp9JswqUT037yjO6iJ5Sw=="],
+    "@sentry/cli": ["@sentry/cli@3.4.1", "", { "dependencies": { "progress": "^2.0.3", "proxy-from-env": "^1.1.0", "undici": "^6.22.0", "which": "^2.0.2" }, "optionalDependencies": { "@sentry/cli-darwin": "3.4.1", "@sentry/cli-linux-arm": "3.4.1", "@sentry/cli-linux-arm64": "3.4.1", "@sentry/cli-linux-i686": "3.4.1", "@sentry/cli-linux-x64": "3.4.1", "@sentry/cli-win32-arm64": "3.4.1", "@sentry/cli-win32-i686": "3.4.1", "@sentry/cli-win32-x64": "3.4.1" }, "bin": { "sentry-cli": "bin/sentry-cli" } }, "sha512-xY9WcIg+/B/bJxY1KbP0XrDZGPQaFNjIOVJbXNbwVtRujiG6DEwVHqGJhADjPa8rilLQVDOUumVMwLbAUCmh6A=="],
 
-    "@sentry/cli-darwin": ["@sentry/cli-darwin@2.55.0", "", { "os": "darwin" }, "sha512-jGHE7SHHzqXUmnsmRLgorVH6nmMmTjQQXdPZbSL5tRtH8d3OIYrVNr5D72DSgD26XAPBDMV0ibqOQ9NKoiSpfA=="],
+    "@sentry/cli-darwin": ["@sentry/cli-darwin@3.4.1", "", { "os": "darwin" }, "sha512-44foor4g/nfFaOaEZYQnxBrAW7TOMO4LatYsRjPI8dAoqXNVsl+P77FIk0gGAFnTwbt5gREXeeOn6j8DA9NyZg=="],
 
-    "@sentry/cli-linux-arm": ["@sentry/cli-linux-arm@2.55.0", "", { "os": [ "linux", "android", "freebsd", ], "cpu": "arm" }, "sha512-ATjU0PsiWADSPLF/kZroLZ7FPKd5W9TDWHVkKNwIUNTei702LFgTjNeRwOIzTgSvG3yTmVEqtwFQfFN/7hnVXQ=="],
+    "@sentry/cli-linux-arm": ["@sentry/cli-linux-arm@3.4.1", "", { "os": [ "linux", "android", "freebsd", ], "cpu": "arm" }, "sha512-XIT4ICA86vwrZWfbvKRiY9HgMg1aJNv1VJgNuiWu/3ysk0H4U7U4rJl6SQNbthgNGpcxvFdXmHbujKv7VZdv5w=="],
 
-    "@sentry/cli-linux-arm64": ["@sentry/cli-linux-arm64@2.55.0", "", { "os": [ "linux", "android", "freebsd", ], "cpu": "arm64" }, "sha512-jNB/0/gFcOuDCaY/TqeuEpsy/k52dwyk1SOV3s1ku4DUsln6govTppeAGRewY3T1Rj9B2vgIWTrnB8KVh9+Rgg=="],
+    "@sentry/cli-linux-arm64": ["@sentry/cli-linux-arm64@3.4.1", "", { "os": [ "linux", "android", "freebsd", ], "cpu": "arm64" }, "sha512-rYWeBxVEiYMZ5hUe16qkpCmJQBc+lxT50sls/CqO5WTN3VlrSRlJsd+jMTKUNesM0j4PMEi82Xy7rovD8a+2tA=="],
 
-    "@sentry/cli-linux-i686": ["@sentry/cli-linux-i686@2.55.0", "", { "os": [ "linux", "android", "freebsd", ], "cpu": "ia32" }, "sha512-8LZjo6PncTM6bWdaggscNOi5r7F/fqRREsCwvd51dcjGj7Kp1plqo9feEzYQ+jq+KUzVCiWfHrUjddFmYyZJrg=="],
+    "@sentry/cli-linux-i686": ["@sentry/cli-linux-i686@3.4.1", "", { "os": [ "linux", "android", "freebsd", ], "cpu": "ia32" }, "sha512-yirtGGummlarcrPmIm4cg5vEA5gYnL/GJ6FLV6yfq1zAeMzEWnl7kaWIVsoTZ8qBi7vmHpy0APlH5LXxK4QXNw=="],
 
-    "@sentry/cli-linux-x64": ["@sentry/cli-linux-x64@2.55.0", "", { "os": [ "linux", "android", "freebsd", ], "cpu": "x64" }, "sha512-5LUVvq74Yj2cZZy5g5o/54dcWEaX4rf3myTHy73AKhRj1PABtOkfexOLbF9xSrZy95WXWaXyeH+k5n5z/vtHfA=="],
+    "@sentry/cli-linux-x64": ["@sentry/cli-linux-x64@3.4.1", "", { "os": [ "linux", "android", "freebsd", ], "cpu": "x64" }, "sha512-r2wJq9Bt1eRFtnAo3vWACfAN3IdV5gRfLnH8rbtDsg7pqdM0MP7tgAjzJDLptLGP02ndPhJfeJ1mXjcDY1MqqQ=="],
 
-    "@sentry/cli-win32-arm64": ["@sentry/cli-win32-arm64@2.55.0", "", { "os": "win32", "cpu": "arm64" }, "sha512-cWIQdzm1pfLwPARsV6dUb8TVd6Y3V1A2VWxjTons3Ift6GvtVmiAe0OWL8t2Yt95i8v61kTD/6Tq21OAaogqzA=="],
+    "@sentry/cli-win32-arm64": ["@sentry/cli-win32-arm64@3.4.1", "", { "os": "win32", "cpu": "arm64" }, "sha512-IWg2FeB9OzxDky3q885MqepN2QEujyGdbcCB0VbHB3zRpT2D2fbk87FIy64JGoZkPVmoI4d7Mbxa+XKFS4jlrw=="],
 
-    "@sentry/cli-win32-i686": ["@sentry/cli-win32-i686@2.55.0", "", { "os": "win32", "cpu": "ia32" }, "sha512-ldepCn2t9r4I0wvgk7NRaA7coJyy4rTQAzM66u9j5nTEsUldf66xym6esd5ZZRAaJUjffqvHqUIr/lrieTIrVg=="],
+    "@sentry/cli-win32-i686": ["@sentry/cli-win32-i686@3.4.1", "", { "os": "win32", "cpu": "ia32" }, "sha512-RlKYU1Cdyk0uqRa9llKA6yVxg2QK0CXX0bogv89lIfABgZ4o1o45zcwVmEQLrD5rrIQmUcIJHWysQVnSyydJkA=="],
 
-    "@sentry/cli-win32-x64": ["@sentry/cli-win32-x64@2.55.0", "", { "os": "win32", "cpu": "x64" }, "sha512-4hPc/I/9tXx+HLTdTGwlagtAfDSIa2AoTUP30tl32NAYQhx9a6niUbPAemK2qfxesiufJ7D2djX83rCw6WnJVA=="],
+    "@sentry/cli-win32-x64": ["@sentry/cli-win32-x64@3.4.1", "", { "os": "win32", "cpu": "x64" }, "sha512-MgKSglGeD+zOIEdbZrt+P9v9ExkMrHKwlIK8hnJA8qNVjmPuOW9yR4khzdVIYd3cdujAQQhLcV3gEB9ceR4PxQ=="],
 
-    "@sentry/core": ["@sentry/core@10.12.0", "", {}, "sha512-Jrf0Yo7DvmI/ZQcvBnA0xKNAFkJlVC/fMlvcin+5IrFNRcqOToZ2vtF+XqTgjRZymXQNE8s1QTD7IomPHk0TAw=="],
+    "@sentry/core": ["@sentry/core@10.51.0", "", {}, "sha512-Y45V/YXvVLEXmOdkbD1oG1gkRWFi9guCEGg3PlIlIpRjAbZUrvLGgjRJIc1E7XpSzmOnWbs5BbUxMv4PDaPj2w=="],
 
-    "@sentry/react": ["@sentry/react@10.12.0", "", { "dependencies": { "@sentry/browser": "10.12.0", "@sentry/core": "10.12.0", "hoist-non-react-statics": "^3.3.2" }, "peerDependencies": { "react": "^16.14.0 || 17.x || 18.x || 19.x" } }, "sha512-TpqgdoYbkf5JynmmW2oQhHQ/h5w+XPYk0cEb/UrsGlvJvnBSR+5tgh0AqxCSi3gvtp82rAXI5w1TyRPBbhLDBw=="],
+    "@sentry/expo-upload-sourcemaps": ["@sentry/expo-upload-sourcemaps@8.11.1", "", { "dependencies": { "@sentry/cli": "3.4.1" }, "peerDependencies": { "@expo/env": "*", "dotenv": "*" }, "optionalPeers": ["@expo/env", "dotenv"], "bin": { "expo-upload-sourcemaps": "cli.js" } }, "sha512-xtWJqJotkZGI6M5luexR+9PJKudZHrrKTQ97rbnEBlM6G9CU9FzgLuJzgrxC4+hdM9h21VhIblam3IUtcK2bUg=="],
 
-    "@sentry/react-native": ["@sentry/react-native@7.2.0", "", { "dependencies": { "@sentry/babel-plugin-component-annotate": "4.3.0", "@sentry/browser": "10.12.0", "@sentry/cli": "2.55.0", "@sentry/core": "10.12.0", "@sentry/react": "10.12.0", "@sentry/types": "10.12.0" }, "peerDependencies": { "expo": ">=49.0.0", "react": ">=17.0.0", "react-native": ">=0.65.0" }, "optionalPeers": ["expo"], "bin": { "sentry-expo-upload-sourcemaps": "scripts/expo-upload-sourcemaps.js" } }, "sha512-rjqYgEjntPz1sPysud78wi4B9ui7LBVPsG6qr8s/htLMYho9GPGFA5dF+eqsQWqMX8NDReAxNkLTC4+gCNklLQ=="],
+    "@sentry/react": ["@sentry/react@10.51.0", "", { "dependencies": { "@sentry/browser": "10.51.0", "@sentry/core": "10.51.0" }, "peerDependencies": { "react": "^16.14.0 || 17.x || 18.x || 19.x" } }, "sha512-RRHHqjNvjji6ebIqdlAr453AkST8Vm4cxdu1vWm772IgbzTO7Jx46Cj6Bt2/GjMyH0YLE5euDaAOQhFMmpvAOw=="],
 
-    "@sentry/types": ["@sentry/types@10.12.0", "", { "dependencies": { "@sentry/core": "10.12.0" } }, "sha512-sKGj3l3V8ZKISh2Tu88bHfnm5ztkRtSLdmpZ6TmCeJdSM9pV+RRd6CMJ0RnSEXmYHselPNUod521t2NQFd4W1w=="],
+    "@sentry/react-native": ["@sentry/react-native@8.11.1", "", { "dependencies": { "@sentry/babel-plugin-component-annotate": "5.2.1", "@sentry/browser": "10.51.0", "@sentry/cli": "3.4.1", "@sentry/core": "10.51.0", "@sentry/expo-upload-sourcemaps": "8.11.1", "@sentry/react": "10.51.0", "@sentry/types": "10.51.0" }, "peerDependencies": { "expo": ">=49.0.0", "react": ">=17.0.0", "react-native": ">=0.65.0" }, "optionalPeers": ["expo"], "bin": { "sentry-eas-build-on-complete": "scripts/eas-build-hook.js", "sentry-eas-build-on-error": "scripts/eas-build-hook.js", "sentry-eas-build-on-success": "scripts/eas-build-hook.js", "sentry-expo-upload-sourcemaps": "scripts/expo-upload-sourcemaps.js" } }, "sha512-TpGWoyNrPNKe3AN6/I2e+C3Z0iCXvw3HQeZwORRg+6vks1eLhCPTQsN49qoUiyQEAI49Sxxv+fbfA5dM+FijPA=="],
+
+    "@sentry/types": ["@sentry/types@10.51.0", "", { "dependencies": { "@sentry/core": "10.51.0" } }, "sha512-/0nTcXk82RKtGGv0mxmY56o+BE85lBuSWG9chtSEfeypvxHFyWn3D7td9rPmjboDMtytC24cYbUzx55jb2OjQA=="],
 
     "@shopify/flash-list": ["@shopify/flash-list@2.0.2", "", { "dependencies": { "tslib": "2.8.1" }, "peerDependencies": { "@babel/runtime": "*", "react": "*", "react-native": "*" } }, "sha512-zhlrhA9eiuEzja4wxVvotgXHtqd3qsYbXkQ3rsBfOgbFA9BVeErpDE/yEwtlIviRGEqpuFj/oU5owD6ByaNX+w=="],
 

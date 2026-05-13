@@ -1,19 +1,17 @@
 import { COLOR } from '@/constants/theme';
 import { useNotificationListener } from '@/hooks/useNotificationListener';
 import { useOnboardingStore } from '@/hooks/useOnboardingStore';
+import { usePurchasesBootstrap } from '@/hooks/usePurchasesBootstrap';
 import { useAuth } from '@clerk/expo';
 import { Stack } from 'expo-router';
 import React from 'react';
-
-// TODO: re-enable when RevenueCat is wired with a release-store key.
-// import { usePurchasesBootstrap } from '@/hooks/usePurchasesBootstrap';
 
 export default function AppLayout() {
   const { isSignedIn } = useAuth();
   const { completed: hasOnboarded } = useOnboardingStore();
 
   useNotificationListener();
-  // usePurchasesBootstrap();
+  usePurchasesBootstrap();
 
   return (
     <Stack

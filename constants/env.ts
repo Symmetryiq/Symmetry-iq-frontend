@@ -1,6 +1,5 @@
 import { getEnv } from "@/utils/env.util";
 
-export const API_URL = getEnv("EXPO_PUBLIC_API_URL");
 export const SENTRY_DSN = getEnv("EXPO_PUBLIC_SENTRY_DSN");
 export const CLERK_PUBLISHABLE_KEY = getEnv(
   "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY",
@@ -12,6 +11,6 @@ export const REVENUECAT_ANDROID_API_KEY = getEnv(
   "EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY",
 );
 
-export const EXPO_PUBLIC_REVENUECAT_TEST_STORE_API_KEY = getEnv(
-  "EXPO_PUBLIC_REVENUECAT_TEST_STORE_API_KEY",
+export const EXPO_PUBLIC_REVENUECAT_TEST_API_KEY = getEnv(
+  "EXPO_PUBLIC_REVENUECAT_TEST_API_KEY",
 );

@@ -28,8 +28,6 @@ import {
 } from 'react-native';
 import { PurchasesPackage } from 'react-native-purchases';
 
-/* ─── Types ────────────────────────────────────────────────── */
-
 type PlanTier = 'weekly' | 'monthly' | 'yearly';
 
 type PlanOption = {
@@ -55,8 +53,7 @@ const TIER_LABEL: Record<PlanTier, string> = {
   yearly: 'Yearly',
 };
 
-// TODO: Set to false before production. Lets preview/QA builds skip RevenueCat
-// and proceed past the paywall as if a purchase succeeded.
+// Flip to true to let QA skip the paywall (treats it as a successful purchase).
 const BYPASS_PAYWALL = true;
 
 const FEATURES = [

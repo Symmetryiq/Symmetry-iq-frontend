@@ -1,4 +1,5 @@
 import { PREMIUM_ENTITLEMENT_ID } from "@/constants/purchases";
+import { Platform } from "react-native";
 import Purchases, {
   CustomerInfo,
   LOG_LEVEL,
@@ -9,14 +10,40 @@ import Purchases, {
 let configured = false;
 
 /**
- * Returns the SDK key for the active platform, or null if it's missing.
- * Uses direct `process.env.EXPO_PUBLIC_*` access so Expo/Metro inlines the
- * value at build time. Dynamic access via a wrapper (`process.env[key]`) is
- * not reliably inlined.
+ * Returns the SDK key for the active environment + platform, or null if
+ * missing. Picks the test-store key in dev builds (Metro / __DEV__) and the
+ * platform-specific release key in preview/production.
+ *
+ * Each `process.env.EXPO_PUBLIC_*` reference is a literal property access so
+ * Metro inlines all three at build time. Dynamic access (`process.env[key]`)
+ * is not reliably inlined.
  */
-function getApiKey(): string | null {
-  const key = process.env.EXPO_PUBLIC_REVENUECAT_TEST_STORE_API_KEY;
-  return key && key.length > 0 ? key : null;
+function getApiKey(): { key: string | null; source: string } {
+  if (__DEV__) {
+    const key = process.env.EXPO_PUBLIC_REVENUECAT_TEST_API_KEY;
+    return {
+      key: key && key.length > 0 ? key : null,
+      source: "test-store (dev)",
+    };
+  }
+
+  if (Platform.OS === "ios") {
+    const key = process.env.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY;
+    return {
+      key: key && key.length > 0 ? key : null,
+      source: "ios-production",
+    };
+  }
+
+  if (Platform.OS === "android") {
+    const key = process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY;
+    return {
+      key: key && key.length > 0 ? key : null,
+      source: "android-production",
+    };
+  }
+
+  return { key: null, source: `unsupported-platform:${Platform.OS}` };
 }
 
 /**
@@ -26,10 +53,10 @@ function getApiKey(): string | null {
 export function configurePurchases(appUserId?: string | null): boolean {
   if (configured) return true;
 
-  const apiKey = getApiKey();
-  if (!apiKey) {
+  const { key, source } = getApiKey();
+  if (!key) {
     console.warn(
-      "[Purchases] No RevenueCat API key configured for this platform — skipping configure().",
+      `[Purchases] No RevenueCat API key for source=${source} — skipping configure().`,
     );
     return false;
   }
@@ -37,10 +64,11 @@ export function configurePurchases(appUserId?: string | null): boolean {
   if (__DEV__) Purchases.setLogLevel(LOG_LEVEL.DEBUG);
 
   Purchases.configure({
-    apiKey,
+    apiKey: key,
     appUserID: appUserId ?? null,
   });
 
+  console.log(`[Purchases] configured with ${source} key`);
   configured = true;
   return true;
 }
