@@ -8,7 +8,7 @@ export function getEnv(key: string): string {
 
   if (!value) {
     console.warn(`[ENV] Missing env variable: ${key}`);
-    return '';
+    return "";
   }
 
   return value;

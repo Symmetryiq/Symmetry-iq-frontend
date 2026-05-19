@@ -9,7 +9,9 @@ export default function OnboardingLayout() {
             headerShown: false,
             contentStyle: { backgroundColor: COLOR.background },
             animation: 'slide_from_right',
-        }} />
+        }}>
+            <Stack.Screen name='index' />
+        </Stack>
     )
 }
 

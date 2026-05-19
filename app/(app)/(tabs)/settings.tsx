@@ -193,8 +193,7 @@ const SettingScreen = () => {
   }, []);
 
   const handleRestorePurchases = useCallback(async () => {
-    // RevenueCat is disabled while we test in preview. Re-enable along with
-    // usePurchasesBootstrap in app/(app)/_layout.tsx.
+    // TODO: wire up to Purchases.restorePurchases() (RevenueCat is now bootstrapped at root).
     Alert.alert(
       'Coming Soon',
       'Subscription restore is temporarily unavailable in this build.',

@@ -2,7 +2,7 @@ import Button from '@/components/Button';
 import ScanIcon from '@/components/icons/ScanIcon';
 import ScreenView from '@/components/ScreenView';
 import ThemedText from '@/components/ThemedText';
-import { COLOR, RADIUS, SHADOW, SPACE } from '@/constants/theme';
+import { COLOR, FONT, RADIUS, SHADOW, SPACE } from '@/constants/theme';
 import { usePlanStore } from '@/hooks/usePlanStore';
 import {
   getTodaysScan,
@@ -22,6 +22,8 @@ import {
 import { router } from 'expo-router';
 import {
   CameraPlusIcon,
+  CheckCircleIcon,
+  ClockCountdownIcon,
   ImageIcon,
   UserCircleIcon,
 } from 'phosphor-react-native';
