@@ -45,8 +45,6 @@ async function ensureLibraryPermission(): Promise<boolean> {
 
 async function analyzeImage(imageUri: string): Promise<void> {
   const landmarks = await getLandmarks(imageUri);
-
-  console.log(landmarks);
   const scores = calculateScores(landmarks);
   useScanStore.getState().saveScan(imageUri, scores);
 }

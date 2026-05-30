@@ -5,6 +5,7 @@ import { create } from 'zustand';
 type PurchasesState = {
   customerInfo: CustomerInfo | null;
   isPremium: boolean;
+  customerInfoLoaded: boolean;
   setCustomerInfo: (info: CustomerInfo | null) => void;
 };
 
@@ -16,8 +17,13 @@ function computeIsPremium(info: CustomerInfo | null): boolean {
 export const usePurchasesStore = create<PurchasesState>((set) => ({
   customerInfo: null,
   isPremium: false,
+  customerInfoLoaded: false,
   setCustomerInfo: (info) =>
-    set({ customerInfo: info, isPremium: computeIsPremium(info) }),
+    set({
+      customerInfo: info,
+      isPremium: computeIsPremium(info),
+      customerInfoLoaded: true,
+    }),
 }));
 
 export const useIsPremium = () => usePurchasesStore((s) => s.isPremium);

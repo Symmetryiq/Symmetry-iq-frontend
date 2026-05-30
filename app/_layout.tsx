@@ -3,8 +3,8 @@ import { tokenCache } from '@clerk/expo/token-cache';
 import { Stack } from 'expo-router';
 import React, { useEffect } from 'react';
 import * as Sentry from '@sentry/react-native';
-import Purchases, { LOG_LEVEL } from 'react-native-purchases';
-import { Platform } from 'react-native';
+import Purchases from 'react-native-purchases';
+import { ActivityIndicator, Platform, View } from 'react-native';
 import { useOnboardingStore } from '@/hooks/useOnboardingStore';
 import { usePurchasesStore } from '@/hooks/usePurchasesStore';
 import { COLOR } from '@/constants/theme';
@@ -12,14 +12,14 @@ import { useNotificationListener } from '@/hooks/useNotificationListener';
 
 Sentry.init({
   dsn: process.env.EXPO_PUBLIC_SENTRY_DSN || '',
-  enableLogs: true,
-  sendDefaultPii: true,
+  environment: __DEV__ ? 'development' : 'production',
+  debug: __DEV__,
+  enableLogs: false,
+  sendDefaultPii: false,
+  tracesSampleRate: __DEV__ ? 1.0 : 0.1,
 });
 
 function getRevenueCatKey(): string {
-  // if (__DEV__) {
-  //   return process.env.EXPO_PUBLIC_REVENUECAT_TEST_API_KEY || '';
-  // }
   if (Platform.OS === 'ios') {
     return process.env.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY || '';
   }
@@ -28,10 +28,12 @@ function getRevenueCatKey(): string {
 
 function RootLayout() {
   useEffect(() => {
-    // if (__DEV__) Purchases.setLogLevel(LOG_LEVEL.DEBUG);
     const apiKey = getRevenueCatKey();
     if (!apiKey) {
-      console.warn('[Purchases] No RevenueCat API key configured for this env');
+      Sentry.captureMessage(
+        `Missing RevenueCat API key for ${Platform.OS}`,
+        'error',
+      );
       return;
     }
     Purchases.configure({ apiKey });
@@ -48,41 +50,71 @@ function RootLayout() {
 }
 
 function RootComponent() {
-  const { isSignedIn } = useAuth();
+  const { isSignedIn, isLoaded: authLoaded } = useAuth();
   const { user, isLoaded: userLoaded } = useUser();
   const { completed: hasOnboarded } = useOnboardingStore();
   const setCustomerInfo = usePurchasesStore((s) => s.setCustomerInfo);
+  const customerInfoLoaded = usePurchasesStore((s) => s.customerInfoLoaded);
+  const isPremium = usePurchasesStore((s) => s.isPremium);
 
   useNotificationListener();
 
-  // useEffect(() => {
-  //   if (!userLoaded) return;
-  //   (async () => {
-  //     try {
-  //       if (user?.id) {
-  //         const { customerInfo } = await Purchases.logIn(user.id);
-  //         setCustomerInfo(customerInfo);
-  //       } else {
-  //         try {
-  //           await Purchases.logOut();
-  //         } catch {
-  //           return;
-  //         }
-  //         setCustomerInfo(await Purchases.getCustomerInfo());
-  //       }
-  //     } catch (e) {
-  //       console.warn('[Purchases] identify failed', e);
-  //     }
-  //   })();
-  // }, [user?.id, userLoaded, setCustomerInfo]);
+  // Identify the current user with RevenueCat and refresh customerInfo whenever
+  // the Clerk session changes. logIn/logOut also seeds the listener below.
+  useEffect(() => {
+    if (!authLoaded || !userLoaded) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        if (user?.id) {
+          const { customerInfo } = await Purchases.logIn(user.id);
+          if (!cancelled) setCustomerInfo(customerInfo);
+        } else {
+          try {
+            await Purchases.logOut();
+          } catch {
+            // Already anonymous — safe to ignore.
+          }
+          const customerInfo = await Purchases.getCustomerInfo();
+          if (!cancelled) setCustomerInfo(customerInfo);
+        }
+      } catch (e) {
+        Sentry.captureException(e);
+        if (!cancelled) setCustomerInfo(null);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.id, authLoaded, userLoaded, setCustomerInfo]);
 
   useEffect(() => {
-    const listener = Purchases.addCustomerInfoUpdateListener(setCustomerInfo);
+    Purchases.addCustomerInfoUpdateListener(setCustomerInfo);
     return () => {
-      // SDK returns void for add; remove takes the original handler.
       Purchases.removeCustomerInfoUpdateListener(setCustomerInfo);
     };
   }, [setCustomerInfo]);
+
+  // Hold routing until we know auth state, and (if signed in) the user's
+  // entitlement status — otherwise a paid user would briefly land on the
+  // paywall on cold launch.
+  const ready =
+    authLoaded && userLoaded && (isSignedIn ? customerInfoLoaded : true);
+
+  if (!ready) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: COLOR.background,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <ActivityIndicator color={COLOR.primaryLight} />
+      </View>
+    );
+  }
 
   return (
     <Stack
@@ -99,7 +131,11 @@ function RootComponent() {
         <Stack.Screen name="(auth)" />
       </Stack.Protected>
 
-      <Stack.Protected guard={hasOnboarded && !!isSignedIn}>
+      <Stack.Protected guard={hasOnboarded && !!isSignedIn && !isPremium}>
+        <Stack.Screen name="paywall" />
+      </Stack.Protected>
+
+      <Stack.Protected guard={hasOnboarded && !!isSignedIn && isPremium}>
         <Stack.Screen name="(app)" />
       </Stack.Protected>
     </Stack>

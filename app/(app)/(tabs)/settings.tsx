@@ -8,13 +8,17 @@ import {
 import { COLOR, RADIUS, SHADOW, SPACE } from '@/constants/theme';
 import { useOnboardingStore } from '@/hooks/useOnboardingStore';
 import { usePlanStore } from '@/hooks/usePlanStore';
+import { usePurchasesStore } from '@/hooks/usePurchasesStore';
 import { useRoutineStore } from '@/hooks/useRoutineStore';
 import { useScanStore } from '@/hooks/useScanStore';
 import { useTaskStore } from '@/hooks/useTaskStore';
+import { isPremium } from '@/utils/purchases.util';
 import { navigateTo, openURL } from '@/utils/router.util';
 import { useAuth, useUser } from '@clerk/expo';
+import * as Sentry from '@sentry/react-native';
 import { Image } from 'expo-image';
 import * as Linking from 'expo-linking';
+import Purchases from 'react-native-purchases';
 import {
   ArrowRightIcon,
   BellIcon,
@@ -124,8 +128,10 @@ const SUPPORT_EMAIL = 'symmetryiq@hotmail.com';
 const SettingScreen = () => {
   const { user } = useUser();
   const { signOut } = useAuth();
+  const setCustomerInfo = usePurchasesStore((s) => s.setCustomerInfo);
   const [signingOut, setSigningOut] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [restoring, setRestoring] = useState(false);
 
   const handleSignOut = useCallback(async () => {
     Alert.alert(
@@ -169,7 +175,8 @@ const SettingScreen = () => {
               useTaskStore.getState().reset();
               await user?.delete();
               await signOut();
-            } catch {
+            } catch (e) {
+              Sentry.captureException(e);
               Alert.alert(
                 'Error',
                 'Failed to delete account. Please try again.',
@@ -193,14 +200,37 @@ const SettingScreen = () => {
   }, []);
 
   const handleRestorePurchases = useCallback(async () => {
-    // TODO: wire up to Purchases.restorePurchases() (RevenueCat is now bootstrapped at root).
-    Alert.alert(
-      'Coming Soon',
-      'Subscription restore is temporarily unavailable in this build.',
-      [{ text: 'OK' }],
-      { userInterfaceStyle: 'dark' },
-    );
-  }, []);
+    setRestoring(true);
+    try {
+      const customerInfo = await Purchases.restorePurchases();
+      setCustomerInfo(customerInfo);
+      if (isPremium(customerInfo)) {
+        Alert.alert(
+          'Restored',
+          'Your premium subscription has been restored.',
+          [{ text: 'OK' }],
+          { userInterfaceStyle: 'dark' },
+        );
+      } else {
+        Alert.alert(
+          'Restore Purchases',
+          'No active subscription found on this account.',
+          [{ text: 'OK' }],
+          { userInterfaceStyle: 'dark' },
+        );
+      }
+    } catch (e) {
+      Sentry.captureException(e);
+      Alert.alert(
+        'Restore failed',
+        'Could not restore purchases. Please try again.',
+        [{ text: 'OK' }],
+        { userInterfaceStyle: 'dark' },
+      );
+    } finally {
+      setRestoring(false);
+    }
+  }, [setCustomerInfo]);
 
   const handleContactSupport = useCallback(() => {
     Linking.openURL(
@@ -277,10 +307,8 @@ const SettingScreen = () => {
           <Divider />
           <SettingsItem
             icon={StarIcon}
-            label="Restore Purchases"
-            sublabel={
-              'Recover previous subscriptions'
-            }
+            label={restoring ? 'Restoring…' : 'Restore Purchases'}
+            sublabel="Recover previous subscriptions"
             onPress={handleRestorePurchases}
             showArrow={false}
           />
@@ -294,24 +322,10 @@ const SettingScreen = () => {
             sublabel="Manage push notifications"
             onPress={() => navigateTo('/notifications')}
           />
-          <Divider />
-          {/* <SettingsItem
-            icon={ChartBarIcon}
-            label="Scan History"
-            sublabel="View your past scans"
-            onPress={() => {}}
-          /> */}
         </SettingsGroup>
 
         {/* ── Support ── */}
         <SettingsGroup title="Support">
-          {/* <SettingsItem
-            icon={QuestionIcon}
-            label="Help & FAQ"
-            sublabel="Common questions answered"
-            onPress={() => {}}
-          /> */}
-          <Divider />
           <SettingsItem
             icon={EnvelopeIcon}
             label="Contact Support"

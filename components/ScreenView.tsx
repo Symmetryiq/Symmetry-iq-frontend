@@ -6,8 +6,6 @@ import {
   SafeAreaViewProps,
 } from 'react-native-safe-area-context';
 
-// TODO - This is a placeholder for the actual ScreenView component
-
 type ScreenViewProps = SafeAreaViewProps & {
   padded?: boolean;
 };

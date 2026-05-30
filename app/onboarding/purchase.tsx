@@ -31,6 +31,7 @@ import Purchases, {
   PurchasesOffering,
   PurchasesPackage,
 } from 'react-native-purchases';
+import * as Sentry from '@sentry/react-native';
 
 type PlanTier = 'weekly' | 'monthly' | 'yearly';
 
@@ -79,6 +80,7 @@ const PurchaseScreen = () => {
           setError(null);
         }
       } catch (e) {
+        Sentry.captureException(e);
         if (!cancelled) {
           setError(e instanceof Error ? e.message : 'Could not load plans.');
         }
@@ -125,6 +127,7 @@ const PurchaseScreen = () => {
       }
     } catch (e) {
       if (isUserCancelledError(e)) return;
+      Sentry.captureException(e);
       Alert.alert('Purchase failed', 'Something went wrong. Please try again.');
     } finally {
       setPurchasing(false);
@@ -144,7 +147,8 @@ const PurchaseScreen = () => {
           'No active subscription found on this account.',
         );
       }
-    } catch {
+    } catch (e) {
+      Sentry.captureException(e);
       Alert.alert('Restore failed', 'Could not restore purchases.');
     } finally {
       setRestoring(false);

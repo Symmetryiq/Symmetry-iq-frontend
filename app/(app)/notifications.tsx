@@ -180,8 +180,7 @@ const NotificationsScreen = () => {
         color="onSecondary"
         style={styles.emptyText}
       >
-        Use the test buttons above to send yourself a notification and confirm
-        delivery on this device.
+        You're all caught up. Reminders, tips, and updates will appear here.
       </ThemedText>
     </View>
   );
@@ -199,46 +198,48 @@ const NotificationsScreen = () => {
         )}
       </View>
 
-      <View style={styles.testCard}>
-        <ThemedText variant="h5">Test delivery</ThemedText>
-        <ThemedText variant="bodySmall" color="onSecondary">
-          {pushToken
-            ? 'Permission granted. You can fire a local notification or send a remote push to this device.'
-            : 'Request permission to enable remote pushes. Local tests work without a token.'}
-        </ThemedText>
+      {__DEV__ && (
+        <View style={styles.testCard}>
+          <ThemedText variant="h5">Test delivery</ThemedText>
+          <ThemedText variant="bodySmall" color="onSecondary">
+            {pushToken
+              ? 'Permission granted. You can fire a local notification or send a remote push to this device.'
+              : 'Request permission to enable remote pushes. Local tests work without a token.'}
+          </ThemedText>
 
-        <View style={styles.testRow}>
+          <View style={styles.testRow}>
+            <Button
+              title="Local test"
+              variant="primary"
+              size="sm"
+              icon={BellIcon}
+              onPress={handleLocalTest}
+              loading={testingLocal}
+              fullWidth
+            />
+            <Button
+              title="Remote test"
+              variant="secondary"
+              size="sm"
+              icon={PaperPlaneTiltIcon}
+              onPress={handleRemoteTest}
+              loading={testingRemote}
+              disabled={!pushToken}
+              fullWidth
+            />
+          </View>
+
           <Button
-            title="Local test"
-            variant="primary"
+            title={
+              pushToken ? 'View / copy push token' : 'Request push permission'
+            }
+            variant="ghost"
             size="sm"
-            icon={BellIcon}
-            onPress={handleLocalTest}
-            loading={testingLocal}
-            fullWidth
-          />
-          <Button
-            title="Remote test"
-            variant="secondary"
-            size="sm"
-            icon={PaperPlaneTiltIcon}
-            onPress={handleRemoteTest}
-            loading={testingRemote}
-            disabled={!pushToken}
-            fullWidth
+            onPress={pushToken ? handleCopyTokenHint : handleRequestToken}
+            loading={requestingToken}
           />
         </View>
-
-        <Button
-          title={
-            pushToken ? 'View / copy push token' : 'Request push permission'
-          }
-          variant="ghost"
-          size="sm"
-          onPress={pushToken ? handleCopyTokenHint : handleRequestToken}
-          loading={requestingToken}
-        />
-      </View>
+      )}
 
       <FlatList
         data={items}

@@ -1,8 +1,11 @@
 import { COLOR } from '@/constants/theme';
+import { useScheduledReminders } from '@/hooks/useScheduledReminders';
 import { Stack } from 'expo-router';
 import React from 'react';
 
 export default function AppLayout() {
+  useScheduledReminders();
+
   return (
     <Stack
       screenOptions={{

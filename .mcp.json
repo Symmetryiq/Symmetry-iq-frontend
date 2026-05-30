@@ -9,6 +9,7 @@
       "url": "https://mcp.revenuecat.ai/mcp"
     },
     "Sentry": {
+      "type": "http",
       "url": "https://mcp.sentry.dev/mcp/symmetryiq/react-native"
     }
   }

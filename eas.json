@@ -17,9 +17,6 @@
     },
     "preview": {
       "distribution": "internal",
-      // "ios": {
-      //   "buildConfiguration": "Release"
-      // },
       "environment": "preview",
       "env": {
         "EXPO_PUBLIC_CLERK_GOOGLE_WEB_CLIENT_ID": "460134598118-qbvblst2fdrstjvl4th7qj1iqude4m9d.apps.googleusercontent.com",
