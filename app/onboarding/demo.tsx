@@ -2,11 +2,13 @@ import Button from '@/components/Button';
 import ScanIcon from '@/components/icons/ScanIcon';
 import ScreenView from '@/components/ScreenView';
 import ThemedText from '@/components/ThemedText';
+import { SCREENSHOT_MODE } from '@/constants/app';
 import { COLOR, RADIUS, SHADOW } from '@/constants/theme';
 import { usePlanStore } from '@/hooks/usePlanStore';
 import { useScanStore } from '@/hooks/useScanStore';
 import { NoFaceDetectedError } from '@/utils/error.util';
 import { calculateScores, getLandmarks } from '@/utils/mediapipe.util';
+import { seedSampleScan } from '@/utils/screenshotSeed.util';
 import {
   launchCameraAsync,
   launchImageLibraryAsync,
@@ -181,6 +183,18 @@ const DemoScanScreen = () => {
           disabled={isAnalyzing}
         />
       </View>
+
+      {SCREENSHOT_MODE && (
+        <Button
+          variant="secondary"
+          title="Use Sample Photo (Screenshot)"
+          fullWidth
+          onPress={() => {
+            seedSampleScan();
+            router.replace('/onboarding/result');
+          }}
+        />
+      )}
     </ScreenView>
   );
 };

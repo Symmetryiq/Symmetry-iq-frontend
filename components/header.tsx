@@ -1,34 +1,60 @@
-import { RADIUS, SHADOW } from '@/constants/theme';
+import { COLOR, RADIUS, SHADOW } from '@/constants/theme';
+import { useOnboardingStore } from '@/hooks/useOnboardingStore';
 import { navigateTo } from '@/utils/router.util';
 import { scale, verticalScale } from '@/utils/scaling.util';
+import { useUser } from '@clerk/expo';
 import { Image } from 'expo-image';
 import { BellIcon } from 'phosphor-react-native';
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import Button from './Button';
 import ThemedText from './ThemedText';
 
-type HeaderProps = {
-  name: string;
-  profileImage: string;
-};
+const LOGO = require('@/assets/images/logo.png');
 
-const Header = ({ name, profileImage }: HeaderProps) => {
+function timeBasedGreeting(): string {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good Morning';
+  if (hour < 18) return 'Good Afternoon';
+  return 'Good Evening';
+}
+
+const Header = () => {
+  const { user } = useUser();
+  const onboardingNameAnswer = useOnboardingStore((s) => s.answers['name']);
+  const onboardingName =
+    typeof onboardingNameAnswer === 'string'
+      ? onboardingNameAnswer.trim()
+      : '';
+
+  const displayName = user
+    ? user.firstName || user.fullName || onboardingName || 'there'
+    : onboardingName || 'there';
+
+  const avatarSource = user?.imageUrl ? { uri: user.imageUrl } : LOGO;
+  const avatarContentFit = user?.imageUrl ? 'cover' : 'contain';
+
   return (
     <View style={styles.container}>
-      <View style={styles.profileImageContainer}>
+      <Pressable
+        onPress={() => navigateTo('/(app)/(tabs)/settings')}
+        style={styles.profileImageContainer}
+        hitSlop={8}
+      >
         <Image
-          source={profileImage}
+          source={avatarSource}
           style={styles.profileImage}
-          contentFit="cover"
+          contentFit={avatarContentFit}
         />
-      </View>
+      </Pressable>
 
       <View style={styles.greetingContainer}>
         <ThemedText variant="bodySmall" color="onSecondary">
-          Good Morning,
+          {timeBasedGreeting()},
         </ThemedText>
-        <ThemedText variant="h3">{name}</ThemedText>
+        <ThemedText variant="h3" numberOfLines={1}>
+          {displayName}
+        </ThemedText>
       </View>
 
       <Button
@@ -57,6 +83,7 @@ const styles = StyleSheet.create({
     height: scale(44),
     borderRadius: RADIUS.full,
     overflow: 'hidden',
+    backgroundColor: COLOR.muted,
     boxShadow: SHADOW.sm,
   },
   profileImage: {

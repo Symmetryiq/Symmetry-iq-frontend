@@ -1,0 +1,250 @@
+Apple2026-05-22 1:35 AM
+Hello, 
+
+We noticed this is your first app submission and want to congratulate you on joining the Apple Developer Program. We look forward to working together on your submissions.
+
+When App Review identifies an issue with a submission, we’ll contact you with a message in App Store Connect with details about what we found and how to resolve the issue. Learn more about App Review and tips for a smooth review experience. 
+
+See below for additional information about the issues that require your attention for this submission. If you have any questions, we are here to help. Reply to this message in App Store Connect and let us know.
+
+Review Environment
+Submission ID: 2aee222d-fc84-48f2-819f-3808d8caa71e
+Review date: May 21, 2026
+Review Device: iPhone 17 Pro Max
+Version reviewed: 1.0 (25)
+
+Guideline 2.1 - Information Needed
+
+We need additional information about how the app uses face data. Face data is sensitive user information that must be handled properly to protect the user's security and privacy.
+
+Next Steps
+
+Provide complete and detailed responses to the following questions:
+
+- What face data does the app collect?
+- Provide a complete and clear explanation of all planned uses of the collected face data.
+- Will the face data be shared with any third parties? Where will this information be stored?
+- How long will face data be retained? 
+- Where in the privacy policy is the app's collection, use, disclosure, sharing, and retention of face data explained? Identify the specific sections in the privacy policy where this information is located.
+- Quote the specific text from the privacy policy concerning face data.
+
+Resources 
+
+Learn more about requirements for data collection and storage in guideline 5.1.1.
+Support
+- Reply to this message in your preferred language if you need assistance. If you need additional support, use the Contact Us module.
+- Consult with fellow developers and Apple engineers on the Apple Developer Forums.
+- Provide feedback on this message and your review experience by completing a short survey.
+
+iOS App 1.0App Version
+Rejection Reasons:
+2.1.0 Performance: App Completeness
+
+
+Samarth Sharma2026-05-22 2:01 AM
+Find the answers attached below:
+
+- The app takes user's facial landmarks to understand various facial features such as Eyebrow Symmetry, and stores the used face image locally for user's history references.
+- The collected face images are used as a reference to the scan history & the facial landmarks are processed in real-time to generate scores for the user. None of the face-data is sent to our servers or to any third-party services.
+- The face data is never shared with any third party or to any of our servers, they are retained locally to user's device for further references.
+- The User's Images are stored to their device and can be erased anytime, None of it is shared to any services/servers & we never read it out of the device.
+- Our Privacy Policy's Section 1, 2, 5 and 9 explains the usage of face-data once, and for all.
+- Section 2 of the Privacy Policy holds information about concerning usage of the face data.
+
+Apple2026-05-26 2:20 PM
+Hello,
+
+Thank you for providing this information.
+
+Upon further review, we've identified additional issues that require your attention:
+
+Guideline 2.3.2 - Performance - Accurate Metadata
+
+Issue Description
+
+We noticed that your promotional image to be displayed on the App Store does not sufficiently represent the associated promoted In-App Purchase and/or win back offer. Specifically, we found the following issue with your promotional image:
+
+– You submitted duplicate or identical promotional images for different promoted In-App Purchase products and/or win back offers. 
+
+Next Steps
+
+To resolve this issue, please revise your promotional image to ensure it is unique and accurately represents the associated promoted In-App Purchase and/or win back offer. 
+
+Resources
+
+- Learn how to view and edit In-App Purchase information in App Store Connect.
+- Discover more best practices for promoting your In-App Purchases on the App Store.
+
+We look forward to reviewing your resubmission.
+
+Best regards,
+
+App Review
+
+iOS App 1.0App Version
+Rejection Reasons:
+2.3.2 Performance: Accurate Metadata
+
+
+Apple2026-05-29 1:34 AM
+Hello,
+
+Thank you for your efforts to follow our guidelines. There are some outstanding issues that still need your attention.
+
+If you have any questions, we are here to help. Reply to this message in App Store Connect and let us know.
+
+Review Environment
+Submission ID: 2aee222d-fc84-48f2-819f-3808d8caa71e
+Review date: May 28, 2026
+Review Device: iPad Air 11-inch (M3)
+Version reviewed: 1.0 (25)
+
+Guideline 4 - Design
+
+Issue Description
+
+Parts of the app's user interface were crowded, laid out, or displayed in a way that made it difficult to use the app when reviewed on iPad Air 11-inch (M3) running iPadOS 26.5.
+
+Specifically, some text/content was overlapped or not visible when the app was run on iPad.
+
+Next Steps
+
+To resolve this issue, revise the app to ensure that the content and controls on the screen are easy to read and interact with.
+
+Note that users expect apps they download to function on all the devices where they are available. For example, apps that may be downloaded onto iPad devices should function as expected for iPad users. Learn more about supporting apps on compatible devices.
+
+Resources
+
+- Learn foundational design principles from Apple designers and the developer community.
+- See documentation for the UIKit framework.
+- Learn more about design requirements in guideline 4.
+Guideline 5.1.1(v) - Legal - Data Collection and Storage
+
+Issue Description
+
+We noticed that the app requires users to register with personal information when purchasing In-App Purchase products that are not account based. 
+
+Apps cannot require user registration prior to allowing access to app content and features that are not associated specifically to the user. User registration that requires the sharing of personal information must be optional or tied to account-specific functionality.
+
+Next Steps
+
+To resolve this issue, please revise the app to not require users to register when purchasing In-App Purchase products that are not account based. You may explain to the user that registering will enable them to access the purchased content from any of their supported devices and provide them a way to register at any time, if they wish to later extend access to additional devices.
+
+Please note that although guideline 5.1.1 requires an app to make subscription content available to all the supported devices owned by a single user, it is not appropriate to force user registration to meet this requirement; such user registration must be optional.
+
+Resources 
+
+- Watch a video from App Review with tips for doing more for users with less data. 
+- See guideline 5.1.1 to learn more about our requirements for apps with account-based content and features.
+Support
+- Reply to this message in your preferred language if you need assistance. If you need additional support, use the Contact Us module.
+- Consult with fellow developers and Apple engineers on the Apple Developer Forums.
+- Provide feedback on this message and your review experience by completing a short survey.
+
+iOS App 1.0App Version
+Rejection Reasons:
+4.0.0 Design: Preamble
+
+5.1.1 Legal: Privacy - Data Collection and Storage
+
+Rejection Attachments:
+Screenshot-0528-125409.pngDownload
+Screenshot-0528-125423.pngDownload
+Screenshot-0528-125429.pngDownload
+Screenshot-0528-125508.pngDownload
+
+Apple2026-06-05 8:14 PM
+
+
+Review Environment
+Submission ID: 2aee222d-fc84-48f2-819f-3808d8caa71e
+Review date: June 05, 2026
+Review Device: iPhone 17 Pro Max and iPad Pro 11-inch (M4)
+Version reviewed: 1.0 (27)
+
+Guideline 2.3.3 - Performance - Accurate Metadata
+Issue Description
+
+The screenshots only display a splash screen. Screenshots should highlight the app's core concept to help users understand the app’s functionality and value. 
+
+Next Steps
+
+Upload new screenshots that resolve the issues identified above and accurately reflect the app in use on each of the supported devices.
+
+Note some screenshots may only be viewed and updated by selecting "View All Sizes in Media Manager" in the Previews and Screenshots section of App Store Connect.
+
+Resources
+
+Follow these general requirements when adding or updating screenshots:
+
+- Marketing or promotional materials that do not reflect the UI of the app are not appropriate for screenshots.
+- The majority of the screenshots should highlight the app's main features and functionality. Note that splash and login screens are generally not considered to show the app in use.
+
+Learn more about creating great screenshots for your product page on the App Store or how to upload screenshots in App Store Connect.
+Guideline 5.1.1(i) - Legal - Privacy - Data Collection and Storage
+
+Issue Description
+
+We noticed the app collects and uses face data but does not include a privacy policy or the provided privacy policy link is not functional.
+
+To protect the user's security and privacy, developers must provide privacy policies that thoroughly explain their app's data collection and storage practices.
+
+Next Steps
+
+To resolve this issue, navigate to the App Privacy section for this app in App Store Connect and provide a functional link to your privacy policy. Ensure the privacy policy includes all the required information described in guideline 5.1.1(i).
+
+Resources
+
+- Learn how to update your privacy policy in App Store Connect. 
+- Learn more about requirements for privacy policies in guideline 5.1.1.
+Support
+- Reply to this message in your preferred language if you need assistance. If you need additional support, use the Contact Us module.
+- Consult with fellow developers and Apple engineers on the Apple Developer Forums.
+- Request an App Review Appointment at Meet with Apple to discuss your app's review. Appointments subject to availability during your local business hours on Tuesdays and Thursdays.
+- Provide feedback on this message and your review experience by completing a short survey.
+
+iOS App 1.0App Version
+Rejection Reasons:
+2.3.3 Performance: Accurate Metadata
+
+5.1.1 Legal: Privacy - Data Collection and Storage
+
+Rejection Attachments:
+fff77ecf7eb3e3e10909d3ae1025e8afddc51428.jpgDownload
+76b110d6fef5822718ecb8f38eedea2d1d22af37.jpgDownload
+a0b296d7255de66c015ad5bb5d93dc3e6f8df800.jpgDownload
+
+AppleToday 3:38 PM
+Hello,
+
+Thank you for your efforts to follow our guidelines. There are some outstanding issues that still need your attention.
+
+If you have any questions, we are here to help. Reply to this message in App Store Connect and let us know.
+
+Review Environment
+Submission ID: 2aee222d-fc84-48f2-819f-3808d8caa71e
+Review date: June 11, 2026
+Review Device: iPad Air 11-inch (M3)
+Version reviewed: 1.0 (27)
+
+Guideline 5.1.1(i) - Legal - Privacy - Data Collection and Storage
+
+Issue Description
+
+We still noticed the app collects and uses face data but does not include a privacy policy or the provided privacy policy link is not functional.
+
+To protect the user's security and privacy, developers must provide privacy policies that thoroughly explain their app's data collection and storage practices.
+
+Next Steps
+
+To resolve this issue, navigate to the App Privacy section for this app in App Store Connect and provide a functional link to your privacy policy. Ensure the privacy policy includes all the required information described in guideline 5.1.1(i).
+
+Resources
+
+- Learn how to update your privacy policy in App Store Connect. 
+- Learn more about requirements for privacy policies in guideline 5.1.1.
+Support
+- Reply to this message in your preferred language if you need assistance. If you need additional support, use the Contact Us module.
+- Consult with fellow developers and Apple engineers on the Apple Developer Forums.
+- Request an App Review Appointment at Meet with Apple to discuss your app's review. Appointments subject to availability during your local business hours on Tuesdays and Thursdays.
+- Provide feedback on this message and your review experience by completing a short survey.

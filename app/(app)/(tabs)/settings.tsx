@@ -1,9 +1,17 @@
 import ScreenView from '@/components/ScreenView';
 import ThemedText from '@/components/ThemedText';
 import {
+  APP_NAME,
+  APP_SLOGAN,
+  APP_STORE_REVIEW_URL,
+  APP_STORE_URL,
   APP_VERSION,
+  PLAY_STORE_MARKET_URL,
+  PLAY_STORE_URL,
   PRIVACY_POLICY_URL,
+  STORE_LINKS_READY,
   TERMS_OF_SERVICE_URL,
+  WEBSITE_URL,
 } from '@/constants/app';
 import { COLOR, RADIUS, SHADOW, SPACE } from '@/constants/theme';
 import { useOnboardingStore } from '@/hooks/useOnboardingStore';
@@ -27,6 +35,7 @@ import {
   GearIcon,
   Icon,
   InfoIcon,
+  ShareNetworkIcon,
   ShieldCheckIcon,
   SignOutIcon,
   StarIcon,
@@ -39,6 +48,7 @@ import {
   Platform,
   Pressable,
   ScrollView,
+  Share,
   StyleSheet,
   View,
 } from 'react-native';
@@ -129,6 +139,11 @@ const SettingScreen = () => {
   const { user } = useUser();
   const { signOut } = useAuth();
   const setCustomerInfo = usePurchasesStore((s) => s.setCustomerInfo);
+  const onboardingNameAnswer = useOnboardingStore((s) => s.answers['name']);
+  const onboardingName =
+    typeof onboardingNameAnswer === 'string'
+      ? onboardingNameAnswer.trim()
+      : '';
   const [signingOut, setSigningOut] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [restoring, setRestoring] = useState(false);
@@ -239,13 +254,32 @@ const SettingScreen = () => {
   }, []);
 
   const handleRateApp = useCallback(() => {
-    // TODO: Replace with actual App Store / Play Store IDs
+    // Until the real App Store ID is set, send users to the website rather than
+    // a dead store page. See STORE_LINKS_READY in constants/app.ts.
+    if (!STORE_LINKS_READY) {
+      Linking.openURL(WEBSITE_URL);
+      return;
+    }
     if (Platform.OS === 'ios') {
-      Linking.openURL(
-        'https://apps.apple.com/app/id0000000000?action=write-review',
-      );
+      Linking.openURL(APP_STORE_REVIEW_URL);
     } else {
-      Linking.openURL('market://details?id=com.symmetryiq.app');
+      Linking.openURL(PLAY_STORE_MARKET_URL);
+    }
+  }, []);
+
+  const handleShareApp = useCallback(async () => {
+    const url = !STORE_LINKS_READY
+      ? WEBSITE_URL
+      : Platform.OS === 'ios'
+        ? APP_STORE_URL
+        : PLAY_STORE_URL;
+    try {
+      await Share.share({
+        message: `Check out ${APP_NAME} — ${APP_SLOGAN}\n${url}`,
+        url,
+      });
+    } catch {
+      // User dismissed the share sheet, or sharing is unavailable — ignore.
     }
   }, []);
 
@@ -266,35 +300,64 @@ const SettingScreen = () => {
           </ThemedText>
         </View>
 
-        {/* ── Profile Card ── */}
-        <Pressable
-          style={({ pressed }) => [
-            styles.profileCard,
-            pressed && { opacity: 0.85 },
-          ]}
-          onPress={() => navigateTo('/profile')}
-        >
-          <View style={styles.profileImageWrapper}>
-            {user?.imageUrl ? (
+        {/* ── Profile / Sign-in Card ── */}
+        {user ? (
+          <Pressable
+            style={({ pressed }) => [
+              styles.profileCard,
+              pressed && { opacity: 0.85 },
+            ]}
+            onPress={() => navigateTo('/profile')}
+          >
+            <View style={styles.profileImageWrapper}>
+              {user.imageUrl ? (
+                <Image
+                  source={user.imageUrl}
+                  style={styles.profileImage}
+                  contentFit="cover"
+                />
+              ) : (
+                <UserCircleIcon size={48} color={COLOR.onMuted} />
+              )}
+            </View>
+
+            <View style={styles.profileInfo}>
+              <ThemedText variant="h4">{user.fullName || 'User'}</ThemedText>
+              <ThemedText variant="bodySmall" color="onMuted">
+                {user.primaryEmailAddress?.emailAddress || ''}
+              </ThemedText>
+            </View>
+
+            <ArrowRightIcon size={20} color={COLOR.onMuted} weight="bold" />
+          </Pressable>
+        ) : (
+          <Pressable
+            style={({ pressed }) => [
+              styles.profileCard,
+              pressed && { opacity: 0.85 },
+            ]}
+            onPress={() => navigateTo('/(auth)/login')}
+          >
+            <View style={styles.profileImageWrapper}>
               <Image
-                source={user.imageUrl}
+                source={require('@/assets/images/logo.png')}
                 style={styles.profileImage}
-                contentFit="cover"
+                contentFit="contain"
               />
-            ) : (
-              <UserCircleIcon size={48} color={COLOR.onMuted} />
-            )}
-          </View>
+            </View>
 
-          <View style={styles.profileInfo}>
-            <ThemedText variant="h4">{user?.fullName || 'User'}</ThemedText>
-            <ThemedText variant="bodySmall" color="onMuted">
-              {user?.primaryEmailAddress?.emailAddress || ''}
-            </ThemedText>
-          </View>
+            <View style={styles.profileInfo}>
+              <ThemedText variant="h4">
+                {onboardingName ? onboardingName : 'Welcome'}
+              </ThemedText>
+              <ThemedText variant="bodySmall" color="onMuted">
+                Sign in to back up your account
+              </ThemedText>
+            </View>
 
-          <ArrowRightIcon size={20} color={COLOR.onMuted} weight="bold" />
-        </Pressable>
+            <ArrowRightIcon size={20} color={COLOR.onMuted} weight="bold" />
+          </Pressable>
+        )}
 
         {/* ── Subscription ── */}
         <SettingsGroup title="Subscription">
@@ -339,6 +402,13 @@ const SettingScreen = () => {
             sublabel="Help us by leaving a review"
             onPress={handleRateApp}
           />
+          <Divider />
+          <SettingsItem
+            icon={ShareNetworkIcon}
+            label="Share App"
+            sublabel="Tell a friend about Symmetry IQ"
+            onPress={handleShareApp}
+          />
         </SettingsGroup>
 
         {/* ── Privacy & Legal ── */}
@@ -356,24 +426,26 @@ const SettingScreen = () => {
           />
         </SettingsGroup>
 
-        {/* ── Account ── */}
-        <SettingsGroup title="Account">
-          <SettingsItem
-            icon={SignOutIcon}
-            label="Sign Out"
-            onPress={handleSignOut}
-            showArrow={false}
-          />
-          <Divider />
-          <SettingsItem
-            icon={TrashIcon}
-            label="Delete Account"
-            sublabel="Permanently delete all your data"
-            onPress={handleDeleteAccount}
-            danger
-            showArrow={false}
-          />
-        </SettingsGroup>
+        {/* ── Account (signed in only) ── */}
+        {user && (
+          <SettingsGroup title="Account">
+            <SettingsItem
+              icon={SignOutIcon}
+              label="Sign Out"
+              onPress={handleSignOut}
+              showArrow={false}
+            />
+            <Divider />
+            <SettingsItem
+              icon={TrashIcon}
+              label="Delete Account"
+              sublabel="Permanently delete all your data"
+              onPress={handleDeleteAccount}
+              danger
+              showArrow={false}
+            />
+          </SettingsGroup>
+        )}
 
         <ThemedText variant="badge" color="onMuted" style={styles.versionText}>
           Symmetry IQ v{APP_VERSION}

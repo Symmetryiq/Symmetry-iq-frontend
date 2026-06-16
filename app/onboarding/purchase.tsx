@@ -1,7 +1,11 @@
 import Button from '@/components/Button';
 import ScreenView from '@/components/ScreenView';
 import ThemedText from '@/components/ThemedText';
-import { PRIVACY_POLICY_URL, TERMS_OF_SERVICE_URL } from '@/constants/app';
+import {
+  PRIVACY_POLICY_URL,
+  SCREENSHOT_MODE,
+  TERMS_OF_SERVICE_URL,
+} from '@/constants/app';
 import { COLOR, FONT, RADIUS, SHADOW, SPACE } from '@/constants/theme';
 import { useOnboardingStore } from '@/hooks/useOnboardingStore';
 import { usePurchasesStore } from '@/hooks/usePurchasesStore';
@@ -110,6 +114,12 @@ const PurchaseScreen = () => {
   const weeklyPlan = plans.find((p) => p.tier === 'weekly');
 
   const handleSubscribe = useCallback(async () => {
+    // Screenshot builds skip the real purchase so the gated tabs are reachable
+    // on a Simulator without StoreKit. No effect in production.
+    if (SCREENSHOT_MODE) {
+      completeOnboarding();
+      return;
+    }
     if (!selectedPlan) return;
     setPurchasing(true);
     try {
@@ -243,7 +253,7 @@ const PurchaseScreen = () => {
             iconPosition="right"
             onPress={handleSubscribe}
             loading={purchasing}
-            disabled={!selectedPlan}
+            disabled={!SCREENSHOT_MODE && !selectedPlan}
           />
           <Pressable onPress={handleRestore} hitSlop={8} disabled={restoring}>
             <ThemedText

@@ -22,7 +22,6 @@ import {
 } from '@/utils/feature.util';
 import { getTodaysPlan } from '@/utils/planner.util';
 import { verticalScale } from '@/utils/scaling.util';
-import { useUser } from '@clerk/expo';
 import { useRouter } from 'expo-router';
 import { CheckCircleIcon } from 'phosphor-react-native';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
@@ -96,7 +95,6 @@ const ScoreCarousel = ({ data }: { data: FeatureScore[] }) => {
 };
 
 const InsightScreen = () => {
-  const { user } = useUser();
   const router = useRouter();
   const history = useScanStore((s) => s.history);
   const currentScan = useScanStore((s) => s.currentScan);
@@ -182,10 +180,7 @@ const InsightScreen = () => {
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
       >
-        <Header
-          name={user?.firstName || 'User'}
-          profileImage={user?.imageUrl ?? ''}
-        />
+        <Header />
 
         <DateSelector
           onDateChange={handleDateChange}

@@ -12,7 +12,6 @@ import { RoutineID } from '@/types/routine.types';
 import { getFeatureByID } from '@/utils/feature.util';
 import { getPlanDates, getPlanForDate } from '@/utils/planner.util';
 import { verticalScale } from '@/utils/scaling.util';
-import { useUser } from '@clerk/expo';
 import { TargetIcon } from 'phosphor-react-native';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import {
@@ -32,7 +31,6 @@ const CARD_WIDTH = SCREEN_WIDTH - THEME.PADDING.screen * 2 - PEEK;
 const SNAP_INTERVAL = CARD_WIDTH + CARD_GAP;
 
 const RoutineScreen = () => {
-  const { user } = useUser();
   const plan = usePlanStore((s) => s.plan);
 
   /* ── Date selection ── */
@@ -116,10 +114,7 @@ const RoutineScreen = () => {
           contentContainerStyle={styles.container}
           showsVerticalScrollIndicator={false}
         >
-          <Header
-            name={user?.firstName || 'User'}
-            profileImage={user?.imageUrl || ''}
-          />
+          <Header />
 
           <View style={styles.emptyState}>
             <ThemedText variant="h3" style={styles.emptyTitle}>
@@ -142,10 +137,7 @@ const RoutineScreen = () => {
           contentContainerStyle={styles.container}
           showsVerticalScrollIndicator={false}
         >
-          <Header
-            name={user?.firstName || 'User'}
-            profileImage={user?.imageUrl || ''}
-          />
+          <Header />
 
           <DateSelector
             onDateChange={handleDateChange}
@@ -174,10 +166,7 @@ const RoutineScreen = () => {
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
       >
-        <Header
-          name={user?.firstName || 'User'}
-          profileImage={user?.imageUrl || ''}
-        />
+        <Header />
 
         <DateSelector
           onDateChange={handleDateChange}

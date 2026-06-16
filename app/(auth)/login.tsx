@@ -13,8 +13,11 @@ import { verticalScale } from '@/utils/scaling.util';
 import { useSignIn } from '@clerk/expo';
 import { useSignInWithApple } from '@clerk/expo/apple';
 import { useSignInWithGoogle } from '@clerk/expo/google';
+import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, Platform, Pressable, StyleSheet, View } from 'react-native';
+
+const POST_AUTH_DESTINATION = '/(app)/(tabs)/settings' as const;
 
 const LoginScreen = () => {
   const { signIn, fetchStatus, errors } = useSignIn();
@@ -36,6 +39,7 @@ const LoginScreen = () => {
 
     if (signIn.status === 'complete') {
       await signIn.finalize();
+      router.replace(POST_AUTH_DESTINATION);
     } else if (signIn.status === 'needs_client_trust') {
       const emailCodeFactor = signIn.supportedSecondFactors.find(
         (factor) => factor.strategy === 'email_code',
@@ -53,6 +57,7 @@ const LoginScreen = () => {
 
       if (createdSessionId && setActive) {
         await setActive({ session: createdSessionId });
+        router.replace(POST_AUTH_DESTINATION);
       }
     } catch (err: any) {
       if (err.code === 'SIGN_IN_CANCELLED' || err.code === '-5') {
@@ -76,6 +81,7 @@ const LoginScreen = () => {
 
       if (createdSessionId && setActive) {
         await setActive({ session: createdSessionId });
+        router.replace(POST_AUTH_DESTINATION);
       }
     } catch (err: any) {
       if (err.code === 'ERR_REQUEST_CANCELED') return;
@@ -94,6 +100,7 @@ const LoginScreen = () => {
 
     if (signIn.status === 'complete') {
       await signIn.finalize();
+      router.replace(POST_AUTH_DESTINATION);
     }
   }
 

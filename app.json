@@ -13,8 +13,15 @@
     "backgroundColor": "#16141f",
     "jsEngine": "hermes",
     "newArchEnabled": true,
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/51228dab-19a8-4c7f-ac85-cb808412e5a1",
+      "fallbackToCacheTimeout": 0
+    },
     "ios": {
-      "supportsTablet": false,
+      "supportsTablet": true,
       "bundleIdentifier": "com.bergmanmedia.symmetryiq",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,

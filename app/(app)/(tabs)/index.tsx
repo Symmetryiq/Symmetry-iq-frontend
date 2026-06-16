@@ -11,12 +11,10 @@ import { useRoutineStore } from '@/hooks/useRoutineStore';
 import { getTodaysScan, useScanStore } from '@/hooks/useScanStore';
 import { getTodaysPlan } from '@/utils/planner.util';
 import { verticalScale } from '@/utils/scaling.util';
-import { useUser } from '@clerk/expo';
 import React, { useMemo } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
 const index = () => {
-  const { user } = useUser();
   const history = useScanStore((s) => s.history);
   const plan = usePlanStore((s) => s.plan);
   const isCompletedToday = useRoutineStore((s) => s.isCompletedToday);
@@ -39,10 +37,7 @@ const index = () => {
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
       >
-        <Header
-          name={user?.firstName || ''}
-          profileImage={user?.imageUrl || ''}
-        />
+        <Header />
 
         <View style={styles.section}>
           <ThemedText variant="h2">Today&apos;s Scan</ThemedText>

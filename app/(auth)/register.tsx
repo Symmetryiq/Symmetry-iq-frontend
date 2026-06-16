@@ -14,8 +14,11 @@ import { verticalScale } from '@/utils/scaling.util';
 import { useSignUp } from '@clerk/expo';
 import { useSignInWithApple } from '@clerk/expo/apple';
 import { useSignInWithGoogle } from '@clerk/expo/google';
+import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, Platform, Pressable, StyleSheet, View } from 'react-native';
+
+const POST_AUTH_DESTINATION = '/(app)/(tabs)/settings' as const;
 
 const Register = () => {
   const { signUp, errors, fetchStatus } = useSignUp();
@@ -42,6 +45,7 @@ const Register = () => {
 
       if (createdSessionId && setActive) {
         await setActive({ session: createdSessionId });
+        router.replace(POST_AUTH_DESTINATION);
       }
     } catch (err: any) {
       if (err.code === 'SIGN_IN_CANCELLED' || err.code === '-5') {
@@ -65,6 +69,7 @@ const Register = () => {
 
       if (createdSessionId && setActive) {
         await setActive({ session: createdSessionId });
+        router.replace(POST_AUTH_DESTINATION);
       }
     } catch (err: any) {
       if (err.code === 'ERR_REQUEST_CANCELED') return;
@@ -96,6 +101,7 @@ const Register = () => {
 
     if (signUp.status === 'complete') {
       await signUp.finalize();
+      router.replace(POST_AUTH_DESTINATION);
     }
   }
 

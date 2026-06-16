@@ -9,6 +9,7 @@ import { useOnboardingStore } from '@/hooks/useOnboardingStore';
 import { usePurchasesStore } from '@/hooks/usePurchasesStore';
 import { COLOR } from '@/constants/theme';
 import { useNotificationListener } from '@/hooks/useNotificationListener';
+import { ForceUpdateGate } from '@/components/ForceUpdateGate';
 
 Sentry.init({
   dsn: process.env.EXPO_PUBLIC_SENTRY_DSN || '',
@@ -40,17 +41,19 @@ function RootLayout() {
   }, []);
 
   return (
-    <ClerkProvider
-      publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY || ''}
-      tokenCache={tokenCache}
-    >
-      <RootComponent />
-    </ClerkProvider>
+    <ForceUpdateGate>
+      <ClerkProvider
+        publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY || ''}
+        tokenCache={tokenCache}
+      >
+        <RootComponent />
+      </ClerkProvider>
+    </ForceUpdateGate>
   );
 }
 
 function RootComponent() {
-  const { isSignedIn, isLoaded: authLoaded } = useAuth();
+  const { isLoaded: authLoaded } = useAuth();
   const { user, isLoaded: userLoaded } = useUser();
   const { completed: hasOnboarded } = useOnboardingStore();
   const setCustomerInfo = usePurchasesStore((s) => s.setCustomerInfo);
@@ -95,11 +98,10 @@ function RootComponent() {
     };
   }, [setCustomerInfo]);
 
-  // Hold routing until we know auth state, and (if signed in) the user's
-  // entitlement status — otherwise a paid user would briefly land on the
-  // paywall on cold launch.
-  const ready =
-    authLoaded && userLoaded && (isSignedIn ? customerInfoLoaded : true);
+  // Hold routing until we know auth state AND the user's entitlement status —
+  // otherwise an anonymous paid user would briefly land on the paywall on
+  // cold launch before customerInfo resolves.
+  const ready = authLoaded && userLoaded && customerInfoLoaded;
 
   if (!ready) {
     return (
@@ -127,17 +129,17 @@ function RootComponent() {
         <Stack.Screen name="onboarding" />
       </Stack.Protected>
 
-      <Stack.Protected guard={hasOnboarded && !isSignedIn}>
-        <Stack.Screen name="(auth)" />
-      </Stack.Protected>
-
-      <Stack.Protected guard={hasOnboarded && !!isSignedIn && !isPremium}>
+      <Stack.Protected guard={hasOnboarded && !isPremium}>
         <Stack.Screen name="paywall" />
       </Stack.Protected>
 
-      <Stack.Protected guard={hasOnboarded && !!isSignedIn && isPremium}>
+      <Stack.Protected guard={hasOnboarded && isPremium}>
         <Stack.Screen name="(app)" />
       </Stack.Protected>
+
+      {/* Auth is reachable on demand from Settings via router.push.
+          Never a forced gate — required by App Store Guideline 5.1.1(v). */}
+      <Stack.Screen name="(auth)" />
     </Stack>
   );
 }
